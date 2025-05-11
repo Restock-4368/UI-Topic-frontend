@@ -1,68 +1,137 @@
 <template>
-  <div class="inventory-wrapper">
+  <div class="p-4">
+    <div class="flex flex-column gap-4">
+      <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 30%;">
+        <div class="flex justify-between align-items-center mb-4">
+          <h1>Insumos</h1>
+          <pv-button label="Crear" icon="pi pi-plus" @click="showSupplyModal = true" />
+        </div>
 
-    <div class="inventory-header flex justify-content-between align-items-center mb-4">
-      <h2 class="text-xl font-bold">{{ $t('inventory.title') }}</h2>
-      <pv-button icon="pi pi-plus" class="p-button-sm p-button-success" :label="$t('inventory.create')" />
-    </div>
+        <div v-if="supplies.length === 0" class="text-center">
+          <p>Aún no has agregado insumos. Añádelos para comenzar a gestionar tu inventario.</p>
+          <pv-button label="Crear Insumo" icon="pi pi-plus" class="mt-2" @click="showSupplyModal = true" />
+        </div>
 
-    <!-- Estado vacío -->
-    <div v-if="ingredients.length === 0" class="empty-state-card surface-card p-4 border-round shadow-2">
-      <p class="mb-3">{{ $t('inventory.emptyMessage') }}</p>
-      <pv-button class="p-button-success" :label="$t('inventory.createItems')" />
-    </div>
-
-    <!-- Sección de búsqueda y lista -->
-    <div v-else>
-      <div class="inventory-tools flex justify-content-between align-items-center mb-3">
-        <h3>{{ $t('inventory.listTitle') }}</h3>
-        <div class="p-inputgroup w-30">
-          <pv-input-text v-model="search" :placeholder="$t('inventory.search')" />
-          <pv-button icon="pi pi-plus" class="p-button-sm" :label="$t('inventory.add')" />
+        <div v-else>
+          <pv-carousel :value="supplies" :numVisible="3" :numScroll="1">
+            <template #item="slotProps">
+              <div class="border-1 surface-border border-round p-3 m-2 text-center">
+                <h4>{{ slotProps.data.name }}</h4>
+                <p class="text-sm">{{ slotProps.data.description }}</p>
+                <p><strong>{{ slotProps.data.category }}</strong> - {{ slotProps.data.unit }}</p>
+              </div>
+            </template>
+          </pv-carousel>
         </div>
       </div>
 
-      <!-- Simulación de tabla vacía -->
-      <div class="empty-table flex flex-column align-items-center justify-content-center border-1 surface-border border-round py-6 mt-4">
-        <i class="pi pi-box text-4xl mb-3 text-gray-400" />
-        <p class="text-gray-500 text-center px-4">
-          {{ $t('inventory.noItems') }}
-        </p>
-      </div>
+      <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 70%;">
+        <div class="flex justify-between align-items-center mb-4">
+          <h1 class="m-0">Inventory</h1>
+          <div class="flex align-items-center gap-2">
+            <pv-input-text v-model="search" placeholder="Buscar..." />
+            <pv-button label="Añadir" icon="pi pi-plus" />
+          </div>
+          <div class="flex align-items-center gap-2">
+            <span>1-5 de 10</span>
+            <pv-button icon="pi pi-angle-left" text />
+            <pv-button icon="pi pi-angle-right" text />
+          </div>
+        </div>
 
-      <!-- Simulación de paginación -->
-      <div class="pagination-tools mt-4 flex justify-content-end align-items-center gap-2 text-sm">
-        <span>{{ $t('inventory.rowsPerPage') }}</span>
-        <pv-dropdown :options="[5, 10, 15]" v-model="rows" />
-        <span>1–5 of 10</span>
-        <pv-button icon="pi pi-angle-left" class="p-button-text p-button-sm" />
-        <pv-button icon="pi pi-angle-right" class="p-button-text p-button-sm" />
+        <pv-data-table :value="inventory" responsiveLayout="scroll">
+          <pv-column field="name" header="Insumos" />
+          <pv-column field="category" header="Categoría" />
+          <pv-column field="unit" header="Unidad de medida" />
+          <pv-column field="expiry" header="Fecha de caducidad" />
+          <pv-column field="stock" header="Stock" />
+          <pv-column field="min" header="Stock Mínimo" />
+          <pv-column field="max" header="Stock Máximo" />
+          <pv-column field="perishable" header="Perecible" />
+          <pv-column header="Acciones">
+            <template #body>
+              <pv-button icon="pi pi-pencil" text />
+              <pv-button icon="pi pi-trash" text severity="danger" />
+            </template>
+          </pv-column>
+        </pv-data-table>
       </div>
     </div>
+
+    <pv-dialog header="Crear Insumo" v-model:visible="showSupplyModal" modal class="w-4">
+      <div class="p-fluid">
+        <div class="field">
+          <label>Nombre de insumo</label>
+          <pv-input-text v-model="newSupply.name" />
+        </div>
+        <div class="field">
+          <label>Categoría</label>
+          <pv-dropdown v-model="newSupply.category" :options="categories" placeholder="Selecciona una categoría" />
+        </div>
+        <div class="field">
+          <label>Unidad de medida</label>
+          <pv-dropdown v-model="newSupply.unit" :options="units" placeholder="Selecciona unidad" />
+        </div>
+        <div class="field">
+          <label>Descripción</label>
+          <pv-input-text v-model="newSupply.description" />
+        </div>
+        <div class="flex justify-end gap-2 mt-3">
+          <pv-button label="Cancelar" text @click="showSupplyModal = false" />
+          <pv-button label="Crear" icon="pi pi-check" @click="createSupply" />
+        </div>
+      </div>
+    </pv-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-const ingredients = ref([]) // Lista vacía para mostrar el estado vacío
-const search = ref('')
-const rows = ref(5)
+const showSupplyModal = ref(false);
+const search = ref('');
+
+const categories = ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'];
+const units = ['kg', 'l', 'unidades', 'g', 'ml'];
+
+const supplies = ref([
+  { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Fresco y orgánico' },
+  { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo' },
+  { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Entera' },
+  { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca' },
+  { name: 'Carne molida', category: 'Carnes', unit: 'kg', description: 'Res' },
+  { name: 'Agua mineral', category: 'Bebidas', unit: 'l', description: 'Sin gas' },
+  { name: 'Yogurt', category: 'Lácteos', unit: 'l', description: 'Natural' },
+  { name: 'Zanahoria', category: 'Verduras', unit: 'kg', description: 'Fresca' },
+  { name: 'Lentejas', category: 'Granos', unit: 'kg', description: 'Secas' },
+  { name: 'Cebolla', category: 'Verduras', unit: 'kg', description: 'Roja' }
+]);
+
+const inventory = ref([
+  { name: 'Tomate', category: 'Verduras', unit: 'kg', expiry: '2025-06-01', stock: 20, min: 10, max: 50, perishable: 'Sí' },
+  { name: 'Pollo', category: 'Carnes', unit: 'kg', expiry: '2025-05-20', stock: 15, min: 5, max: 30, perishable: 'Sí' },
+  { name: 'Leche', category: 'Lácteos', unit: 'l', expiry: '2025-05-15', stock: 25, min: 10, max: 40, perishable: 'Sí' },
+  { name: 'Papa', category: 'Verduras', unit: 'kg', expiry: '2025-06-10', stock: 30, min: 15, max: 60, perishable: 'Sí' },
+  { name: 'Carne molida', category: 'Carnes', unit: 'kg', expiry: '2025-05-19', stock: 10, min: 5, max: 25, perishable: 'Sí' },
+  { name: 'Agua mineral', category: 'Bebidas', unit: 'l', expiry: '2026-01-01', stock: 50, min: 20, max: 100, perishable: 'No' },
+  { name: 'Yogurt', category: 'Lácteos', unit: 'l', expiry: '2025-05-18', stock: 18, min: 8, max: 30, perishable: 'Sí' },
+  { name: 'Zanahoria', category: 'Verduras', unit: 'kg', expiry: '2025-06-12', stock: 22, min: 10, max: 45, perishable: 'Sí' },
+  { name: 'Lentejas', category: 'Granos', unit: 'kg', expiry: '2025-12-01', stock: 40, min: 20, max: 60, perishable: 'No' },
+  { name: 'Cebolla', category: 'Verduras', unit: 'kg', expiry: '2025-06-05', stock: 35, min: 15, max: 50, perishable: 'Sí' }
+]);
+
+const newSupply = ref({
+  name: '',
+  category: null,
+  unit: null,
+  description: ''
+});
+
+const createSupply = () => {
+  if (newSupply.value.name && newSupply.value.category && newSupply.value.unit) {
+    supplies.value.push({ ...newSupply.value });
+    showSupplyModal.value = false;
+    newSupply.value = { name: '', category: null, unit: null, description: '' };
+  }
+};
 </script>
-
-<style scoped>
-.inventory-wrapper {
-  padding: 1.5rem;
-}
-
-.empty-state-card {
-  text-align: center;
-  background-color: #f9fafb;
-  border: 1px dashed #cbd5e1;
-}
-
-.empty-table {
-  background-color: #f4f4f5;
-  min-height: 200px;
-}
-</style>

@@ -6,11 +6,8 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
-import {Button, Card, Menubar, Image, SelectButton, Toolbar} from "primevue";
+import {Button,Column, DataTable,Carousel,Dropdown,Dialog,InputText, Card, Menubar, Image, SelectButton, Toolbar} from "primevue";
 
-/**
- * @summary Define main entry point
- */
 const app = createApp(App);
 
 app
@@ -19,9 +16,14 @@ app
     .component('pv-button', Button)
     .component('pv-card', Card)
     .component('pv-select-button', SelectButton)
-    //.component('pv-menu', Menu)
     .component('pv-menubar', Menubar)
     .component('pv-toolbar', Toolbar)
-    //.component('pv-tooltip', Tooltip)
     .component('pv-image', Image)
-    .mount('#app');
+    .component('pv-input-text', InputText)
+    .component('pv-dropdown', Dropdown)
+    .component('pv-dialog', Dialog)
+    .component('pv-carousel', Carousel)
+    .component('pv-data-table', DataTable)
+    .component('pv-column', Column)
+
+.mount('#app');
