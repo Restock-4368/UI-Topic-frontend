@@ -2,7 +2,7 @@
   <div class="p-4">
     <div class="flex flex-column gap-4">
       <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 30%;">
-        <div class="flex justify-between align-items-center mb-4">
+        <div class="flex justify-content-around align-items-center mb-4">
           <h1>Insumos</h1>
           <pv-button
               label="Crear"
@@ -37,11 +37,11 @@
       </div>
 
       <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 70%;">
-        <div class="flex justify-between align-items-center mb-4">
+        <div class="flex justify-content-around align-items-center mb-4">
           <h1 class="m-0">Inventory</h1>
           <div class="flex align-items-center gap-2">
             <pv-input-text v-model="search" placeholder="Buscar..." />
-            <pv-button label="Añadir" icon="pi pi-plus" />
+            <pv-button label="Añadir" icon="pi pi-plus" @click="openAddModal"/>
           </div>
           <div class="flex align-items-center gap-2">
             <span>1-5 de 10</span>
@@ -60,8 +60,8 @@
           <pv-column field="max" header="Stock Máximo" />
           <pv-column field="perishable" header="Perecible" />
           <pv-column header="Acciones">
-            <template #body>
-              <pv-button icon="pi pi-pencil" text />
+            <template #body="slotProps">
+              <pv-button icon="pi pi-pencil" text @click="openInventoryEditModal(slotProps.data)" />
               <pv-button icon="pi pi-trash" text severity="danger" />
             </template>
           </pv-column>
@@ -80,14 +80,29 @@
         @cancel="showSupplyModal = false"
         @update:visible="showSupplyModal = $event"
     />
+    <inventorySupplyAddAndEdit
+        :visible="showInventoryModal"
+        :isEdit="false"
+        :supply="selectedInventoryItem"
+        :supplies="supplies"
+        :providers="providers"
+        :isPerishable="selectedInventoryItem?.perishable === 'Sí'"
+        @update:visible="showInventoryModal = $event"
+        @save="handleInventoryUpdate"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import inventorySupplyCreateAndEdit from './inventory-supply-create-and-edit.component.vue';
+import inventorySupplyAddAndEdit from './inventory-supply-add-and-edit.component.vue';
+
 const showSupplyModal = ref(false);
 const search = ref('');
+
+const showInventoryModal = ref(false);
+const selectedInventoryItem = ref(null);
 
 const isEditing = ref(false);
 const supplyToEdit = ref(null);
@@ -99,13 +114,18 @@ const openCreateModal = () => {
   isEditing.value = false;
   supplyToEdit.value = null;
   showSupplyModal.value = true;
-  console.log(showSupplyModal.value);
 };
 
 const openEditModal = (supply) => {
   isEditing.value = true;
   supplyToEdit.value = { ...supply };
   showSupplyModal.value = true;
+};
+
+const openAddModal = () => {
+  isEditing.value = false;
+  supplyToEdit.value = null;
+  showInventoryModal.value = true;
 };
 
 const supplies = ref([
@@ -134,6 +154,8 @@ const inventory = ref([
   { name: 'Cebolla', category: 'Verduras', unit: 'kg', expiry: '2025-06-05', stock: 35, min: 15, max: 50, perishable: 'Sí' }
 ]);
 
+const providers = ref(['Proveedor A', 'Proveedor B', 'Proveedor C']);
+
 const newSupply = ref({
   name: '',
   category: null,
@@ -154,5 +176,17 @@ const updateSupply = (updatedItem) => {
   showSupplyModal.value = false;
 };
 
+const openInventoryEditModal = (item) => {
+  selectedInventoryItem.value = { ...item };
+  showInventoryModal.value = true;
+};
+
+const handleInventoryUpdate = (updatedItem) => {
+  const index = inventory.value.findIndex(i => i.name === updatedItem.name);
+  if (index !== -1) {
+    inventory.value[index] = { ...updatedItem };
+  }
+  showInventoryModal.value = false;
+};
 
 </script>
