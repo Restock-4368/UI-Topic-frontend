@@ -4,7 +4,11 @@
       <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 30%;">
         <div class="flex justify-between align-items-center mb-4">
           <h1>Insumos</h1>
-          <pv-button label="Crear" icon="pi pi-plus" @click="showSupplyModal = true" />
+          <pv-button
+              label="Crear"
+              icon="pi pi-plus"
+              @click="openCreateModal"
+          />
         </div>
 
         <div v-if="supplies.length === 0" class="text-center">
@@ -19,6 +23,13 @@
                 <h4>{{ slotProps.data.name }}</h4>
                 <p class="text-sm">{{ slotProps.data.description }}</p>
                 <p><strong>{{ slotProps.data.category }}</strong> - {{ slotProps.data.unit }}</p>
+                <pv-button
+                    icon="pi pi-pencil"
+                    label="Editar"
+                    size="small"
+                    class="mt-2"
+                    @click="openEditModal(slotProps.data)"
+                />
               </div>
             </template>
           </pv-carousel>
@@ -58,41 +69,44 @@
       </div>
     </div>
 
-    <pv-dialog header="Crear Insumo" v-model:visible="showSupplyModal" modal class="w-4">
-      <div class="p-fluid">
-        <div class="field">
-          <label>Nombre de insumo</label>
-          <pv-input-text v-model="newSupply.name" />
-        </div>
-        <div class="field">
-          <label>Categoría</label>
-          <pv-dropdown v-model="newSupply.category" :options="categories" placeholder="Selecciona una categoría" />
-        </div>
-        <div class="field">
-          <label>Unidad de medida</label>
-          <pv-dropdown v-model="newSupply.unit" :options="units" placeholder="Selecciona unidad" />
-        </div>
-        <div class="field">
-          <label>Descripción</label>
-          <pv-input-text v-model="newSupply.description" />
-        </div>
-        <div class="flex justify-end gap-2 mt-3">
-          <pv-button label="Cancelar" text @click="showSupplyModal = false" />
-          <pv-button label="Crear" icon="pi pi-check" @click="createSupply" />
-        </div>
-      </div>
-    </pv-dialog>
+    <inventorySupplyCreateAndEdit
+        :visible="showSupplyModal"
+        :isEdit="isEditing"
+        :supplyToEdit="supplyToEdit"
+        :categories="categories"
+        :units="units"
+        @create="createSupply"
+        @update="updateSupply"
+        @cancel="showSupplyModal = false"
+        @update:visible="showSupplyModal = $event"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-
+import inventorySupplyCreateAndEdit from './inventory-supply-create-and-edit.component.vue';
 const showSupplyModal = ref(false);
 const search = ref('');
 
+const isEditing = ref(false);
+const supplyToEdit = ref(null);
+
 const categories = ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'];
 const units = ['kg', 'l', 'unidades', 'g', 'ml'];
+
+const openCreateModal = () => {
+  isEditing.value = false;
+  supplyToEdit.value = null;
+  showSupplyModal.value = true;
+  console.log(showSupplyModal.value);
+};
+
+const openEditModal = (supply) => {
+  isEditing.value = true;
+  supplyToEdit.value = { ...supply };
+  showSupplyModal.value = true;
+};
 
 const supplies = ref([
   { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Fresco y orgánico' },
@@ -127,11 +141,18 @@ const newSupply = ref({
   description: ''
 });
 
-const createSupply = () => {
-  if (newSupply.value.name && newSupply.value.category && newSupply.value.unit) {
-    supplies.value.push({ ...newSupply.value });
-    showSupplyModal.value = false;
-    newSupply.value = { name: '', category: null, unit: null, description: '' };
-  }
+const createSupply = (newItem) => {
+  supplies.value.push(newItem);
+  showSupplyModal.value = false;
 };
+
+const updateSupply = (updatedItem) => {
+  const index = supplies.value.findIndex(s => s.name === updatedItem.name); // puedes usar otro id si lo tienes
+  if (index !== -1) {
+    supplies.value[index] = { ...updatedItem };
+  }
+  showSupplyModal.value = false;
+};
+
+
 </script>

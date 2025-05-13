@@ -1,11 +1,11 @@
 <script setup>
-import Inventory from './restaurant-admin/components/Inventory.vue'
+import InventoryComponent from './restaurant-admin/components/inventory.component.vue'
 </script>
 
 <template>
   <div class="app-container">
   <main>
-    <Inventory />
+    <InventoryComponent />
   </main>
 
 </div>
