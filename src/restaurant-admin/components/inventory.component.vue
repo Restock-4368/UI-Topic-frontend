@@ -1,3 +1,64 @@
+<script>
+export default {
+  name: 'InventoryComponent',
+  data() {
+    return {
+      showSupplyModal: false,
+      search: '',
+      categories: ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'],
+      units: ['kg', 'l', 'unidades', 'g', 'ml'],
+      supplies: [
+        { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Fresco y orgánico' },
+        { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo' },
+        { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Entera' },
+        { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca' },
+        { name: 'Carne molida', category: 'Carnes', unit: 'kg', description: 'Res' },
+        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', description: 'Sin gas' },
+        { name: 'Yogurt', category: 'Lácteos', unit: 'l', description: 'Natural' },
+        { name: 'Zanahoria', category: 'Verduras', unit: 'kg', description: 'Fresca' },
+        { name: 'Lentejas', category: 'Granos', unit: 'kg', description: 'Secas' },
+        { name: 'Cebolla', category: 'Verduras', unit: 'kg', description: 'Roja' }
+      ],
+      inventory: [
+        { name: 'Tomate', category: 'Verduras', unit: 'kg', expiry: '2025-06-01', stock: 20, min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Pollo', category: 'Carnes', unit: 'kg', expiry: '2025-05-20', stock: 15, min: 5, max: 30, perishable: 'Sí' },
+        { name: 'Leche', category: 'Lácteos', unit: 'l', expiry: '2025-05-15', stock: 25, min: 10, max: 40, perishable: 'Sí' },
+        { name: 'Papa', category: 'Verduras', unit: 'kg', expiry: '2025-06-10', stock: 30, min: 15, max: 60, perishable: 'Sí' },
+        { name: 'Carne molida', category: 'Carnes', unit: 'kg', expiry: '2025-05-19', stock: 10, min: 5, max: 25, perishable: 'Sí' },
+        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', expiry: '2026-01-01', stock: 50, min: 20, max: 100, perishable: 'No' },
+        { name: 'Yogurt', category: 'Lácteos', unit: 'l', expiry: '2025-05-18', stock: 18, min: 8, max: 30, perishable: 'Sí' },
+        { name: 'Zanahoria', category: 'Verduras', unit: 'kg', expiry: '2025-06-12', stock: 22, min: 10, max: 45, perishable: 'Sí' },
+        { name: 'Lentejas', category: 'Granos', unit: 'kg', expiry: '2025-12-01', stock: 40, min: 20, max: 60, perishable: 'No' },
+        { name: 'Cebolla', category: 'Verduras', unit: 'kg', expiry: '2025-06-05', stock: 35, min: 15, max: 50, perishable: 'Sí' }
+      ],
+      newSupply: {
+        name: '',
+        category: null,
+        unit: null,
+        description: ''
+      }
+    }
+  },
+  methods: {
+    createSupply() {
+      const { name, category, unit } = this.newSupply
+      if (name && category && unit) {
+        this.supplies.push({ ...this.newSupply })
+        this.showSupplyModal = false
+        this.newSupply = {
+          name: '',
+          category: null,
+          unit: null,
+          description: ''
+        }
+      }
+    }
+  }
+}
+</script>
+
+
+
 <template>
   <div class="p-4">
     <div class="flex flex-column gap-4">
@@ -85,53 +146,3 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-
-const showSupplyModal = ref(false);
-const search = ref('');
-
-const categories = ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'];
-const units = ['kg', 'l', 'unidades', 'g', 'ml'];
-
-const supplies = ref([
-  { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Fresco y orgánico' },
-  { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo' },
-  { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Entera' },
-  { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca' },
-  { name: 'Carne molida', category: 'Carnes', unit: 'kg', description: 'Res' },
-  { name: 'Agua mineral', category: 'Bebidas', unit: 'l', description: 'Sin gas' },
-  { name: 'Yogurt', category: 'Lácteos', unit: 'l', description: 'Natural' },
-  { name: 'Zanahoria', category: 'Verduras', unit: 'kg', description: 'Fresca' },
-  { name: 'Lentejas', category: 'Granos', unit: 'kg', description: 'Secas' },
-  { name: 'Cebolla', category: 'Verduras', unit: 'kg', description: 'Roja' }
-]);
-
-const inventory = ref([
-  { name: 'Tomate', category: 'Verduras', unit: 'kg', expiry: '2025-06-01', stock: 20, min: 10, max: 50, perishable: 'Sí' },
-  { name: 'Pollo', category: 'Carnes', unit: 'kg', expiry: '2025-05-20', stock: 15, min: 5, max: 30, perishable: 'Sí' },
-  { name: 'Leche', category: 'Lácteos', unit: 'l', expiry: '2025-05-15', stock: 25, min: 10, max: 40, perishable: 'Sí' },
-  { name: 'Papa', category: 'Verduras', unit: 'kg', expiry: '2025-06-10', stock: 30, min: 15, max: 60, perishable: 'Sí' },
-  { name: 'Carne molida', category: 'Carnes', unit: 'kg', expiry: '2025-05-19', stock: 10, min: 5, max: 25, perishable: 'Sí' },
-  { name: 'Agua mineral', category: 'Bebidas', unit: 'l', expiry: '2026-01-01', stock: 50, min: 20, max: 100, perishable: 'No' },
-  { name: 'Yogurt', category: 'Lácteos', unit: 'l', expiry: '2025-05-18', stock: 18, min: 8, max: 30, perishable: 'Sí' },
-  { name: 'Zanahoria', category: 'Verduras', unit: 'kg', expiry: '2025-06-12', stock: 22, min: 10, max: 45, perishable: 'Sí' },
-  { name: 'Lentejas', category: 'Granos', unit: 'kg', expiry: '2025-12-01', stock: 40, min: 20, max: 60, perishable: 'No' },
-  { name: 'Cebolla', category: 'Verduras', unit: 'kg', expiry: '2025-06-05', stock: 35, min: 15, max: 50, perishable: 'Sí' }
-]);
-
-const newSupply = ref({
-  name: '',
-  category: null,
-  unit: null,
-  description: ''
-});
-
-const createSupply = () => {
-  if (newSupply.value.name && newSupply.value.category && newSupply.value.unit) {
-    supplies.value.push({ ...newSupply.value });
-    showSupplyModal.value = false;
-    newSupply.value = { name: '', category: null, unit: null, description: '' };
-  }
-};
-</script>
