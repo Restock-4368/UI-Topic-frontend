@@ -7,10 +7,13 @@ import Aura from '@primeuix/themes/aura';
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
 import {Button,Column, DataTable,Carousel,Dropdown,Dialog,InputText, Card, Menubar, Image, SelectButton, Toolbar} from "primevue";
+import router from "./router/index.js";
+
 
 const app = createApp(App);
 
 app
+    .use(router)
     .use(i18n)
     .use(PrimeVue, {ripple: true, theme: {preset: Aura }})
     .component('pv-button', Button)
