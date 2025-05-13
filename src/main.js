@@ -28,5 +28,7 @@ app
     .component('pv-carousel', Carousel)
     .component('pv-data-table', DataTable)
     .component('pv-column', Column)
+    .component('pv-calendar', Calendar)
+    .component('pv-input-number', InputNumber)
 
 .mount('#app');

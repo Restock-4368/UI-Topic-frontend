@@ -57,8 +57,6 @@ export default {
 }
 </script>
 
-
-
 <template>
   <div class="p-4">
     <div class="flex flex-column gap-4">
@@ -66,6 +64,7 @@ export default {
         <div class="flex justify-between align-items-center mb-4">
           <h1>Insumos</h1>
           <pv-button label="Crear" icon="pi pi-plus" @click="showSupplyModal = true" />
+
         </div>
 
         <div v-if="supplies.length === 0" class="text-center">
@@ -80,6 +79,14 @@ export default {
                 <h4>{{ slotProps.data.name }}</h4>
                 <p class="text-sm">{{ slotProps.data.description }}</p>
                 <p><strong>{{ slotProps.data.category }}</strong> - {{ slotProps.data.unit }}</p>
+
+                <pv-button
+                    icon="pi pi-pencil"
+                    label="Editar"
+                    size="small"
+                    class="mt-2"
+                    @click="openEditModal(slotProps.data)"
+                />
               </div>
             </template>
           </pv-carousel>
@@ -92,6 +99,7 @@ export default {
           <div class="flex align-items-center gap-2">
             <pv-input-text v-model="search" placeholder="Buscar..." />
             <pv-button label="Añadir" icon="pi pi-plus" />
+
           </div>
           <div class="flex align-items-center gap-2">
             <span>1-5 de 10</span>
@@ -112,12 +120,14 @@ export default {
           <pv-column header="Acciones">
             <template #body>
               <pv-button icon="pi pi-pencil" text />
+
               <pv-button icon="pi pi-trash" text severity="danger" />
             </template>
           </pv-column>
         </pv-data-table>
       </div>
     </div>
+
 
     <pv-dialog header="Crear Insumo" v-model:visible="showSupplyModal" modal class="w-4">
       <div class="p-fluid">
@@ -145,4 +155,3 @@ export default {
     </pv-dialog>
   </div>
 </template>
-
