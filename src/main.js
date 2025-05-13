@@ -6,7 +6,7 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
-import {Button,Column, DataTable,Carousel,Dropdown,Dialog,InputText, Card, Menubar, Image, SelectButton, Toolbar} from "primevue";
+import {Button,Column, DataTable,Carousel,Dropdown,Dialog,InputText, Card, Menubar, Image, SelectButton, Toolbar, Calendar, InputNumber} from "primevue";
 
 const app = createApp(App);
 
@@ -25,5 +25,7 @@ app
     .component('pv-carousel', Carousel)
     .component('pv-data-table', DataTable)
     .component('pv-column', Column)
+    .component('pv-calendar', Calendar)
+    .component('pv-input-number', InputNumber)
 
 .mount('#app');
