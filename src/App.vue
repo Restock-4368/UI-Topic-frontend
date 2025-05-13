@@ -1,17 +1,21 @@
-<script setup>
-import InventoryComponent from './restaurant-admin/components/inventory.component.vue'
+<script>
+import Sidebar from './shared/components/sidebar.component.vue'
+
+export default {
+  name: 'App',
+  components: { Sidebar }
+}
 </script>
 
 <template>
-  <div class="app-container">
-  <main>
-    <InventoryComponent />
-  </main>
-
-</div>
-
+  <div class="app-shell flex min-h-screen">
+    <Sidebar />
+    <main class="flex-auto overflow-x-hidden">
+    <router-view />
+    </main>
+  </div>
 </template>
 
-<style scoped>
+<style>
 
 </style>
