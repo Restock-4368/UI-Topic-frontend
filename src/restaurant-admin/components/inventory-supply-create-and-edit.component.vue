@@ -4,42 +4,124 @@
       :visible="visible"
       @update:visible="$emit('update:visible', $event)"
       modal
-      class="w-4"
+      class="w-[38rem]"
   >
-    <div class="p-fluid">
-      <div class="field">
-        <label for="name">Nombre</label>
-        <pv-input-text id="name" v-model="form.name" />
+    <template #header>
+      <div>
+        <h2 class="text-xl font-semibold">
+          {{ isEdit ? 'Editar Insumo' : 'Crear Insumo' }}
+        </h2>
+        <p class="text-sm text-gray-500">
+          {{ isEdit ? 'Modifica la información del insumo.' : 'Completa los detalles del nuevo insumo para añadirlo a tu lista.' }}
+        </p>
+      </div>
+    </template>
+    <div class="p-5 space-y-5">
+      <!-- Nombre del insumo -->
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre de insumo</label>
+        <pv-input-text id="name" v-model="form.name" placeholder="Ej: Tomate, Harina, Aceite..." class="w-full" />
       </div>
 
-      <div class="field">
-        <label for="description">Descripción</label>
-        <pv-input-text id="description" v-model="form.description" />
-      </div>
-
-      <div class="field">
-        <label for="category">Categoría</label>
+      <!-- Categoría -->
+      <div>
+        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
         <pv-dropdown
             id="category"
             :options="categories"
             v-model="form.category"
             placeholder="Seleccionar categoría"
+            class="w-full"
         />
       </div>
 
-      <div class="field">
-        <label for="unit">Unidad</label>
+      <!-- Unidad -->
+      <div>
+        <label for="unit" class="block text-sm font-medium text-gray-700 mb-1">Unidad de medida</label>
         <pv-dropdown
             id="unit"
             :options="units"
             v-model="form.unit"
             placeholder="Seleccionar unidad"
+            class="w-full"
         />
       </div>
 
-      <div class="flex justify-end gap-2 mt-4">
-        <pv-button label="Cancelar" severity="secondary" @click="cancel" />
-        <pv-button :label="isEdit ? 'Actualizar' : 'Crear'" @click="submit" />
+      <!-- Descripción -->
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Descripción (opcional)</label>
+        <pv-input-text
+            id="description"
+            v-model="form.description"
+            placeholder="Detalles adicionales del insumo..."
+            class="w-full"
+        />
+      </div>
+
+      <!-- Perecible -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">¿Perecible?</label>
+        <div class="flex gap-4">
+          <div class="flex items-center gap-2">
+            <input
+                type="radio"
+                id="nonPerishable"
+                value="No"
+                v-model="form.perishable"
+                class="accent-green-600"
+            />
+            <label for="nonPerishable" class="text-sm">No es perecible</label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input
+                type="radio"
+                id="perishable"
+                value="Sí"
+                v-model="form.perishable"
+                class="accent-green-600"
+            />
+            <label for="perishable" class="text-sm">Sí es perecible</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mínimo de stock -->
+      <div>
+        <label for="min" class="block text-sm font-medium text-gray-700 mb-1">Mínimo de stock</label>
+        <pv-input-number
+            id="min"
+            v-model="form.min"
+            :min="0"
+            placeholder="Ej: 10"
+            class="w-full"
+        />
+      </div>
+
+      <!-- Máximo de stock -->
+      <div>
+        <label for="max" class="block text-sm font-medium text-gray-700 mb-1">Máximo de stock</label>
+        <pv-input-number
+            id="max"
+            v-model="form.max"
+            :min="0"
+            placeholder="Ej: 100"
+            class="w-full"
+        />
+      </div>
+
+      <!-- Botones -->
+      <div class="flex justify-between pt-4">
+        <pv-button
+            :label="isEdit ? 'Editar' : 'Crear'"
+            class="bg-green-600 border-none text-white hover:bg-green-700 px-5"
+            @click="submit"
+        />
+        <pv-button
+            label="Cancelar"
+            severity="danger"
+            class="px-5"
+            @click="cancel"
+        />
       </div>
     </div>
   </pv-dialog>
@@ -57,7 +139,10 @@ const props = defineProps({
       name: '',
       description: '',
       category: null,
-      unit: null
+      unit: null,
+      perishable: 'No',
+      min: 0,
+      max: 0
     })
   },
   categories: Array,
@@ -70,7 +155,10 @@ const form = ref({
   name: '',
   description: '',
   category: null,
-  unit: null
+  unit: null,
+  perishable: 'No',
+  min: 0,
+  max: 0
 });
 
 const resetForm = () => {
@@ -78,7 +166,10 @@ const resetForm = () => {
     name: '',
     description: '',
     category: null,
-    unit: null
+    unit: null,
+    perishable: 'No',
+    min: 0,
+    max: 0
   };
 };
 
