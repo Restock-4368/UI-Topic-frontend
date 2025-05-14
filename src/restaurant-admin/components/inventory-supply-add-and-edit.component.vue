@@ -9,13 +9,21 @@
     <div class="p-fluid">
       <div class="field">
         <label for="supply">Insumo</label>
-        <pv-dropdown
-            id="supply"
-            :options="supplies"
-            optionLabel="name"
-            v-model="form.supply"
-            placeholder="Seleccionar insumo"
-        />
+        <template v-if="!isEdit">
+          <pv-dropdown
+              id="supply"
+              :options="supplies"
+              optionLabel="name"
+              v-model="form.supply"
+              placeholder="Seleccionar insumo"
+          />
+        </template>
+        <template v-else>
+          <pv-input-text
+              :value="form.supply?.name"
+              disabled
+          />
+        </template>
       </div>
 
       <div class="field">
