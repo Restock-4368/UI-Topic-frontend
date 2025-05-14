@@ -1,10 +1,26 @@
 <script>
+import inventorySupplyCreateAndEdit from './inventory-supply-create-and-edit.component.vue';
+import inventorySupplyAddAndEdit from './inventory-supply-add-and-edit.component.vue';
 export default {
   name: 'InventoryComponent',
+  components: {
+    inventorySupplyCreateAndEdit,
+    inventorySupplyAddAndEdit
+  },
   data() {
     return {
       showSupplyModal: false,
       search: '',
+      showInventoryModal: false,
+      selectedInventoryItem: null,
+      isEditing: false,
+      supplyToEdit: null,
+      newSupply: {
+        name: '',
+        category: null,
+        unit: null,
+        description: ''
+      },
       categories: ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'],
       units: ['kg', 'l', 'unidades', 'g', 'ml'],
       supplies: [
@@ -31,30 +47,60 @@ export default {
         { name: 'Lentejas', category: 'Granos', unit: 'kg', expiry: '2025-12-01', stock: 40, min: 20, max: 60, perishable: 'No' },
         { name: 'Cebolla', category: 'Verduras', unit: 'kg', expiry: '2025-06-05', stock: 35, min: 15, max: 50, perishable: 'Sí' }
       ],
-      newSupply: {
-        name: '',
-        category: null,
-        unit: null,
-        description: ''
-      }
+      providers :['Proveedor A', 'Proveedor B', 'Proveedor C'],
     }
   },
   methods: {
-    createSupply() {
-      const { name, category, unit } = this.newSupply
-      if (name && category && unit) {
-        this.supplies.push({ ...this.newSupply })
-        this.showSupplyModal = false
-        this.newSupply = {
-          name: '',
-          category: null,
-          unit: null,
-          description: ''
-        }
+    openCreateModal() {
+      this.isEditing = false;
+      this.supplyToEdit = null;
+      this.showSupplyModal = true;
+    },
+    openEditModal(supply) {
+      this.isEditing = true;
+      this.supplyToEdit = { ...supply };
+      this.showSupplyModal = true;
+    },
+    openAddModal() {
+      this.isEditing = false;
+      this.selectedInventoryItem = null;
+      this.showInventoryModal = true;
+    },
+    openInventoryEditModal(item) {
+      const matchedSupply = this.supplies.find(s => s.name === item.name);
+
+      this.selectedInventoryItem = {
+        supply: matchedSupply || null,
+        stock: item.stock,
+        provider: item.provider || null,
+        expiry: item.expiry || null
+      };
+
+      this.isEditing = true;
+      this.showInventoryModal = true;
+    },
+    createSupply(newItem) {
+      this.supplies.push({ ...newItem });
+      this.showSupplyModal = false;
+    },
+    updateSupply(updatedItem) {
+      const index = this.supplies.findIndex(s => s.name === updatedItem.name);
+      if (index !== -1) {
+        this.supplies[index] = { ...updatedItem };
       }
+      this.showSupplyModal = false;
+    },
+    handleInventoryUpdate(updatedItem) {
+      const index = this.inventory.findIndex(i => i.name === updatedItem.name);
+      if (index !== -1) {
+        this.inventory[index] = { ...updatedItem };
+      }
+      this.showInventoryModal = false;
     }
   }
+
 }
+
 </script>
 
 <template>
@@ -63,13 +109,13 @@ export default {
       <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 30%;">
         <div class="flex justify-between align-items-center mb-4">
           <h1>Insumos</h1>
-          <pv-button label="Crear" icon="pi pi-plus" @click="showSupplyModal = true" />
+          <pv-button label="Crear" icon="pi pi-plus" @click="openCreateModal" />
 
         </div>
 
         <div v-if="supplies.length === 0" class="text-center">
           <p>Aún no has agregado insumos. Añádelos para comenzar a gestionar tu inventario.</p>
-          <pv-button label="Crear Insumo" icon="pi pi-plus" class="mt-2" @click="showSupplyModal = true" />
+          <pv-button label="Crear Insumo" icon="pi pi-plus" class="mt-2" @click="openCreateModal" />
         </div>
 
         <div v-else>
@@ -98,7 +144,7 @@ export default {
           <h1 class="m-0">Inventory</h1>
           <div class="flex align-items-center gap-2">
             <pv-input-text v-model="search" placeholder="Buscar..." />
-            <pv-button label="Añadir" icon="pi pi-plus" />
+            <pv-button label="Añadir" icon="pi pi-plus" @click="openAddModal"/>
 
           </div>
           <div class="flex align-items-center gap-2">
@@ -118,9 +164,12 @@ export default {
           <pv-column field="max" header="Stock Máximo" />
           <pv-column field="perishable" header="Perecible" />
           <pv-column header="Acciones">
-            <template #body>
-              <pv-button icon="pi pi-pencil" text />
-
+            <template #body="slotProps">
+              <pv-button
+                  icon="pi pi-pencil"
+                  text
+                  @click="() => { console.log(slotProps); openInventoryEditModal(slotProps.data); }"
+              />
               <pv-button icon="pi pi-trash" text severity="danger" />
             </template>
           </pv-column>
@@ -129,29 +178,27 @@ export default {
     </div>
 
 
-    <pv-dialog header="Crear Insumo" v-model:visible="showSupplyModal" modal class="w-4">
-      <div class="p-fluid">
-        <div class="field">
-          <label>Nombre de insumo</label>
-          <pv-input-text v-model="newSupply.name" />
-        </div>
-        <div class="field">
-          <label>Categoría</label>
-          <pv-dropdown v-model="newSupply.category" :options="categories" placeholder="Selecciona una categoría" />
-        </div>
-        <div class="field">
-          <label>Unidad de medida</label>
-          <pv-dropdown v-model="newSupply.unit" :options="units" placeholder="Selecciona unidad" />
-        </div>
-        <div class="field">
-          <label>Descripción</label>
-          <pv-input-text v-model="newSupply.description" />
-        </div>
-        <div class="flex justify-end gap-2 mt-3">
-          <pv-button label="Cancelar" text @click="showSupplyModal = false" />
-          <pv-button label="Crear" icon="pi pi-check" @click="createSupply" />
-        </div>
-      </div>
-    </pv-dialog>
+    <inventory-supply-create-and-edit
+        :visible="showSupplyModal"
+        :isEdit="isEditing"
+        :supplyToEdit="supplyToEdit"
+        :categories="categories"
+        :units="units"
+        @create="createSupply"
+        @update="updateSupply"
+        @cancel="showSupplyModal = false"
+        @update:visible="showSupplyModal = $event"
+    />
+    <inventorySupplyAddAndEdit
+        :visible="showInventoryModal"
+        :isEdit="isEditing"
+        :itemToEdit="selectedInventoryItem"
+        :supplies="supplies"
+        :providers="providers"
+        :isPerishable="selectedInventoryItem?.perishable === 'Sí'"
+        @update:visible="showInventoryModal = $event"
+        @update="handleInventoryUpdate"
+        @cancel="showInventoryModal = false"
+    />
   </div>
 </template>
