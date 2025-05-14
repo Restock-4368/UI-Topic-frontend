@@ -24,16 +24,16 @@ export default {
       categories: ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'],
       units: ['kg', 'l', 'unidades', 'g', 'ml'],
       supplies: [
-        { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Fresco y orgánico' },
-        { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo' },
-        { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Entera' },
-        { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca' },
-        { name: 'Carne molida', category: 'Carnes', unit: 'kg', description: 'Res' },
-        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', description: 'Sin gas' },
-        { name: 'Yogurt', category: 'Lácteos', unit: 'l', description: 'Natural' },
-        { name: 'Zanahoria', category: 'Verduras', unit: 'kg', description: 'Fresca' },
-        { name: 'Lentejas', category: 'Granos', unit: 'kg', description: 'Secas' },
-        { name: 'Cebolla', category: 'Verduras', unit: 'kg', description: 'Roja' }
+        { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Fresco y orgánico',perishable: 'Sí' },
+        { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo', perishable: 'Sí' },
+        { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Entera', perishable: 'Sí' },
+        { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca', perishable: 'Sí' },
+        { name: 'Carne molida', category: 'Carnes', unit: 'kg', description: 'Res', perishable: 'Sí' },
+        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', description: 'Sin gas', perishable: 'No' },
+        { name: 'Yogurt', category: 'Lácteos', unit: 'l', description: 'Natural', perishable: 'No' },
+        { name: 'Zanahoria', category: 'Verduras', unit: 'kg', description: 'Fresca', perishable: 'Sí' },
+        { name: 'Lentejas', category: 'Granos', unit: 'kg', description: 'Secas', perishable: 'Sí' },
+        { name: 'Cebolla', category: 'Verduras', unit: 'kg', description: 'Roja', perishable: 'Sí' }
       ],
       inventory: [
         { name: 'Tomate', category: 'Verduras', unit: 'kg', expiry: '2025-06-01', stock: 20, min: 10, max: 50, perishable: 'Sí' },
@@ -107,7 +107,7 @@ export default {
   <div class="p-4">
     <div class="flex flex-column gap-4">
       <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 30%;">
-        <div class="flex justify-between align-items-center mb-4">
+        <div class="flex justify-content-around align-items-center mb-4">
           <h1>Insumos</h1>
           <pv-button label="Crear" icon="pi pi-plus" @click="openCreateModal" />
 
@@ -140,7 +140,7 @@ export default {
       </div>
 
       <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 70%;">
-        <div class="flex justify-between align-items-center mb-4">
+        <div class="flex justify-content-around align-items-center mb-4">
           <h1 class="m-0">Inventory</h1>
           <div class="flex align-items-center gap-2">
             <pv-input-text v-model="search" placeholder="Buscar..." />
@@ -168,7 +168,7 @@ export default {
               <pv-button
                   icon="pi pi-pencil"
                   text
-                  @click="() => { console.log(slotProps); openInventoryEditModal(slotProps.data); }"
+                  @click="() => {openInventoryEditModal(slotProps.data) }"
               />
               <pv-button icon="pi pi-trash" text severity="danger" />
             </template>

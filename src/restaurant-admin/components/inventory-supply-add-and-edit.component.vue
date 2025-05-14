@@ -47,9 +47,15 @@
         />
       </div>
 
-      <div class="field" v-if="isPerishable">
-        <label for="expiry">Fecha de caducidad</label>
-        <pv-calendar id="expiry" v-model="form.expiry" dateFormat="yy-mm-dd" showIcon />
+      <div class="field" v-if="form.perishable">
+        <label for="expiry">Fecha de expiración</label>
+        <pv-calendar
+            id="expiry"
+            v-model="form.expiry"
+            showIcon
+            class="w-full"
+            placeholder="Seleccionar fecha"
+        />
       </div>
 
       <div class="flex justify-end gap-2 mt-4">
@@ -110,7 +116,16 @@ const form = ref({
   supply: null,
   stock: 0,
   provider: null,
-  expiry: null
+  expiry: null,
+  perishable: false
+});
+
+watch(() => form.value.supply, (selectedSupply) => {
+  if (selectedSupply) {
+    form.value.perishable = selectedSupply.perishable === 'Sí';
+  } else {
+    form.value.perishable = false;
+  }
 });
 
 const resetForm = () => {
