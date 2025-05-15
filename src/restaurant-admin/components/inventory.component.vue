@@ -142,7 +142,7 @@ export default {
 </script>
 
 <template>
-  <div class="p-4">
+  <div class="px-4">
     <div class="flex flex-column gap-4">
       <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 30%;">
         <div class="flex justify-content-around align-items-center mb-4">
@@ -182,36 +182,39 @@ export default {
             <pv-button icon="pi pi-angle-right" text />
           </div>
         </div>
+        <div style="max-height: 300px; overflow-y: auto;">
+          <pv-data-table
+              :value="filteredInventory"
+              responsiveLayout="scroll"
+              :rowClass="(data) => getRowClass(data)"
+              class="overflow-x-auto"
+          >
+            <pv-column field="name" header="Insumos" />
+            <pv-column field="category" header="Categoría" />
+            <pv-column field="unit" header="Unidad de medida" />
+            <pv-column field="expiry" header="Fecha de caducidad" />
+            <pv-column field="stock" header="Stock" />
+            <pv-column field="min" header="Stock Mínimo" />
+            <pv-column field="max" header="Stock Máximo" />
+            <pv-column field="perishable" header="Perecible" />
+            <pv-column header="Acciones">
+              <template #body="slotProps">
+                <pv-button
+                    icon="pi pi-pencil"
+                    text
+                    @click="() => {openInventoryEditModal(slotProps.data) }"
+                />
+                <pv-button
+                    icon="pi pi-trash"
+                    text
+                    severity="danger"
+                    @click="() => confirmDelete(slotProps.data)"
+                />
+              </template>
+            </pv-column>
+          </pv-data-table>
+        </div>
 
-        <pv-data-table
-            :value="filteredInventory"
-            responsiveLayout="scroll"
-            :rowClass="(data) => getRowClass(data)"
-        >
-          <pv-column field="name" header="Insumos" />
-          <pv-column field="category" header="Categoría" />
-          <pv-column field="unit" header="Unidad de medida" />
-          <pv-column field="expiry" header="Fecha de caducidad" />
-          <pv-column field="stock" header="Stock" />
-          <pv-column field="min" header="Stock Mínimo" />
-          <pv-column field="max" header="Stock Máximo" />
-          <pv-column field="perishable" header="Perecible" />
-          <pv-column header="Acciones">
-            <template #body="slotProps">
-              <pv-button
-                  icon="pi pi-pencil"
-                  text
-                  @click="() => {openInventoryEditModal(slotProps.data) }"
-              />
-              <pv-button
-                  icon="pi pi-trash"
-                  text
-                  severity="danger"
-                  @click="() => confirmDelete(slotProps.data)"
-              />
-            </template>
-          </pv-column>
-        </pv-data-table>
       </div>
     </div>
 
