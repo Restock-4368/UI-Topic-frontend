@@ -1,11 +1,20 @@
 <script>
 import inventorySupplyCreateAndEdit from './inventory-supply-create-and-edit.component.vue';
 import inventorySupplyAddAndEdit from './inventory-supply-add-and-edit.component.vue';
+import InventorySupplyCard from './inventory-supply-card.component.vue';
 export default {
   name: 'InventoryComponent',
   components: {
     inventorySupplyCreateAndEdit,
-    inventorySupplyAddAndEdit
+    inventorySupplyAddAndEdit,
+    InventorySupplyCard
+  },
+  computed: {
+    filteredInventory() {
+      if (!this.search.trim()) return this.inventory;
+      const term = this.search.toLowerCase();
+      return this.inventory.filter(item => item.name.toLowerCase().includes(term));
+    }
   },
   data() {
     return {
@@ -15,6 +24,8 @@ export default {
       selectedInventoryItem: null,
       isEditing: false,
       supplyToEdit: null,
+      itemToDelete: null,
+      showDeleteModal: false,
       newSupply: {
         name: '',
         category: null,
@@ -24,27 +35,27 @@ export default {
       categories: ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'],
       units: ['kg', 'l', 'unidades', 'g', 'ml'],
       supplies: [
-        { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Fresco y orgánico',perishable: 'Sí' },
-        { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo', perishable: 'Sí' },
-        { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Entera', perishable: 'Sí' },
-        { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca', perishable: 'Sí' },
-        { name: 'Carne molida', category: 'Carnes', unit: 'kg', description: 'Res', perishable: 'Sí' },
-        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', description: 'Sin gas', perishable: 'No' },
-        { name: 'Yogurt', category: 'Lácteos', unit: 'l', description: 'Natural', perishable: 'No' },
-        { name: 'Zanahoria', category: 'Verduras', unit: 'kg', description: 'Fresca', perishable: 'Sí' },
-        { name: 'Lentejas', category: 'Granos', unit: 'kg', description: 'Secas', perishable: 'Sí' },
-        { name: 'Cebolla', category: 'Verduras', unit: 'kg', description: 'Roja', perishable: 'Sí' }
+        { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Fresco y orgánico', min: 10, max: 50,perishable: 'Sí' },
+        { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Entera', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Carne molida', category: 'Carnes', unit: 'kg', description: 'Res', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', description: 'Sin gas', min: 10, max: 50, perishable: 'No' },
+        { name: 'Yogurt', category: 'Lácteos', unit: 'l', description: 'Natural', min: 10, max: 50, perishable: 'No' },
+        { name: 'Zanahoria', category: 'Verduras', unit: 'kg', description: 'Fresca', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Lentejas', category: 'Granos', unit: 'kg', description: 'Secas', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Cebolla', category: 'Verduras', unit: 'kg', description: 'Roja', min: 10, max: 50, perishable: 'Sí' }
       ],
       inventory: [
         { name: 'Tomate', category: 'Verduras', unit: 'kg', expiry: '2025-06-01', stock: 20, min: 10, max: 50, perishable: 'Sí' },
-        { name: 'Pollo', category: 'Carnes', unit: 'kg', expiry: '2025-05-20', stock: 15, min: 5, max: 30, perishable: 'Sí' },
-        { name: 'Leche', category: 'Lácteos', unit: 'l', expiry: '2025-05-15', stock: 25, min: 10, max: 40, perishable: 'Sí' },
+        { name: 'Pollo', category: 'Carnes', unit: 'kg', expiry: '2025-05-10', stock: 15, min: 5, max: 30, perishable: 'Sí' },
+        { name: 'Leche', category: 'Lácteos', unit: 'l', expiry: '2025-05-18', stock: 25, min: 10, max: 40, perishable: 'Sí' },
         { name: 'Papa', category: 'Verduras', unit: 'kg', expiry: '2025-06-10', stock: 30, min: 15, max: 60, perishable: 'Sí' },
         { name: 'Carne molida', category: 'Carnes', unit: 'kg', expiry: '2025-05-19', stock: 10, min: 5, max: 25, perishable: 'Sí' },
-        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', expiry: '2026-01-01', stock: 50, min: 20, max: 100, perishable: 'No' },
+        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', expiry: null, stock: 50, min: 20, max: 100, perishable: 'No' },
         { name: 'Yogurt', category: 'Lácteos', unit: 'l', expiry: '2025-05-18', stock: 18, min: 8, max: 30, perishable: 'Sí' },
         { name: 'Zanahoria', category: 'Verduras', unit: 'kg', expiry: '2025-06-12', stock: 22, min: 10, max: 45, perishable: 'Sí' },
-        { name: 'Lentejas', category: 'Granos', unit: 'kg', expiry: '2025-12-01', stock: 40, min: 20, max: 60, perishable: 'No' },
+        { name: 'Lentejas', category: 'Granos', unit: 'kg', expiry: null, stock: 40, min: 20, max: 60, perishable: 'No' },
         { name: 'Cebolla', category: 'Verduras', unit: 'kg', expiry: '2025-06-05', stock: 35, min: 15, max: 50, perishable: 'Sí' }
       ],
       providers :['Proveedor A', 'Proveedor B', 'Proveedor C'],
@@ -79,6 +90,15 @@ export default {
       this.isEditing = true;
       this.showInventoryModal = true;
     },
+    confirmDelete(item) {
+      this.itemToDelete = item;
+      this.showDeleteModal = true;
+    },
+    deleteInventoryItem() {
+      this.inventory = this.inventory.filter(i => i.name !== this.itemToDelete.name);
+      this.showDeleteModal = false;
+      this.itemToDelete = null;
+    },
     createSupply(newItem) {
       this.supplies.push({ ...newItem });
       this.showSupplyModal = false;
@@ -96,6 +116,24 @@ export default {
         this.inventory[index] = { ...updatedItem };
       }
       this.showInventoryModal = false;
+    },
+    handleCreateSupply(newInventoryItem){
+      this.inventory.push(newInventoryItem);
+      this.showInventoryModal = false;
+    },
+    getRowClass(data) {
+      if (!data.expiry) {
+        return '';
+      }
+
+      const today = new Date();
+      const expiryDate = new Date(data.expiry);
+
+      if (expiryDate < today) {
+        return 'expired-row';
+      }
+
+      return '';
     }
   }
 
@@ -121,19 +159,10 @@ export default {
         <div v-else>
           <pv-carousel :value="supplies" :numVisible="3" :numScroll="1">
             <template #item="slotProps">
-              <div class="border-1 surface-border border-round p-3 m-2 text-center">
-                <h4>{{ slotProps.data.name }}</h4>
-                <p class="text-sm">{{ slotProps.data.description }}</p>
-                <p><strong>{{ slotProps.data.category }}</strong> - {{ slotProps.data.unit }}</p>
-
-                <pv-button
-                    icon="pi pi-pencil"
-                    label="Editar"
-                    size="small"
-                    class="mt-2"
-                    @click="openEditModal(slotProps.data)"
-                />
-              </div>
+              <inventory-supply-card
+                  :supply="slotProps.data"
+                  @edit="openEditModal"
+              />
             </template>
           </pv-carousel>
         </div>
@@ -154,7 +183,11 @@ export default {
           </div>
         </div>
 
-        <pv-data-table :value="inventory" responsiveLayout="scroll">
+        <pv-data-table
+            :value="filteredInventory"
+            responsiveLayout="scroll"
+            :rowClass="(data) => getRowClass(data)"
+        >
           <pv-column field="name" header="Insumos" />
           <pv-column field="category" header="Categoría" />
           <pv-column field="unit" header="Unidad de medida" />
@@ -170,13 +203,49 @@ export default {
                   text
                   @click="() => {openInventoryEditModal(slotProps.data) }"
               />
-              <pv-button icon="pi pi-trash" text severity="danger" />
+              <pv-button
+                  icon="pi pi-trash"
+                  text
+                  severity="danger"
+                  @click="() => confirmDelete(slotProps.data)"
+              />
             </template>
           </pv-column>
         </pv-data-table>
       </div>
     </div>
 
+    <pv-dialog
+        :visible="showDeleteModal"
+        modal
+        header="Eliminar insumo del inventario"
+        style="width: 450px"
+        @update:visible="showDeleteModal = $event"
+    >
+      <div class="p-3">
+        <p>
+          Está a punto de eliminar el insumo
+          <strong>“{{ itemToDelete?.name }}”</strong> con
+          <strong>{{ itemToDelete?.stock }} {{ itemToDelete?.unit }}</strong>
+          en el inventario de forma permanente. <br />
+          Esta acción es irreversible y no podrá recuperarse luego.
+        </p>
+      </div>
+      <template #footer>
+        <div class="flex justify-content-end gap-2">
+          <pv-button
+              label="CANCELAR"
+              severity="danger"
+              @click="showDeleteModal = false"
+          />
+          <pv-button
+              label="CONFIRMAR"
+              severity="success"
+              @click="deleteInventoryItem"
+          />
+        </div>
+      </template>
+    </pv-dialog>
 
     <inventory-supply-create-and-edit
         :visible="showSupplyModal"
@@ -196,9 +265,16 @@ export default {
         :supplies="supplies"
         :providers="providers"
         :isPerishable="selectedInventoryItem?.perishable === 'Sí'"
+        @create="handleCreateSupply"
         @update:visible="showInventoryModal = $event"
         @update="handleInventoryUpdate"
         @cancel="showInventoryModal = false"
     />
   </div>
 </template>
+
+<style>
+.expired-row {
+  background-color: rgba(244, 21, 21, 0.3) !important;
+}
+</style>
