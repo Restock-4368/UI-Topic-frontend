@@ -8,9 +8,9 @@ export default {
 </script>
 
 <template>
-  <div class="app-shell flex min-h-screen">
-    <Sidebar />
-    <main class="flex-auto overflow-x-hidden">
+  <div class=" flex">
+    <Sidebar class="w-64 flex-shrink-0" />
+    <main class="flex-1" >
     <router-view />
     </main>
   </div>

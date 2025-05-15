@@ -1,5 +1,5 @@
 <template>
-  <aside class="sidebar flex flex-column surface-0 w-4 h-full border-right-1 surface-border">
+  <aside class="flex flex-column surface-0 w-2 border-right-1 surface-border">
     <div class="logo flex align-items-center gap-2 px-3 pt-4 pb-3">
       <img :src="logo" alt="Restock logo" class="logo-icon" />
       <span class="logo-text">Restock</span>
@@ -76,11 +76,7 @@ export default {
 </script>
 
 <style scoped>
-/* Ancho fijo en desktop, colapsa fácilmente en mobile si lo necesitas */
-.sidebar {
-  width: 240px;
-  min-height: 100vh;
-}
+
 
 /* Logo */
 .logo-icon {
