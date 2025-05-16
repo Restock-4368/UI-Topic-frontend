@@ -24,7 +24,7 @@ a:hover {
 }
 
 body {
-  
+
 }
 
 h1 {
@@ -56,7 +56,6 @@ button:focus-visible {
 }
 
 #app {
-  padding: 0;
 }
 
 .green-button {
@@ -68,6 +67,18 @@ button:focus-visible {
 
 .green-button:hover {
   background-color: #3d6e47 !important;
+  color: white !important;
+}
+
+.red-button {
+  border-radius: 9999px !important;
+  background-color: #D9534F !important;
+  color: white !important;
+  border: none !important;
+}
+
+.red-button:hover {
+  background-color: #D9534F !important;
   color: white !important;
 }
 

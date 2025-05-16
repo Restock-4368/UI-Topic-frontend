@@ -4,64 +4,64 @@
       :visible="visible"
       @update:visible="$emit('update:visible', $event)"
       modal
-      class="w-[38rem]"
+      class="w-4"
   >
     <template #header>
-      <div>
+      <div class="p-2">
         <h2 class="text-xl font-semibold">
           {{ isEdit ? 'Editar Insumo' : 'Crear Insumo' }}
         </h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm font-light text-gray-500">
           {{ isEdit ? 'Modifica la información del insumo.' : 'Completa los detalles del nuevo insumo para añadirlo a tu lista.' }}
         </p>
       </div>
     </template>
-    <div class="p-5 space-y-5">
+    <div class="p-2">
       <!-- Nombre del insumo -->
       <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre de insumo</label>
-        <pv-input-text id="name" v-model="form.name" placeholder="Ej: Tomate, Harina, Aceite..." class="w-full" />
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Nombre de insumo</label>
+        <pv-input-text id="name" v-model="form.name" placeholder="Ej: Tomate, Harina, Aceite..." class="w-full mb-3" />
       </div>
 
       <!-- Categoría -->
       <div>
-        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+        <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
         <pv-dropdown
             id="category"
             :options="categories"
             v-model="form.category"
             placeholder="Seleccionar categoría"
-            class="w-full"
+            class="w-full  mb-3"
         />
       </div>
 
       <!-- Unidad -->
       <div>
-        <label for="unit" class="block text-sm font-medium text-gray-700 mb-1">Unidad de medida</label>
+        <label for="unit" class="block text-sm font-medium text-gray-700 mb-2">Unidad de medida</label>
         <pv-dropdown
             id="unit"
             :options="units"
             v-model="form.unit"
             placeholder="Seleccionar unidad"
-            class="w-full"
+            class="w-full  mb-3"
         />
       </div>
 
       <!-- Descripción -->
       <div>
-        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Descripción (opcional)</label>
+        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Descripción (opcional)</label>
         <pv-input-text
             id="description"
             v-model="form.description"
             placeholder="Detalles adicionales del insumo..."
-            class="w-full"
+            class="w-full  mb-3"
         />
       </div>
 
       <!-- Perecible -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">¿Perecible?</label>
-        <div class="flex gap-4">
+        <div class="flex flex-column gap-4 mb-3">
           <div class="flex items-center gap-2">
             <input
                 type="radio"
@@ -87,39 +87,41 @@
 
       <!-- Mínimo de stock -->
       <div>
-        <label for="min" class="block text-sm font-medium text-gray-700 mb-1">Mínimo de stock</label>
+        <label for="min" class="block text-sm font-medium text-gray-700 mb-2">Mínimo de stock</label>
         <pv-input-number
             id="min"
             v-model="form.min"
             :min="0"
             placeholder="Ej: 10"
-            class="w-full"
+            class="w-full  mb-3"
         />
       </div>
 
       <!-- Máximo de stock -->
       <div>
-        <label for="max" class="block text-sm font-medium text-gray-700 mb-1">Máximo de stock</label>
+        <label for="max" class="block text-sm font-medium text-gray-700 mb-2">Máximo de stock</label>
         <pv-input-number
             id="max"
             v-model="form.max"
             :min="0"
             placeholder="Ej: 100"
-            class="w-full"
+            class="w-full  mb-3"
         />
       </div>
 
       <!-- Botones -->
-      <div class="flex justify-between pt-4">
+      <div class="flex justify-content-around pt-4">
         <pv-button
-            :label="isEdit ? 'Editar' : 'Crear'"
-            class="bg-green-600 border-none text-white hover:bg-green-700 px-5"
+            :label="isEdit ? 'EDITAR' : 'CREAR'"
+            :icon="isEdit ? 'pi pi-pen-to-square' : 'pi pi-save'"
+            class="green-button"
             @click="submit"
         />
         <pv-button
-            label="Cancelar"
+            label="CANCELAR"
+            icon="pi pi-times-circle"
             severity="danger"
-            class="px-5"
+            class="red-button"
             @click="cancel"
         />
       </div>
