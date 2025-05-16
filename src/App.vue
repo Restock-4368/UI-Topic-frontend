@@ -8,9 +8,9 @@ export default {
 </script>
 
 <template>
-  <div class="flex overflow-x-hidden">
+  <div class="flex">
     <Sidebar class="w-64 flex-shrink-0" />
-    <main class="flex-1" >
+    <main class="flex-1 w-full" >
     <router-view />
     </main>
   </div>
