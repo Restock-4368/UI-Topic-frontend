@@ -8,7 +8,7 @@
         icon="pi pi-pencil"
         label="Editar"
         size="small"
-        class="mt-2"
+        class="green-button"
         @click="$emit('edit', supply)"
     />
   </div>
