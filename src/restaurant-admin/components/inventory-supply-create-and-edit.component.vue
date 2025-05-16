@@ -86,7 +86,7 @@
       </div>
 
       <!-- Mínimo de stock -->
-      <div>
+      <div v-if="props.role === 'admin'">
         <label for="min" class="block text-sm font-medium text-gray-700 mb-2">Mínimo de stock</label>
         <pv-input-number
             id="min"
@@ -98,7 +98,7 @@
       </div>
 
       <!-- Máximo de stock -->
-      <div>
+      <div v-if="props.role === 'admin'">
         <label for="max" class="block text-sm font-medium text-gray-700 mb-2">Máximo de stock</label>
         <pv-input-number
             id="max"
@@ -106,6 +106,21 @@
             :min="0"
             placeholder="Ej: 100"
             class="w-full  mb-3"
+        />
+      </div>
+
+      <div v-if="props.role !== 'admin'">
+        <label for="unitPrice" class="block text-sm font-medium text-gray-700 mb-2">Precio unitario ($)</label>
+        <pv-input-number
+            id="unitPrice"
+            v-model="form.unitPrice"
+            mode="currency"
+            currency="USD"
+            locale="en-US"
+            :min="0"
+            :step="0.01"
+            placeholder="Ej: 3.50"
+            class="w-full mb-3"
         />
       </div>
 
@@ -135,6 +150,10 @@ import { ref, watch } from 'vue';
 const props = defineProps({
   visible: Boolean,
   isEdit: Boolean,
+  role: {
+    type: String,
+    default: 'admin'
+  },
   supplyToEdit: {
     type: Object,
     default: () => ({
@@ -171,7 +190,8 @@ const resetForm = () => {
     unit: null,
     perishable: 'No',
     min: 0,
-    max: 0
+    max: 0,
+    unitPrice: null
   };
 };
 
@@ -179,7 +199,16 @@ watch(
     () => props.supplyToEdit,
     (newVal) => {
       if (props.isEdit && newVal) {
-        form.value = { ...newVal };
+        form.value = {
+          name: newVal.name || '',
+          description: newVal.description || '',
+          category: newVal.category || null,
+          unit: newVal.unit || null,
+          perishable: newVal.perishable || 'No',
+          min: props.role === 'admin' ? newVal.min || 0 : 0,
+          max: props.role === 'admin' ? newVal.max || 0 : 0,
+          unitPrice: props.role !== 'admin' ? newVal.unitPrice || 0 : null
+        };
       } else {
         resetForm();
       }
@@ -188,7 +217,29 @@ watch(
 );
 
 const submit = () => {
-  props.isEdit ? emit('update', form.value) : emit('create', form.value);
+  const commonData = {
+    name: form.value.name,
+    description: form.value.description,
+    category: form.value.category,
+    unit: form.value.unit,
+    perishable: form.value.perishable
+  };
+  let payload = {};
+
+  if (props.role === 'admin') {
+    payload = {
+      ...commonData,
+      min: form.value.min,
+      max: form.value.max
+    };
+  } else {
+    payload = {
+      ...commonData,
+      unitPrice: form.value.unitPrice
+    };
+  }
+
+  props.isEdit ? emit('update', payload) : emit('create', payload);
   resetForm();
   emit('update:visible', false);
 };
