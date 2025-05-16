@@ -4,6 +4,10 @@
   line-height: 1.5;
   font-weight: 400;
 
+  color-scheme:normal;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #ffffff;
+
   color: black !important;
   background-color: #ffffff !important;
   color-scheme: light !important;
@@ -68,6 +72,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
+  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -82,6 +87,8 @@ button:focus-visible {
 .card {
   padding: 2em;
 }
+
+
 
 #app {
 }
