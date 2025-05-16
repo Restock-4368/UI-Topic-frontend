@@ -5,6 +5,7 @@ import { createRouter, createWebHistory } from 'vue-router'
  */
 const Inventory = () => import('../restaurant-admin/components/inventory.component.vue')
 const RestaurantSummaryOverview = () => import('../app/restock/Analytics/pages/restaurant-summary-overview.component.vue')
+const SupplierSummaryOverview = () => import('../app/restock/Analytics/pages/supplier-summary-overview.component.vue')
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
@@ -17,10 +18,16 @@ const routes = [
         meta: { title: 'sidebar.inventory' }
     },
     {
-        path: '/summary',
+        path: '/summary/restaurant',
         name: 'restaurant-summary',
         component: RestaurantSummaryOverview,
         meta: { title: 'sidebar.restaurant-summary-overview' }
+    },
+    {
+        path: '/summary/supplier',
+        name: 'supplier-summary',
+        component: SupplierSummaryOverview,
+        meta: { title: 'sidebar.supplier-summary-overview' }
     }
 ]
 

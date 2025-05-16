@@ -41,9 +41,6 @@
     <div v-if="isMobile" class="mobile-header"><h3>Frequent Customers</h3></div>
     <div class="frequent-customers-container">
       <div v-if="!isMobile" class="header"><h3>Frequent Customers</h3></div>
-      php-template
-      Copy
-      Edit
       <div class="cards-grid" v-if="!isMobile">
         <div
             class="customer-card"
