@@ -33,7 +33,7 @@ const routes = [
         meta: { title: 'sidebar.restaurant-summary-overview' }
     },
     {
-        path: '/dashboard/supplier/reviews',
+        path: '/dashboard/supplier/ratings',
         name: 'supplier-reviews',
         component: SupplierReviewComponent,
         meta: { title: 'sidebar.ratings' }
