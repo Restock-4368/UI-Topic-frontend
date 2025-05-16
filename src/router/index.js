@@ -6,6 +6,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 const Inventory = () => import('../restaurant-admin/components/inventory.component.vue')
 const RestaurantSummaryOverview = () => import('../app/restock/Analytics/pages/restaurant-summary-overview.component.vue')
 const SupplierSummaryOverview = () => import('../app/restock/Analytics/pages/supplier-summary-overview.component.vue')
+const RestaurantSupplierOverview = () => import('../app/restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
+const RestaurantSupplierDetail = () => import('../app/restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
+
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
@@ -28,6 +31,18 @@ const routes = [
         name: 'supplier-summary',
         component: SupplierSummaryOverview,
         meta: { title: 'sidebar.supplier-summary-overview' }
+    },
+    {
+        path: '/suppliers',
+        name: 'supplier-catalog',
+        component: RestaurantSupplierOverview,
+        meta: { title: 'sidebar.supplier-catalog-overview' }
+    },
+    {
+        path: '/suppliers/:id',
+        name: 'supplier-detail',
+        component: RestaurantSupplierDetail,
+        meta: { title: 'sidebar.supplier-detail' }
     }
 ]
 
