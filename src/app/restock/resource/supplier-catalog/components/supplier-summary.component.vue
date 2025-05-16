@@ -1,22 +1,39 @@
-<script setup> import {useRouter} from 'vue-router'
-import {defineProps, defineEmits} from 'vue'
+<script setup>
+import {useRouter} from 'vue-router'
+import {defineProps} from 'vue'
+import {addRestaurantSupplier} from '../services/supplier.service.js'
 
 const router = useRouter()
-const emit = defineEmits(['add'])
 const props = defineProps({supplier: {type: Object, required: true}})
+const API_URL = import.meta.env.VITE_API_URL
+const RESTAURANT_ID = 2
 
-function addSupplier() {
-  emit('add', props.supplier.id)
-  router.push('/dashboard/restaurant/suppliers/')
+async function addSupplier() {
+  try {
+    const checkRes = await fetch(`${API_URL}/restaurant_suppliers?restaurant_id=${RESTAURANT_ID}&supplier_id=${props.supplier.id}`)
+    const existing = await checkRes.json()
+    if (existing.length > 0) {
+      console.log('Supplier already added.')
+      return
+    }
+    await addRestaurantSupplier(props.supplier.id)
+    router.push('/dashboard/restaurant/suppliers?added=true')
+  } catch (error) {
+    console.error('Error checking or adding supplier:', error)
+  }
 }
 
 function contactSupplier() {
-  const phone = props.supplier.phone.replace(/\D/g, '')
-  window.open(`https://wa.me/${phone}`, '_blank')
+  const phone = props.supplier.phone?.replace(/\D/g, '')
+  if (phone) {
+    window.open(`https://wa.me/${phone}`, '_blank')
+  }
 } </script>
+
 <template><h3 class="mobile-subtitle">Suppliers</h3>
   <div class="summary-container"> <!-- Columna imagen -->
-    <div class="image-column"><h4>{{ supplier.name }}</h4> <img src="/src/assets/general_profile_supplier.png" alt="Supplier image"/>
+    <div class="image-column"><h4>{{ supplier.name }}</h4> <img src="/src/assets/general_profile_supplier.png"
+                                                                alt="Supplier image"/>
     </div>
     <!-- Columna información 1 -->
     <div class="info-column">
@@ -55,6 +72,7 @@ function contactSupplier() {
     </div>
   </div>
 </template>
+
 <style scoped> .summary-container {
   display: flex;
   align-items: center;

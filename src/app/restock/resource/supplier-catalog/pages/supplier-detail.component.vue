@@ -2,40 +2,40 @@
 import {ref, computed, onMounted} from 'vue'
 import SupplierSummary from '../components/supplier-summary.component.vue'
 
+const API_URL = import.meta.env.VITE_API_URL
 const router = useRouter()
 const route = useRoute()
-const mockSuppliers = [{
-  id: 1,
-  name: 'Frutas Perú SAC',
-  email: 'ventas@frutasperu.com',
-  address: 'Av. Perú 123, Lima',
-  category: 'Frutas'
-}, {
-  id: 2,
-  name: 'Carnes Selectas',
-  email: 'contacto@carnesseleccionadas.com',
-  address: 'Calle 9, Surco',
-  category: 'Carnes'
-}, {
-  id: 3,
-  name: 'Abarrotes Lima',
-  email: 'soporte@abarroteslima.pe',
-  address: 'Av. Benavides 452',
-  category: 'Abarrotes'
-}]
 const supplier = ref(null)
 const notFound = computed(() => supplier.value === null)
-onMounted(() => {
-  const id = parseInt(route.params.id)
-  supplier.value = mockSuppliers.find(s => s.id === id) || null
-})
 const goBack = () => {
   router.push('/dashboard/restaurant/suppliers/')
 }
-function handleAddSupplier(id) {
-  const match = mockSuppliers.find(s => s.id === id)
-  if (match) match.added = true
-}
+onMounted(async () => {
+  const id = parseInt(route.params.id)
+  try {
+    const res = await fetch(`${API_URL}/users/${id}`)
+    if (!res.ok) throw new Error('Not found')
+    const data = await res.json()
+    supplier.value
+        = {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      address: data.address || '-',
+      phone: data.phone || '',
+      ruc: data.ruc || '',
+      contactPerson: data.contactPerson || '',
+      position: data.position || '',
+      category: data.category || '',
+      status: data.status ?? true,
+      registrationDate: data.registrationDate || 'N/A',
+      lastUpdate: data.lastUpdate || 'N/A'
+    }
+  } catch (error) {
+    console.error('Supplier not found:', error)
+    supplier.value = null
+  }
+})
 </script>
 <template>
   <div class="content">

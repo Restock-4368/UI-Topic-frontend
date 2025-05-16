@@ -108,7 +108,7 @@
 }
 
 .scroll-wrapper {
-  max-height: 250px;
+  max-height: 270px;
   overflow-y: auto;
 }
 
