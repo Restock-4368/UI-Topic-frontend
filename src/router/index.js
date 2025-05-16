@@ -1,11 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
 /**
  * @description Lazy-loaded component imports for route configuration
  * Using dynamic imports to enable code splitting and improve performance
  */
 const Inventory = () => import('../restaurant-admin/components/inventory.component.vue')
-
+const RestaurantSummaryOverview = () => import('../app/restock/Analytics/pages/restaurant-summary-overview.component.vue')
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
@@ -16,6 +15,12 @@ const routes = [
         name: 'inventory',
         component: Inventory,
         meta: { title: 'sidebar.inventory' }
+    },
+    {
+        path: '/summary',
+        name: 'restaurant-summary',
+        component: RestaurantSummaryOverview,
+        meta: { title: 'sidebar.restaurant-summary-overview' }
     }
 ]
 
