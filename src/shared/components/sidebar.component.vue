@@ -20,8 +20,6 @@
       <span class="logo-text">Restock</span>
     </div>
 
-    <UserCard
-    />
 
     <ul class="menu list-none flex-auto p-0">
       <li v-for="item in menuItems" :key="item.route">
@@ -45,40 +43,48 @@
 </template>
 
 <script>
-/**
- * @summary Sidebar component for Restock.
- * @author Jahaziel
- * @description Fetches user with Axios (JSON Server) and renders navigation.
- */
 import axios from 'axios'
 import { RouterLink } from 'vue-router'
 import LanguageSwitcher from './language-switcher.component.vue'
-import UserCard from '/src/public/user/components/user-card.component.vue'
-
-// usa rutas relativas: sin alias "@"
 import logo from '../../assets/logo-restock.png'
 
 export default {
   name: 'Sidebar',
-  components: { RouterLink, LanguageSwitcher, UserCard },
+  components: { RouterLink, LanguageSwitcher },
   data() {
     return {
       logo,
       user: null,
       sidebarVisible: false,
       isMobile: window.innerWidth < 1260,
-      // PrimeIcons -> https://primefaces.org/primevue/icons
-      menuItems: [
-        { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/summary' },
-        { label: 'sidebar.subscription', icon: 'pi pi-credit-card', route: '/subscription' },
-        { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/inventory' },
-        { label: 'sidebar.suppliers', icon: 'pi pi-users', route: '/suppliers' },
-        { label: 'sidebar.alerts', icon: 'pi pi-bell', route: '/alerts' },
-        { label: 'sidebar.orders', icon: 'pi pi-truck', route: '/orders' },
-        { label: 'sidebar.recipes', icon: 'pi pi-clipboard', route: '/recipes' },
-        { label: 'sidebar.sales', icon: 'pi pi-chart-line', route: '/sales' }
-      ]
+      menuItems: [] // se llenará según el rol
     }
+  },
+  created() {
+    axios.get('http://localhost:3000/users/1').then(({ data }) => {
+      this.user = data;
+      const role = data.role_id?.name;
+
+      if (role === 'supplier') {
+        this.menuItems = [
+          { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/supplier/summary' },
+          { label: 'sidebar.subscription', icon: 'pi pi-credit-card', route: '/dashboard/supplier/subscription' },
+          { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/dashboard/supplier/inventory' },
+          { label: 'sidebar.alerts', icon: 'pi pi-bell', route: '/dashboard/supplier/alerts' },
+          { label: 'sidebar.orders', icon: 'pi pi-truck', route: '/dashboard/supplier/orders' },
+          { label: 'sidebar.ratings', icon: 'pi pi-star', route: '/dashboard/supplier/ratings' }
+        ];
+      } else if (role === 'restaurant') {
+        this.menuItems = [
+          { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/restaurant/summary' },
+          { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/dashboard/restaurant/inventory' },
+          { label: 'sidebar.suppliers', icon: 'pi pi-users', route: '/dashboard/restaurant/suppliers' },
+          { label: 'sidebar.orders', icon: 'pi pi-truck', route: '/dashboard/restaurant/orders' },
+          { label: 'sidebar.recipes', icon: 'pi pi-clipboard', route: '/dashboard/restaurant/recipes' },
+          { label: 'sidebar.sales', icon: 'pi pi-chart-line', route: '/dashboard/restaurant/sales' }
+        ];
+      }
+    });
   },
   mounted() {
     window.addEventListener('resize', this.checkMobile)
@@ -87,13 +93,9 @@ export default {
   beforeUnmount() {
     window.removeEventListener('resize', this.checkMobile)
   },
-  created() {
-    // Obtén el primer usuario del fake-API
-    axios.get('http://localhost:3000/users/1').then(({ data }) => (this.user = data))
-  },
   watch: {
     isMobile(newValue) {
-      this.sidebarVisible = !newValue; // false si móvil, true si escritorio
+      this.sidebarVisible = !newValue
     }
   },
   methods: {
@@ -101,18 +103,13 @@ export default {
       return this.$route.path.startsWith(route)
     },
     checkMobile() {
-      this.isMobile = window.innerWidth < 1260;
-
-      // Asegura que sidebarVisible sea false si pasas a móvil
-      if (this.isMobile) {
-        this.sidebarVisible = false;
-      } else {
-        this.sidebarVisible = true;
-      }
+      this.isMobile = window.innerWidth < 1260
+      this.sidebarVisible = !this.isMobile
     }
   }
 }
 </script>
+
 
 <style>
 

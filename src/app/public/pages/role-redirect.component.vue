@@ -1,11 +1,8 @@
 <template>
-  <div class="h-screen flex items-center justify-center text-gray-500">
-    <p>Redirigiendo al panel...</p>
-  </div>
+  <p>Redirecting...</p>
 </template>
 
 <script>
-
 import {UserService} from "../../restock/iam/services/user.service.js";
 
 export default {

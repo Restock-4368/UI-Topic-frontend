@@ -1,6 +1,6 @@
 <script>
 import { UserService } from '../services/user.service.js'
-import {User} from "../model/user.entity.js";
+import {User} from "../../../../public/user/model/user.entity.js";
 
 export default {
   name: 'UserCard',
