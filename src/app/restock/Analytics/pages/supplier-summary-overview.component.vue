@@ -1,7 +1,8 @@
 <script>
 import {defineComponent} from "vue";
+import SupplierAccountWidget from "../components/supplier-account-widget.component.vue";
 import SupplierAlertsWidget from "../components/supplier-alerts-widget.component.vue";
-
+import SupplierFrequentCustomersWidget from "../components/supplier-frequent-customers-widget.component.vue";
 export default defineComponent({
   name: 'supplier-summary-overview',
   components: {SupplierAlertsWidget, SupplierAccountWidget, SupplierFrequentCustomersWidget}
