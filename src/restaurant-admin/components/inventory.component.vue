@@ -177,15 +177,16 @@ export default {
 </script>
 
 <template>
-  <div class="px-4" >
+  <div class="" >
     <div class="flex flex-column gap-4">
-      <div
-          class="px-3 py-1 rounded font-semibold text-white w-max"
-          :class="role === 'admin' ? 'bg-green-600' : 'bg-blue-600'"
-      >
-        {{ role }}
-      </div>
-      <div class="surface-card shadow-4 p-4 border-round-3xl" style="flex: 0 0 30%;">
+
+      <div class="surface-card shadow-4 p-4 border-round-3xl">
+        <div
+            class="px-3 py-1 rounded font-semibold text-white w-max"
+            :class="role === 'admin' ? 'bg-green-600' : 'bg-blue-600'"
+        >
+          {{ role }}
+        </div>
         <div class="flex justify-content-between align-items-center mb-4">
           <h1>Supplies</h1>
           <pv-button label="CREAR" icon="pi pi-plus-circle" @click="openCreateModal" class="green-button" />
@@ -209,7 +210,7 @@ export default {
         </div>
       </div>
 
-      <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 70%;">
+      <div class="surface-card p-4 border-round-3xl">
         <div class="flex justify-content-around align-items-center mb-4">
           <h1 class="m-0">Inventory</h1>
 
