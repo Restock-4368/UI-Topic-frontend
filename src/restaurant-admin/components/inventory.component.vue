@@ -144,10 +144,10 @@ export default {
 <template>
   <div class="px-4">
     <div class="flex flex-column gap-4">
-      <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 30%;">
-        <div class="flex justify-content-around align-items-center mb-4">
-          <h1>Insumos</h1>
-          <pv-button label="Crear" icon="pi pi-plus" @click="openCreateModal" />
+      <div class="surface-card shadow-4 p-4 border-round-3xl" style="flex: 0 0 30%;">
+        <div class="flex justify-content-between align-items-center mb-4">
+          <h1>Supplies</h1>
+          <pv-button label="Crear" icon="pi pi-plus" @click="openCreateModal" class="green-button" />
 
         </div>
 
@@ -157,7 +157,7 @@ export default {
         </div>
 
         <div v-else>
-          <pv-carousel :value="supplies" :numVisible="3" :numScroll="1">
+          <pv-carousel :value="supplies" :numVisible="3" :numScroll="1" :showIndicators="false">
             <template #item="slotProps">
               <inventory-supply-card
                   :supply="slotProps.data"
@@ -171,11 +171,11 @@ export default {
       <div class="surface-card shadow-2 p-4 border-round" style="flex: 0 0 70%;">
         <div class="flex justify-content-around align-items-center mb-4">
           <h1 class="m-0">Inventory</h1>
-          <div class="flex align-items-center gap-2">
-            <pv-input-text v-model="search" placeholder="Buscar..." />
-            <pv-button label="Añadir" icon="pi pi-plus" @click="openAddModal"/>
 
-          </div>
+            <pv-input-text v-model="search" placeholder="Buscar insumo" style="width: 400px" class="font-light"/>
+            <pv-button label="Añadir" icon="pi pi-plus" @click="openAddModal" class="green-button"/>
+
+
           <div class="flex align-items-center gap-2">
             <span>1-5 de 10</span>
             <pv-button icon="pi pi-angle-left" text />
@@ -277,6 +277,11 @@ export default {
 </template>
 
 <style>
+h1 {
+  font-weight: 400; /* Regular */
+  font-size: 23px;
+}
+
 .expired-row {
   background-color: rgba(244, 21, 21, 0.3) !important;
 }

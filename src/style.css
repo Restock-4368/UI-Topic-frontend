@@ -1,5 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Poppins', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -23,6 +24,7 @@ a:hover {
 }
 
 body {
+  
 }
 
 h1 {
@@ -55,6 +57,18 @@ button:focus-visible {
 
 #app {
   padding: 0;
+}
+
+.green-button {
+  border-radius: 9999px !important;
+  background-color: #4F8A5B !important;
+  color: white !important;
+  border: none !important;
+}
+
+.green-button:hover {
+  background-color: #3d6e47 !important;
+  color: white !important;
 }
 
 @media (prefers-color-scheme: light) {
