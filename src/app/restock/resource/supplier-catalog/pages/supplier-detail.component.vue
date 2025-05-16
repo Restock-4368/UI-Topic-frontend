@@ -30,7 +30,7 @@ onMounted(() => {
   supplier.value = mockSuppliers.find(s => s.id === id) || null
 })
 const goBack = () => {
-  router.push('/dashboard/suppliers')
+  router.push('/dashboard/restaurant/suppliers/')
 }
 function handleAddSupplier(id) {
   const match = mockSuppliers.find(s => s.id === id)
@@ -50,7 +50,7 @@ function handleAddSupplier(id) {
           rounded
           @click="goBack"
       />
-      <supplier-summary :supplier="supplier" @add="handleAddSupplier" />
+      <supplier-summary :supplier="supplier"/>
     </div>
   </div>
 </template>

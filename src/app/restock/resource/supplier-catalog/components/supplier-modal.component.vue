@@ -20,7 +20,7 @@ export default defineComponent({
     const filteredSuppliers = computed(() => suppliers.value.filter(s => s.name.toLowerCase().includes(searchText.value.toLowerCase())))
     const getColumns = computed(() => isMobile.value ? ['name', 'email', 'catalog'] : ['name', 'email', 'address', 'catalog'])
     const goToDetail = id => {
-      router.push(`/dashboard/suppliers/${id}`)
+      router.push(`/dashboard/restaurant/suppliers/${id}`)
     }
     const checkViewport = () => {
       isMobile.value = window.innerWidth <= 800

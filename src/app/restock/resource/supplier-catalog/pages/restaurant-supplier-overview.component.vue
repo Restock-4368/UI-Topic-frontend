@@ -57,7 +57,7 @@ export default {
       this.suppliers = mock.filter(s => s.added)
       this.categories = [...new Set(this.suppliers.map(s => s.category))]
     }, goToDetail(id) {
-      this.$router.push(`/dashboard/suppliers/${id}`)
+      this.$router.push(`/dashboard/restaurant/suppliers/${id}`)
     }
   }
 } </script>
@@ -145,7 +145,18 @@ export default {
 .mobile-only {
   display: none;
 }
+.empty-state {
+  text-align: center;
+  margin-top: 40px;
+  color: #7f8c8d;
+}
 
+.supplier-icon {
+  width: 100%;
+  height: 100%;
+  font-size: 160px;
+  color: #7f8c8d;
+}
 @media (max-width: 600px) {
   .mobile-only {
     display: flex;

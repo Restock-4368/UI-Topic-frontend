@@ -7,7 +7,7 @@ const props = defineProps({supplier: {type: Object, required: true}})
 
 function addSupplier() {
   emit('add', props.supplier.id)
-  router.push('/dashboard/suppliers')
+  router.push('/dashboard/restaurant/suppliers/')
 }
 
 function contactSupplier() {

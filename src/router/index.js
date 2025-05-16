@@ -37,19 +37,19 @@ const routes = [
         meta: { title: 'sidebar.restaurant-summary-overview' }
     },
     {
-        path: '/dashboard/summary/supplier',
+        path: '/dashboard/supplier/summary',
         name: 'supplier-summary',
         component: SupplierSummaryOverview,
         meta: { title: 'sidebar.supplier-summary-overview' }
     },
     {
-        path: '/dashboard/suppliers',
+        path: '/dashboard/restaurant/suppliers',
         name: 'supplier-catalog',
         component: RestaurantSupplierOverview,
         meta: { title: 'sidebar.supplier-catalog-overview' }
     },
     {
-        path: '/dashboard/suppliers/:id',
+        path: '/dashboard/restaurant/suppliers/:id',
         name: 'supplier-detail',
         component: RestaurantSupplierDetail,
         meta: { title: 'sidebar.supplier-detail' }

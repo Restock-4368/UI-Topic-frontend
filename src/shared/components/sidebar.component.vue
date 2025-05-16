@@ -61,7 +61,7 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:3000/users/1').then(({ data }) => {
+    axios.get('http://localhost:3000/users/2').then(({ data }) => {
       this.user = data;
       const role = data.role_id?.name;
 
