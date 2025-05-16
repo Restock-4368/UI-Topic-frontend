@@ -55,8 +55,8 @@
         />
       </div>
 
-      <!-- Proveedor -->
-      <div>
+      <!-- Proveedor solo visible para admin -->
+      <div v-if="role === 'admin'">
         <label for="provider" class="block text-sm font-medium text-gray-700 mb-2">Proveedor (opcional)</label>
         <pv-dropdown
             id="provider"
@@ -114,6 +114,10 @@ const formatDate = (date) => {
 const props = defineProps({
   visible: Boolean,
   isEdit: Boolean,
+  role: {
+    type: String,
+    default: 'admin'
+  },
   isPerishable: Boolean,
   supplies: Array,
   providers: Array,
