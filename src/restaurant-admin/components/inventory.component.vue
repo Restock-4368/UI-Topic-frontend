@@ -35,16 +35,16 @@ export default {
       categories: ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'],
       units: ['kg', 'l', 'unidades', 'g', 'ml'],
       supplies: [
-        { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Fresco y orgánico', min: 10, max: 50,perishable: 'Sí' },
-        { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo', min: 10, max: 50, perishable: 'Sí' },
-        { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Entera', min: 10, max: 50, perishable: 'Sí' },
-        { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca', min: 10, max: 50, perishable: 'Sí' },
-        { name: 'Carne molida', category: 'Carnes', unit: 'kg', description: 'Res', min: 10, max: 50, perishable: 'Sí' },
-        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', description: 'Sin gas', min: 10, max: 50, perishable: 'No' },
-        { name: 'Yogurt', category: 'Lácteos', unit: 'l', description: 'Natural', min: 10, max: 50, perishable: 'No' },
-        { name: 'Zanahoria', category: 'Verduras', unit: 'kg', description: 'Fresca', min: 10, max: 50, perishable: 'Sí' },
-        { name: 'Lentejas', category: 'Granos', unit: 'kg', description: 'Secas', min: 10, max: 50, perishable: 'Sí' },
-        { name: 'Cebolla', category: 'Verduras', unit: 'kg', description: 'Roja', min: 10, max: 50, perishable: 'Sí' }
+        { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Tomate fresco, orgánico, ideal para ensaladas y salsas.', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo sin piel, rica en proteínas, lista para cocinar.', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Leche entera pasteurizada, ideal para consumo diario o recetas.', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca andina, firme y versátil para todo tipo de platos.', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Carne molida', category: 'Carnes', unit: 'kg', description: 'Carne de res molida fresca, perfecta para hamburguesas y guisos.', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Agua mineral', category: 'Bebidas', unit: 'l', description: 'Agua mineral sin gas, purificada, embotellada en origen natural.', min: 10, max: 50, perishable: 'No' },
+        { name: 'Yogurt', category: 'Lácteos', unit: 'l', description: 'Yogurt natural sin azúcar, con cultivos vivos, fuente de probióticos.', min: 10, max: 50, perishable: 'No' },
+        { name: 'Zanahoria', category: 'Verduras', unit: 'kg', description: 'Zanahoria fresca, crocante y dulce, rica en betacarotenos.', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Lentejas', category: 'Granos', unit: 'kg', description: 'Lentejas secas seleccionadas, ideales para guisos y ensaladas.', min: 10, max: 50, perishable: 'Sí' },
+        { name: 'Cebolla', category: 'Verduras', unit: 'kg', description: 'Cebolla roja fresca, de sabor intenso, ideal para sofritos y ensaladas.', min: 10, max: 50, perishable: 'Sí' }
       ],
       inventory: [
         { name: 'Tomate', category: 'Verduras', unit: 'kg', expiry: '2025-06-01', stock: 20, min: 10, max: 50, perishable: 'Sí' },
@@ -142,18 +142,18 @@ export default {
 </script>
 
 <template>
-  <div class="px-4">
+  <div class="px-4" >
     <div class="flex flex-column gap-4">
       <div class="surface-card shadow-4 p-4 border-round-3xl" style="flex: 0 0 30%;">
         <div class="flex justify-content-between align-items-center mb-4">
           <h1>Supplies</h1>
-          <pv-button label="Crear" icon="pi pi-plus" @click="openCreateModal" class="green-button" />
+          <pv-button label="CREAR" icon="pi pi-plus-circle" @click="openCreateModal" class="green-button" />
 
         </div>
 
         <div v-if="supplies.length === 0" class="text-center">
           <p>Aún no has agregado insumos. Añádelos para comenzar a gestionar tu inventario.</p>
-          <pv-button label="Crear Insumo" icon="pi pi-plus" class="mt-2" @click="openCreateModal" />
+          <pv-button label="CREAR INSUMO" icon="pi pi-plus-circle" class="mt-2" @click="openCreateModal" />
         </div>
 
         <div v-else>
@@ -173,7 +173,7 @@ export default {
           <h1 class="m-0">Inventory</h1>
 
             <pv-input-text v-model="search" placeholder="Buscar insumo" style="width: 400px" class="font-light"/>
-            <pv-button label="Añadir" icon="pi pi-plus" @click="openAddModal" class="green-button"/>
+            <pv-button label="AÑADIR" icon="pi pi-plus-circle" @click="openAddModal" class="green-button"/>
 
 
           <div class="flex align-items-center gap-2">
@@ -200,7 +200,7 @@ export default {
             <pv-column header="Acciones">
               <template #body="slotProps">
                 <pv-button
-                    icon="pi pi-pencil"
+                    icon="pi pi-pen-to-square"
                     text
                     @click="() => {openInventoryEditModal(slotProps.data) }"
                 />
@@ -225,8 +225,8 @@ export default {
         style="width: 450px"
         @update:visible="showDeleteModal = $event"
     >
-      <div class="p-3">
-        <p>
+      <div class="p-1">
+        <p class="font-light">
           Está a punto de eliminar el insumo
           <strong>“{{ itemToDelete?.name }}”</strong> con
           <strong>{{ itemToDelete?.stock }} {{ itemToDelete?.unit }}</strong>
@@ -237,14 +237,16 @@ export default {
       <template #footer>
         <div class="flex justify-content-end gap-2">
           <pv-button
-              label="CANCELAR"
-              severity="danger"
-              @click="showDeleteModal = false"
-          />
-          <pv-button
               label="CONFIRMAR"
               severity="success"
               @click="deleteInventoryItem"
+              class="green-button"
+          />
+          <pv-button
+              label="CANCELAR"
+              severity="danger"
+              @click="showDeleteModal = false"
+              class="red-button"
           />
         </div>
       </template>

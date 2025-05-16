@@ -4,14 +4,14 @@
       :visible="visible"
       @update:visible="$emit('update:visible', $event)"
       modal
-      class="w-[38rem]"
+      class="w-4"
   >
     <template #header>
-      <div>
+      <div class="p-2">
         <h2 class="text-xl font-semibold">
           {{ isEdit ? 'Editar Registro de Insumo' : 'Agregar Insumo al Inventario' }}
         </h2>
-        <p class="text-sm text-gray-500">
+        <p class="text-sm font-light text-gray-500">
           {{ isEdit
             ? 'Modifica la información del registro de inventario.'
             : 'Completa los detalles para agregar el insumo al inventario.' }}
@@ -19,10 +19,10 @@
       </div>
     </template>
 
-    <div class="p-5 space-y-5">
+    <div class="p-2">
       <!-- Insumo -->
       <div>
-        <label for="supply" class="block text-sm font-medium text-gray-700 mb-1">Insumo</label>
+        <label for="supply" class="block text-sm font-medium text-gray-700 mb-2">Insumo</label>
         <template v-if="!isEdit">
           <pv-dropdown
               id="supply"
@@ -30,14 +30,14 @@
               optionLabel="name"
               v-model="form.supply"
               placeholder="Seleccionar insumo"
-              class="w-full"
+              class="w-full mb-3"
           />
         </template>
         <template v-else>
           <pv-input-text
               :value="form.supply?.name"
               disabled
-              class="w-full"
+              class="w-full mb-3"
           />
         </template>
       </div>
@@ -50,20 +50,20 @@
             v-model="form.stock"
             :min="0"
             mode="decimal"
-            class="w-full"
+            class="w-full mb-3"
             placeholder="Ej: 50"
         />
       </div>
 
       <!-- Proveedor -->
       <div>
-        <label for="provider" class="block text-sm font-medium text-gray-700 mb-1">Proveedor (opcional)</label>
+        <label for="provider" class="block text-sm font-medium text-gray-700 mb-2">Proveedor (opcional)</label>
         <pv-dropdown
             id="provider"
             :options="providers"
             v-model="form.provider"
             placeholder="Seleccionar proveedor"
-            class="w-full"
+            class="w-full mb-3"
         />
       </div>
 
@@ -74,22 +74,24 @@
             id="expiry"
             v-model="form.expiry"
             showIcon
-            class="w-full"
+            class="w-full mb-3"
             placeholder="Seleccionar fecha"
         />
       </div>
 
       <!-- Botones -->
-      <div class="flex justify-between pt-4">
+      <div class="flex justify-content-around pt-4">
         <pv-button
-            :label="isEdit ? 'Actualizar' : 'Agregar'"
-            class="bg-green-600 border-none text-white hover:bg-green-700 px-5"
+            :label="isEdit ? 'GUARDAR' : 'AÑADIR'"
+            :icon="isEdit ? 'pi pi-pen-to-square' : 'pi pi-plus-circle'"
+            class="green-button"
             @click="submit"
         />
         <pv-button
-            label="Cancelar"
+            label="CANCELAR"
+            icon="pi pi-times-circle"
             severity="danger"
-            class="px-5"
+            class="red-button"
             @click="cancel"
         />
       </div>
