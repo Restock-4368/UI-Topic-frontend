@@ -61,6 +61,7 @@ export default defineComponent({
   .widget-alerts,
   .widget-supplies {
     width: 100% !important;
+
   }
 
   .summary-row-2 {
