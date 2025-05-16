@@ -57,7 +57,7 @@ export default {
       this.suppliers = mock.filter(s => s.added)
       this.categories = [...new Set(this.suppliers.map(s => s.category))]
     }, goToDetail(id) {
-      this.$router.push(`/suppliers/${id}`)
+      this.$router.push(`/dashboard/suppliers/${id}`)
     }
   }
 } </script>

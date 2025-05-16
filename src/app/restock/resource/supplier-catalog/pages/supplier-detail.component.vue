@@ -30,7 +30,7 @@ onMounted(() => {
   supplier.value = mockSuppliers.find(s => s.id === id) || null
 })
 const goBack = () => {
-  router.push('/suppliers')
+  router.push('/dashboard/suppliers')
 }
 function handleAddSupplier(id) {
   const match = mockSuppliers.find(s => s.id === id)
