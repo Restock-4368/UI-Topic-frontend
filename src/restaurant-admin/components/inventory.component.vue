@@ -95,7 +95,13 @@ export default {
       this.showDeleteModal = true;
     },
     deleteInventoryItem() {
-      this.inventory = this.inventory.filter(i => i.name !== this.itemToDelete.name);
+      this.inventory = this.inventory.filter(i =>
+          !(
+              i.name === this.itemToDelete.name &&
+              i.stock === this.itemToDelete.stock &&
+              i.expiry === this.itemToDelete.expiry
+          )
+      );
       this.showDeleteModal = false;
       this.itemToDelete = null;
     },
