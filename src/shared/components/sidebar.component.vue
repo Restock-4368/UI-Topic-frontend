@@ -12,7 +12,7 @@
       <li v-for="item in menuItems" :key="item.route">
         <RouterLink
             :to="item.route"
-            class="menu-link flex align-items-center gap-3 p-3 text-color transition-colors border-left-3 border-transparent w-full"
+            class="menu-link flex align-items-center gap-3 p-4 transition-colors border-left-3 border-transparent w-full"
             :class="{
             'menu-link--active': isActive(item.route)
           }"
@@ -88,7 +88,6 @@ export default {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;     /* semibold */
   font-size: 1.25rem;   /* ≈20 px */
-  color: var(--surface-900);   /* tono gris oscuro */
 }
 
 
