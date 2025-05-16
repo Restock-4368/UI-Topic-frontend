@@ -51,7 +51,7 @@ export default {
       categories: ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'],
       units: ['kg', 'l', 'unidades', 'g', 'ml'],
       supplies: [
-        { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Tomate fresco, orgánico, ideal para ensaladas y salsas.', min: 10, max: 50, perishable: 'Sí',unitPrice: 20.50 },
+        { name: 'Tomate', category: 'Verduras', unit: 'kg', description: 'Tomate fresco, orgánico, ideal para ensaladas y salsas.', min: 15, max: 50, perishable: 'Sí',unitPrice: 20.50 },
         { name: 'Pollo', category: 'Carnes', unit: 'kg', description: 'Pechuga de pollo sin piel, rica en proteínas, lista para cocinar.', min: 10, max: 50, perishable: 'Sí',unitPrice: 12.50 },
         { name: 'Leche', category: 'Lácteos', unit: 'l', description: 'Leche entera pasteurizada, ideal para consumo diario o recetas.', min: 10, max: 50, perishable: 'Sí' , unitPrice: 7.50},
         { name: 'Papa', category: 'Verduras', unit: 'kg', description: 'Papa blanca andina, firme y versátil para todo tipo de platos.', min: 10, max: 50, perishable: 'Sí', unitPrice: 7.50 },
