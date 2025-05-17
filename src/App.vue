@@ -1,14 +1,21 @@
-<script setup>
+<script>
+import Sidebar from './shared/components/sidebar.component.vue'
+
+export default {
+  name: 'App',
+  components: { Sidebar }
+}
 </script>
 
 <template>
-  <div>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="flex">
+    <Sidebar class="w-64 flex-shrink-0" />
+    <main class="flex-1 w-full" >
+    <router-view />
+    </main>
   </div>
 </template>
 
-<style scoped>
+<style>
 
 </style>
