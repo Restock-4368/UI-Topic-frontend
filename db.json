@@ -61,6 +61,21 @@
       "id": "cd65",
       "restaurant_id": 2,
       "supplier_id": "1"
+    },
+    {
+      "id": "bc43",
+      "restaurant_id": 2,
+      "supplier_id": "3"
+    },
+    {
+      "id": "857e",
+      "restaurant_id": 2,
+      "supplier_id": "4"
+    },
+    {
+      "id": "001b",
+      "restaurant_id": 2,
+      "supplier_id": "5"
     }
   ]
 }

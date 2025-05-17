@@ -4,31 +4,31 @@ const alerts = ref([
   {ingredient: 'Tomates', status: 'Low stock'},
   {ingredient: 'Lechuga', status: 'Max stock'},
   {ingredient: 'Cebolla', status: 'Low stock'},
-  {ingredient: 'Papas', status: 'Low stock'},])
-
-const displayedColumns = ['ingredient', 'status']
-</script>
-<template><h3 class="widget-title">Last alerts</h3>
-  <div class="widget-container">
-    <div class="scroll-wrapper">
-      <pv-data-table :value="alerts" responsiveLayout="scroll" class="mat-elevation-z1">
-        <pv-column field="ingredient" header="Supplies">
-          <template #body="slotProps"><span class="ingredient">{{ slotProps.data.ingredient }}</span></template>
-        </pv-column>
-        <pv-column field="status" header="Status">
-          <template #body="slotProps">
-            <button
-                :class="{ 'low-stock': slotProps.data.status === 'Low stock', 'max-stock': slotProps.data.status === 'Max stock' }"
-                class="status-btn"> {{ slotProps.data.status }}
-            </button>
-          </template>
-        </pv-column>
-      </pv-data-table>
+  {ingredient: 'Papas', status: 'Low stock'},
+])
+const displayedColumns = ['ingredient', 'status'] </script>
+<template>
+  <div><h3 class="widget-title">Last alerts</h3>
+    <div class="widget-container">
+      <div class="scroll-wrapper">
+        <pv-data-table :value="alerts" responsiveLayout="scroll" class="mat-elevation-z1">
+          <pv-column field="ingredient" header="Supplies">
+            <template #body="slotProps"><span class="ingredient">{{ slotProps.data.ingredient }}</span></template>
+          </pv-column>
+          <pv-column field="status" header="Status">
+            <template #body="slotProps">
+              <button
+                  :class="{ 'low-stock': slotProps.data.status === 'Low stock', 'max-stock': slotProps.data.status === 'Max stock' }"
+                  class="status-btn"> {{ slotProps.data.status }}
+              </button>
+            </template>
+          </pv-column>
+        </pv-data-table>
+      </div>
     </div>
   </div>
 </template>
-<style>
-.widget-title {
+<style scoped> .widget-title {
   font-family: Poppins, sans-serif;
   font-weight: 400;
   font-size: 23px;
@@ -71,7 +71,7 @@ const displayedColumns = ['ingredient', 'status']
   border: none;
 }
 
-.low-stock{
+.low-stock {
   background-color: #FFEAEA;
   color: #FF5252;
 }
