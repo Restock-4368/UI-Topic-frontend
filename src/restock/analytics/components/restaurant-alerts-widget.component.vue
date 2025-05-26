@@ -1,4 +1,4 @@
-<script setup> import {ref, onMounted} from 'vue'
+<script setup> import {ref} from 'vue'
 
 const alerts = ref([
   {ingredient: 'Tomates', status: 'Low stock'},

@@ -1,7 +1,7 @@
 <script>
-import inventorySupplyCreateAndEdit from './inventory-supply-create-and-edit.component.vue';
-import inventorySupplyAddAndEdit from './inventory-supply-add-and-edit.component.vue';
-import InventorySupplyCard from './inventory-supply-card.component.vue';
+import inventorySupplyCreateAndEdit from '../components/inventory-supply-create-and-edit.component.vue';
+import inventorySupplyAddAndEdit from '../components/inventory-supply-add-and-edit.component.vue';
+import InventorySupplyCard from '../components/inventory-supply-card.component.vue';
 
 export default {
   name: 'InventoryComponent',
