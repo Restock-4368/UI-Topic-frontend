@@ -1,4 +1,5 @@
-<script> import {defineComponent, ref, onMounted, onBeforeUnmount, computed} from 'vue'
+<script>
+import {defineComponent, ref, onMounted, onBeforeUnmount, computed} from 'vue'
 import {useRouter} from 'vue-router'
 
 export default defineComponent({
@@ -6,20 +7,20 @@ export default defineComponent({
     const router = useRouter()
     const searchText = ref('')
     const isMobile = ref(false)
-    const suppliers = ref([{
-      id: 1,
-      name: 'Frutas Perú SAC',
-      email: 'ventas@frutasperu.com',
-      address: 'Av. Perú 123, Lima'
-    }, {id: 2, name: 'Carnes Selectas', email: 'contacto@carnesseleccionadas.com', address: 'Calle 9, Surco'}, {
-      id: 3,
-      name: 'Abarrotes Lima',
-      email: 'soporte@abarroteslima.pe',
-      address: 'Av. Benavides 452'
-    }])
+    const suppliers = ref([])
+    const API_URL = import.meta.env.VITE_API_URL
+    const loadSuppliersFromApi = async () => {
+      try {
+        const response = await fetch(`${API_URL}/users?role_id.name=supplier`)
+        const data = await response.json()
+        suppliers.value = data.map(s => ({id: s.id, name: s.name, email: s.email, address: s.address || '-',}))
+      } catch (error) {
+        console.error('Error loading suppliers:', error)
+      }
+    }
     const filteredSuppliers = computed(() => suppliers.value.filter(s => s.name.toLowerCase().includes(searchText.value.toLowerCase())))
     const getColumns = computed(() => isMobile.value ? ['name', 'email', 'catalog'] : ['name', 'email', 'address', 'catalog'])
-    const goToDetail = id => {
+    const goToDetail = (id) => {
       router.push(`/dashboard/restaurant/suppliers/${id}`)
     }
     const checkViewport = () => {
@@ -28,13 +29,15 @@ export default defineComponent({
     onMounted(() => {
       checkViewport()
       window.addEventListener('resize', checkViewport)
+      loadSuppliersFromApi()
     })
     onBeforeUnmount(() => {
       window.removeEventListener('resize', checkViewport)
     })
     return {searchText, suppliers, filteredSuppliers, isMobile, getColumns, goToDetail, emit}
   }
-}) </script>
+})
+</script>
 <template>
   <div class="modal-backdrop">
     <div class="modal-content"><h4>Add supplier</h4>
