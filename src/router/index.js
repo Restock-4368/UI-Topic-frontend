@@ -11,18 +11,12 @@ const RoleRedirect = () => import('../public/components/role-redirect.component.
 const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplier-summary-overview.component.vue')
 const RestaurantSupplierOverview = () => import('../restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
 const RestaurantSupplierDetail = () => import('../restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
-
+const RestaurantAlertsOverview = () => import('../restock/monitoring/pages/restaurant-alerts-overview.component.vue')
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
  */
 const routes = [
-    {
-        path: '/dashboard/supplier/inventory',
-        name: 'supplier-inventory',
-        component: Inventory,
-        meta: { title: 'sidebar.inventory' }
-    },
     {
         path: '/dashboard/restaurant/inventory',
         name: 'restaurant-inventory',
@@ -35,6 +29,19 @@ const routes = [
         component: RestaurantSummaryOverview,
         meta: { title: 'sidebar.restaurant-summary-overview' }
     },
+    {
+        path: '/dashboard/restaurant/alerts',
+        name: 'restaurant-alerts',
+        component: RestaurantAlertsOverview,
+        meta: { title: 'sidebar.restaurant-alerts-overview' }
+    },
+    {
+        path: '/dashboard/supplier/inventory',
+        name: 'supplier-inventory',
+        component: Inventory,
+        meta: { title: 'sidebar.inventory' }
+    },
+
     {
         path: '/dashboard/supplier/summary',
         name: 'supplier-summary',
