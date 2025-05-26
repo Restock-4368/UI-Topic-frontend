@@ -32,7 +32,7 @@ function contactSupplier() {
 
 <template><h3 class="mobile-subtitle">Suppliers</h3>
   <div class="summary-container"> <!-- Columna imagen -->
-    <div class="image-column"><h4>{{ supplier.name }}</h4> <img src="/src/assets/general_profile_supplier.png"
+    <div class="image-column"><h4>{{ supplier.name }}</h4> <img src="/src/assets/images/general_profile_supplier.png"
                                                                 alt="Supplier image"/>
     </div>
     <!-- Columna información 1 -->
@@ -113,14 +113,6 @@ function contactSupplier() {
   color: white !important;
   border-radius: 2px;
   margin-top: 0.5rem;
-}
-
-.btn-content {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-  font-size: 14px;
 }
 
 .action-column {

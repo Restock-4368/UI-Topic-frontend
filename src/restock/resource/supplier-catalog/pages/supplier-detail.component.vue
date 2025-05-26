@@ -1,4 +1,5 @@
-<script setup> import {useRoute, useRouter} from 'vue-router'
+<script setup>
+import {useRoute, useRouter} from 'vue-router'
 import {ref, computed, onMounted} from 'vue'
 import SupplierSummary from '../components/supplier-summary.component.vue'
 
@@ -16,12 +17,14 @@ onMounted(async () => {
     const res = await fetch(`${API_URL}/users/${id}`)
     if (!res.ok) throw new Error('Not found')
     const data = await res.json()
-    supplier.value
-        = {
+    if (data.role_id?.name !== 'supplier') {
+      throw new Error('User is not a supplier')
+    }
+    supplier.value = {
       id: data.id,
       name: data.name,
       email: data.email,
-      address: data.address || '-',
+      address: data.address || '',
       phone: data.phone || '',
       ruc: data.ruc || '',
       contactPerson: data.contactPerson || '',
@@ -29,10 +32,11 @@ onMounted(async () => {
       category: data.category || '',
       status: data.status ?? true,
       registrationDate: data.registrationDate || 'N/A',
-      lastUpdate: data.lastUpdate || 'N/A'
+      lastUpdate: data.lastUpdate || 'N/A',
+      avatarUrl: data.avatar?.url || ''
     }
   } catch (error) {
-    console.error('Supplier not found:', error)
+    console.error('Supplier not found or invalid:', error)
     supplier.value = null
   }
 })
