@@ -45,7 +45,7 @@
 <script>
 import { RouterLink } from 'vue-router'
 import LanguageSwitcher from './language-switcher.component.vue'
-import logo from '../../assets/logo-restock.png'
+import logo from '../../assets/images/logo-restock.png'
 import { mockUser } from '../../shared/mocks/user.mock.ts';
 
 export default {

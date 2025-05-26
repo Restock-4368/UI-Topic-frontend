@@ -16,7 +16,7 @@ function contactSupplier() {
 } </script>
 <template><h3 class="mobile-subtitle">Suppliers</h3>
   <div class="summary-container"> <!-- Columna imagen -->
-    <div class="image-column"><h4>{{ supplier.name }}</h4> <img src="/src/assets/general_profile_supplier.png" alt="Supplier image"/>
+    <div class="image-column"><h4>{{ supplier.name }}</h4> <img src="/src/assets/images/general_profile_supplier.png" alt="Supplier image"/>
     </div>
     <!-- Columna información 1 -->
     <div class="info-column">
