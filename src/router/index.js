@@ -12,11 +12,14 @@ const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplie
 const RestaurantSupplierOverview = () => import('../restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
 const RestaurantSupplierDetail = () => import('../restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
 const RestaurantAlertsOverview = () => import('../restock/monitoring/pages/restaurant-alerts-overview.component.vue')
+const RestaurantRecipesOverview = () => import('../restock/planning/pages/restaurant-recipes-overview.component.vue')
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
  */
 const routes = [
+
+    // Restaurants Routes
     {
         path: '/dashboard/restaurant/inventory',
         name: 'restaurant-inventory',
@@ -35,6 +38,14 @@ const routes = [
         component: RestaurantAlertsOverview,
         meta: { title: 'sidebar.restaurant-alerts-overview' }
     },
+    {
+        path: '/dashboard/restaurant/recipes',
+        name: 'restaurant-recipes',
+        component: RestaurantRecipesOverview,
+        meta: { title: 'sidebar.restaurant-recipes-overview' }
+    },
+
+    // Suppliers Routes
     {
         path: '/dashboard/supplier/inventory',
         name: 'supplier-inventory',
