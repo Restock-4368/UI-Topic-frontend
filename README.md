@@ -1,8 +1,8 @@
-# 🍽️ Restaurant Inventory Management System 
+# Restaurant Inventory Management System 
 
 Sistema de gestión de inventario para restaurantes y proveedores, desarrollado en **Vue 3**, que permite a los administradores controlar eficientemente productos, alertas, perfiles y relaciones con proveedores.
 
-## 🚀 Tecnologías
+## Tecnologías
 
 - Vue 3 (Options API)
 - Vue Router
@@ -13,9 +13,9 @@ Sistema de gestión de inventario para restaurantes y proveedores, desarrollado 
 
 ---
 
-## ✅ Funcionalidades Clave
+## Funcionalidades Clave
 
-### 📦 Gestión de Inventario
+### Gestión de Inventario
 
 **Feature:** Visualización y control del inventario
 
@@ -31,7 +31,7 @@ Sistema de gestión de inventario para restaurantes y proveedores, desarrollado 
 
 ---
  
-### 📊 Panel de Resumen
+### Panel de Resumen
 
 **Feature:** Vista consolidada de métricas clave y actividad reciente
 
@@ -44,7 +44,7 @@ Sistema de gestión de inventario para restaurantes y proveedores, desarrollado 
 
 ---
 
-### 📢 Envío de Alertas
+### Envío de Alertas
 
 **Feature:** Sistema de notificaciones ante eventos críticos
 
@@ -58,7 +58,7 @@ Sistema de gestión de inventario para restaurantes y proveedores, desarrollado 
 
 ---
 
-### 📚 Catálogo de Proveedores
+### Catálogo de Proveedores
 
 **Feature:** Visualización y gestión de proveedores registrados
 
