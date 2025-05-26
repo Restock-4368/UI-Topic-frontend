@@ -1,11 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import axios from "axios";
-import {UserService} from "../restock/iam/services/user.service.js";
-/**
+
+ /**
  * @description Lazy-loaded component imports for route configuration
  * Using dynamic imports to enable code splitting and improve performance
  */
-const Inventory = () => import('../restaurant-admin/components/inventory.component.vue')
+const Inventory = () => import('../restock/resource/inventory/pages/inventory.component.vue')
 const RestaurantSummaryOverview = () => import('../restock/Analytics/pages/restaurant-summary-overview.component.vue')
 const SupplierReviewComponent = () => import('../restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
 const RoleRedirect = () => import('../public/pages/role-redirect.component.vue');
