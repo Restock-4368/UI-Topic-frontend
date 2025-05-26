@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
-import i18n from "./i18n.js";
+import index from "./i18n/index.js";
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import 'primeicons/primeicons.css'
@@ -14,7 +14,7 @@ const app = createApp(App);
 
 app
     .use(router)
-    .use(i18n)
+    .use(index)
     .use(PrimeVue, {ripple: true, theme: {preset: Aura }})
     .component('pv-button', Button)
     .component('pv-card', Card)
