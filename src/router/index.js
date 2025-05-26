@@ -1,17 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import axios from "axios";
-import {UserService} from "../app/restock/iam/services/user.service.js";
+import {UserService} from "../restock/iam/services/user.service.js";
 /**
  * @description Lazy-loaded component imports for route configuration
  * Using dynamic imports to enable code splitting and improve performance
  */
 const Inventory = () => import('../restaurant-admin/components/inventory.component.vue')
-const RestaurantSummaryOverview = () => import('../app/restock/Analytics/pages/restaurant-summary-overview.component.vue')
-const SupplierReviewComponent = () => import('../app/restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
-const RoleRedirect = () => import('../app/public/pages/role-redirect.component.vue');
-const SupplierSummaryOverview = () => import('../app/restock/Analytics/pages/supplier-summary-overview.component.vue')
-const RestaurantSupplierOverview = () => import('../app/restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
-const RestaurantSupplierDetail = () => import('../app/restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
+const RestaurantSummaryOverview = () => import('../restock/Analytics/pages/restaurant-summary-overview.component.vue')
+const SupplierReviewComponent = () => import('../restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
+const RoleRedirect = () => import('../public/pages/role-redirect.component.vue');
+const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplier-summary-overview.component.vue')
+const RestaurantSupplierOverview = () => import('../restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
+const RestaurantSupplierDetail = () => import('../restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
 
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
