@@ -7,7 +7,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const Inventory = () => import('../restock/resource/inventory/pages/inventory.component.vue')
 const RestaurantSummaryOverview = () => import('../restock/Analytics/pages/restaurant-summary-overview.component.vue')
 const SupplierReviewComponent = () => import('../restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
-const RoleRedirect = () => import('../public/pages/role-redirect.component.vue');
+const RoleRedirect = () => import('../public/components/role-redirect.component.vue');
 const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplier-summary-overview.component.vue')
 const RestaurantSupplierOverview = () => import('../restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
 const RestaurantSupplierDetail = () => import('../restock/resource/supplier-catalog/pages/supplier-detail.component.vue')

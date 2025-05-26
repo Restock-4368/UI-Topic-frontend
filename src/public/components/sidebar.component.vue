@@ -115,9 +115,9 @@ export default {
 
 /* Base sidebar para todos los tamaños */
 .sidebar {
-  /* width: 30rem; */
+  /* width: 30rem;
   background: var(--surface-0);
-  border-right: 1px solid var(--surface-border);
+  border-right: 1px solid var(--surface-border); */
   transition: transform 0.3s ease;
   display: flex;
   flex-direction: column;
