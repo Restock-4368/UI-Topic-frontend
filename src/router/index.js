@@ -1,29 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import axios from "axios";
-import {UserService} from "../app/restock/iam/services/user.service.js";
-/**
+
+ /**
  * @description Lazy-loaded component imports for route configuration
  * Using dynamic imports to enable code splitting and improve performance
  */
-const Inventory = () => import('../restaurant-admin/components/inventory.component.vue')
-const RestaurantSummaryOverview = () => import('../app/restock/Analytics/pages/restaurant-summary-overview.component.vue')
-const SupplierReviewComponent = () => import('../app/restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
-const RoleRedirect = () => import('../app/public/pages/role-redirect.component.vue');
-const SupplierSummaryOverview = () => import('../app/restock/Analytics/pages/supplier-summary-overview.component.vue')
-const RestaurantSupplierOverview = () => import('../app/restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
-const RestaurantSupplierDetail = () => import('../app/restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
-
+const Inventory = () => import('../restock/resource/inventory/pages/inventory.component.vue')
+const RestaurantSummaryOverview = () => import('../restock/Analytics/pages/restaurant-summary-overview.component.vue')
+const SupplierReviewComponent = () => import('../restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
+const RoleRedirect = () => import('../public/components/role-redirect.component.vue');
+const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplier-summary-overview.component.vue')
+const RestaurantSupplierOverview = () => import('../restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
+const RestaurantSupplierDetail = () => import('../restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
+const RestaurantAlertsOverview = () => import('../restock/monitoring/pages/restaurant-alerts-overview.component.vue')
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
  */
 const routes = [
-    {
-        path: '/dashboard/supplier/inventory',
-        name: 'supplier-inventory',
-        component: Inventory,
-        meta: { title: 'sidebar.inventory' }
-    },
     {
         path: '/dashboard/restaurant/inventory',
         name: 'restaurant-inventory',
@@ -36,6 +29,19 @@ const routes = [
         component: RestaurantSummaryOverview,
         meta: { title: 'sidebar.restaurant-summary-overview' }
     },
+    {
+        path: '/dashboard/restaurant/alerts',
+        name: 'restaurant-alerts',
+        component: RestaurantAlertsOverview,
+        meta: { title: 'sidebar.restaurant-alerts-overview' }
+    },
+    {
+        path: '/dashboard/supplier/inventory',
+        name: 'supplier-inventory',
+        component: Inventory,
+        meta: { title: 'sidebar.inventory' }
+    },
+
     {
         path: '/dashboard/supplier/summary',
         name: 'supplier-summary',
