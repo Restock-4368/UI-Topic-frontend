@@ -1,25 +1,118 @@
 <script>
 import EmptySection from '../../../shared/components/empty-section.component.vue';
-import {Button as PvButton, InputText as PvInputText} from "primevue";
+import CreateAndEdit from '../../../shared/components/create-and-edit.component.vue';
+import AddAndEditForm from '../../../shared/components/add-and-edit.component.vue';
+import DeleteConfirmation from '../../../shared/components/delete.component.vue';
+import SupplySelector from '../components/supply-selector.component.vue';
+import {RecipeService} from "../services/recipe.service.js";
 
 export default {
-  name: 'RecipesView',
+  name: 'RestaurantRecipesOverview',
   components: {
-    PvButton,
-    PvInputText,
     EmptySection,
+    CreateAndEdit,
+    AddAndEditForm,
+    DeleteConfirmation,
+    SupplySelector,
   },
   data() {
     return {
+      recipes: [],
       search: '',
-      sortByPrice: false,
+      formVisible: false,
+      editMode: 'create',
+      formModel: {},
+      selectedRecipe: null,
+      deleteVisible: false,
+      recipeService: new RecipeService(),
     };
+  },
+  computed: {
+    filteredRecipes() {
+      return this.recipes.filter(r =>
+          r.name.toLowerCase().includes(this.search.toLowerCase())
+      );
+    },
+    formSchema() {
+      return [
+        {
+          name: 'name',
+          label: 'Name',
+          type: 'text',
+          placeholder: 'Recipe name'
+        },
+        {
+          name: 'description',
+          label: 'Description',
+          type: 'text',
+          placeholder: 'Short description'
+        },
+        {
+          name: 'total_price',
+          label: 'Total Price (S/.)',
+          type: 'number',
+          placeholder: 'e.g. 29.90'
+        },
+        {
+          name: 'image_url',
+          label: 'Dish Image',
+          type: 'file'
+        }
+      ];
+    },
+  },
+  async created() {
+    await this.loadRecipes();
+  },
+  methods: {
+    async loadRecipes() {
+      this.recipes = await this.recipeService.getAll();
+    },
+    openCreateDialog() {
+      this.editMode = 'create';
+      this.formModel = { supplies: [] };
+      this.formVisible = true;
+    },
+    openEditDialog(recipe) {
+      this.editMode = 'edit';
+      this.formModel = { ...recipe, supplies: recipe.supplies || [] };
+      this.formVisible = true;
+    },
+    closeForm() {
+      this.formVisible = false;
+    },
+    async submitForm(data) {
+      if (!data.supplies || data.supplies.length === 0) {
+        alert('You must add at least one supply to the recipe.');
+        return;
+      }
+
+      if (this.editMode === 'create') {
+        await this.recipeService.create(data);
+      } else {
+        await this.recipeService.update(this.formModel.id, data);
+      }
+
+      this.formVisible = false;
+      await this.loadRecipes();
+    },
+    openDeleteDialog(recipe) {
+      this.selectedRecipe = recipe;
+      this.deleteVisible = true;
+    },
+    async confirmDelete() {
+      await this.recipeService.delete(this.selectedRecipe.id);
+      this.deleteVisible = false;
+      this.selectedRecipe = null;
+      await this.loadRecipes();
+    },
   },
 };
 </script>
 
 <template>
   <div class="recipes-view">
+    <!-- Header -->
     <div class="recipes-header">
       <div class="recipes-header__top">
         <h2 class="recipes-header__title">Recipes</h2>
@@ -27,64 +120,114 @@ export default {
       <div class="recipes-header__controls">
         <pv-input-text
             v-model="search"
-            placeholder="Buscar recetas"
-            class="recipes-header__search"
-        />
-        <ToggleSwitch
-            v-model="sortByPrice"
+            placeholder="Search recipes..."
             class="recipes-header__control"
         />
         <pv-button
             label="Create"
             icon="pi pi-plus"
+            @click="openCreateDialog"
             class="recipes-header__control"
         />
       </div>
     </div>
 
-    <EmptySection>
+    <!-- Empty -->
+    <EmptySection v-if="filteredRecipes.length === 0">
       <template #icon>
         <i class="pi pi-clipboard" style="font-size: 3rem; color: #bcbcbc;"></i>
       </template>
-      You currently have no recipes registered. Create a new recipe to start organizing your preparations and better
-      manage your ingredients from this section.
+      You currently have no recipes registered. Create a new recipe to start organizing your preparations and better manage your ingredients from this section.
     </EmptySection>
+
+    <!-- Grid -->
+    <div v-else class="recipes-grid">
+      <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card">
+        <img :src="recipe.image_url" alt="Dish image" />
+        <h3>{{ recipe.name }}</h3>
+        <p>Total cost: S/.{{ recipe.total_price }}</p>
+        <div class="recipe-card__actions">
+          <pv-button icon="pi pi-pencil" @click="openEditDialog(recipe)" outlined />
+          <pv-button icon="pi pi-trash" severity="danger" @click="openDeleteDialog(recipe)" outlined />
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE / EDIT Modal -->
+    <CreateAndEdit
+        v-model="formVisible"
+        :mode="editMode"
+        createTitle="Create Recipe"
+        editTitle="Edit Recipe"
+        @close="closeForm"
+    >
+      <AddAndEditForm
+          :schema="formSchema"
+          :initialData="formModel"
+          @submit="submitForm"
+      />
+
+      <h4 class="mt-4 mb-2">Recipe Supplies</h4>
+      <SupplySelector v-model="formModel.supplies" />
+    </CreateAndEdit>
+
+
+
+    <DeleteConfirmation
+        v-model="deleteVisible"
+        :label="selectedRecipe?.name"
+        @confirm="confirmDelete"
+        @cancel="deleteVisible = false"
+    />
+
   </div>
 </template>
 
-<style>
+
+
+<style scoped>
 .recipes-header {
   display: flex;
-  flex-direction: row;
-  gap: 5rem;
-  padding: 3rem;
-  justify-content: center;
-}
-
-.recipes-header__top {
-  display: flex;
-  align-items: center;
-}
-
-.recipes-header__title {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin: 0;
-  color: #2e2e2e;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem 0;
 }
 
 .recipes-header__controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 1rem;
   align-items: center;
 }
 
-.recipes-header__search {
-  min-width: 500px;
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
+.recipe-card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
 
+.recipe-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+}
 
+.recipe-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
 </style>
-
