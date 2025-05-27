@@ -1,4 +1,4 @@
-export class Category {
+export class UnitMeasurement {
     constructor({ id, name }) {
         this.id = id;
         this.name = name;

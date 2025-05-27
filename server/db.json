@@ -1,14 +1,4 @@
 {
-  "categories": [
-    {
-      "id": 1,
-      "name": "Vue.js"
-    },
-    {
-      "id": 2,
-      "name": "ASP.NET Core"
-    }
-  ],
   "users": [
     {
       "id": 1,
@@ -33,5 +23,112 @@
       }
     }
   ],
+  "recipes": [
+    {
+      "id": 1,
+      "name": "Lomo Saltado",
+      "description": "Clásico plato peruano con carne salteada",
+      "total_price": 28.5,
+      "image_url": "https://jameaperu.com/assets/images/lomo-saltado-de-pollo_800x534.webp",
+      "user_id": 1,
+      "supplies": [
+        { "supply_id": 1, "description": "Papas", "quantity": 2 },
+        { "supply_id": 2, "description": "Lomo Fino", "quantity": 1 },
+        { "supply_id": 3, "description": "Cebolla Roja", "quantity": 1 }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Ají de Gallina",
+      "description": "Delicioso ají cremoso con pollo deshilachado",
+      "total_price": 24.0,
+      "image_url": "https://buenazo.cronosmedia.glr.pe/original/2023/06/26/6499bf204fb28f54f91a9289.png",
+      "user_id": 1,
+      "supplies": [
+        { "supply_id": 4, "description": "Pechuga de Pollo", "quantity": 1 },
+        { "supply_id": 5, "description": "Ají Amarillo", "quantity": 1 },
+        { "supply_id": 6, "description": "Pan", "quantity": 2 }
+      ]
+    }
+  ],
+  "supplies": [
+    {
+      "id": 1,
+      "description": "Papas",
+      "perishable": true,
+      "min_stock": 5,
+      "max_stock": 50,
+      "category_id": 1,
+      "unit_measurement_id": 1,
+      "price": 2.5,
+      "user_id": 1
+    },
+    {
+      "id": 2,
+      "description": "Lomo Fino",
+      "perishable": true,
+      "min_stock": 2,
+      "max_stock": 20,
+      "category_id": 2,
+      "unit_measurement_id": 2,
+      "price": 12.0,
+      "user_id": 1
+    },
+    {
+      "id": 3,
+      "description": "Cebolla Roja",
+      "perishable": true,
+      "min_stock": 3,
+      "max_stock": 30,
+      "category_id": 1,
+      "unit_measurement_id": 1,
+      "price": 1.0,
+      "user_id": 1
+    },
+    {
+      "id": 4,
+      "description": "Pechuga de Pollo",
+      "perishable": true,
+      "min_stock": 2,
+      "max_stock": 15,
+      "category_id": 2,
+      "unit_measurement_id": 2,
+      "price": 10.0,
+      "user_id": 1
+    },
+    {
+      "id": 5,
+      "description": "Ají Amarillo",
+      "perishable": true,
+      "min_stock": 1,
+      "max_stock": 10,
+      "category_id": 3,
+      "unit_measurement_id": 1,
+      "price": 1.5,
+      "user_id": 1
+    },
+    {
+      "id": 6,
+      "description": "Pan",
+      "perishable": true,
+      "min_stock": 10,
+      "max_stock": 100,
+      "category_id": 4,
+      "unit_measurement_id": 1,
+      "price": 0.5,
+      "user_id": 1
+    }
+  ],
+  "categories": [
+    { "id": 1, "name": "Vegetales" },
+    { "id": 2, "name": "Carnes" },
+    { "id": 3, "name": "Ajíes" },
+    { "id": 4, "name": "Panadería" }
+  ],
+  "unit_measurements": [
+    { "id": 1, "name": "Unidad" },
+    { "id": 2, "name": "Kg" }
+  ]
+
   "restaurant_suppliers": []
 }

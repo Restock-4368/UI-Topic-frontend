@@ -6,7 +6,23 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
-import {Button,Column, DataTable,Carousel,Dropdown,Dialog,InputText, Card, Menubar, Image, SelectButton, Toolbar, Calendar, InputSwitch, InputNumber} from "primevue";
+import {
+    Button,
+    Column,
+    DataTable,
+    Carousel,
+    Select,
+    Dialog,
+    InputText,
+    Card,
+    Menubar,
+    Image,
+    SelectButton,
+    Toolbar,
+    Calendar,
+    InputNumber,
+    ToggleSwitch, FileUpload
+} from "primevue";
 import router from "./router/index.js";
 
 
@@ -23,13 +39,15 @@ app
     .component('pv-toolbar', Toolbar)
     .component('pv-image', Image)
     .component('pv-input-text', InputText)
-    .component('pv-dropdown', Dropdown)
+    .component('pv-select', Select)
     .component('pv-dialog', Dialog)
     .component('pv-carousel', Carousel)
     .component('pv-data-table', DataTable)
     .component('pv-column', Column)
     .component('pv-calendar', Calendar)
     .component('pv-input-number', InputNumber)
-    .component('pv-input-switch', InputSwitch)
+    .component('pv-input-switch', ToggleSwitch)
+    .component('ToggleSwitch', ToggleSwitch)
+    .component('FileUpload', FileUpload)
 
 .mount('#app');
