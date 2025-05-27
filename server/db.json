@@ -4,6 +4,11 @@
       "id": 1,
       "name": "Don Pepe",
       "email": "pepe@gmail.com",
+      "username": "donpepe",
+      "password": "password123",
+      "subscription_id": 1,
+      "start_date": "2023-01-01",
+      "subscription_payment_details_id": 1,
       "avatar": {
         "url": "https://i.pravatar.cc/150?img=1"
       },
@@ -15,12 +20,44 @@
       "id": 2,
       "name": "Chef Rosa",
       "email": "rosa@gmail.com",
+      "username": "rosachef",
+      "password": "password1234",
+      "subscription_id": 2,
+      "start_date": "2023-02-01",
+      "profile_id": 2,
+      "subscription_payment_details_id": 2,
       "avatar": {
         "url": "https://i.pravatar.cc/150?img=2"
       },
       "role_id": {
         "name": "restaurant"
       }
+    }
+  ],
+  "profiles": [
+    {
+      "id": 1,
+      "last_name": "Gonzales",
+      "phone": "987654321",
+      "address": "Av. Principal 123",
+      "country": "Perú",
+      "description": "Proveedor de ingredientes frescos",
+      "companyName": "Frescos del Valle",
+      "companyAddress": "Calle del Mercado 456",
+      "companyCategories": ["Fast Food", "Beverages", "Desserts", "Grill", "Pizzeria", "Buffet"],
+      "user_id": 1
+    },
+    {
+      "id": 2,
+      "last_name": "Martinez",
+      "phone": "987645321",
+      "address": "Av. Principal 133",
+      "country": "Perú",
+      "description": "Dueña de restaurante con recetas tradicionales",
+      "companyName": "Raíces del Sabor",
+      "companyAddress": "Calle del Mercado 346",
+      "companyCategories": ["Fast Food", "Beverages", "Desserts", "Grill", "Pizzeria", "Buffet"],
+      "user_id": 2
     }
   ],
   "recipes": [
