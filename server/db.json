@@ -129,4 +129,6 @@
     { "id": 1, "name": "Unidad" },
     { "id": 2, "name": "Kg" }
   ]
+
+  "restaurant_suppliers": []
 }
