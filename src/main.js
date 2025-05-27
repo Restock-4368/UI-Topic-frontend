@@ -11,7 +11,7 @@ import {
     Column,
     DataTable,
     Carousel,
-    Dropdown,
+    Select,
     Dialog,
     InputText,
     Card,
@@ -21,7 +21,7 @@ import {
     Toolbar,
     Calendar,
     InputNumber,
-    ToggleSwitch
+    ToggleSwitch, FileUpload
 } from "primevue";
 import router from "./router/index.js";
 
@@ -39,13 +39,15 @@ app
     .component('pv-toolbar', Toolbar)
     .component('pv-image', Image)
     .component('pv-input-text', InputText)
-    .component('pv-dropdown', Dropdown)
+    .component('pv-select', Select)
     .component('pv-dialog', Dialog)
     .component('pv-carousel', Carousel)
     .component('pv-data-table', DataTable)
     .component('pv-column', Column)
     .component('pv-calendar', Calendar)
     .component('pv-input-number', InputNumber)
+    .component('pv-input-switch', ToggleSwitch)
     .component('ToggleSwitch', ToggleSwitch)
+    .component('FileUpload', FileUpload)
 
 .mount('#app');
