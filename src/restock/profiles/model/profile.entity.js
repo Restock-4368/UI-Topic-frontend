@@ -1,18 +1,25 @@
-class Profile {
-    constructor() {
-        this.name = 'Elon';
-        this.lastName = 'Musk';
-        this.email = 'elon@gmail.com';
-        this.phone = '+51 940 163 699';
-        this.address = 'Av. Paseo de la República cuadra 2 ';
-        this.country = 'Peru';
-        this.description = 'I am a restaurant manager passionate about delivering exceptional culinary experiences.';
-        this.companyName = 'Alimentos S.A.';
-        this.companyAddress = 'Av. Paseo de la República cuadra 3';
-        this.companyCategories = ['Fast Food', 'Beverages', 'Desserts', 'Grill', 'Pizzeria', 'Buffet'];
-        this.image = 'assets/admin-avatar.png';
+export class Profile {
+    constructor({
+                    id = null,
+                    last_name = '',
+                    phone = '',
+                    address = '',
+                    country = '',
+                    description = '',
+                    companyName = '',
+                    companyAddress = '',
+                    companyCategories = [],
+                    user_id = null
+                } = {}) {
+        this.id = id;
+        this.last_name = last_name;
+        this.phone = phone;
+        this.address = address;
+        this.country = country;
+        this.description = description;
+        this.companyName = companyName;
+        this.companyAddress = companyAddress;
+        this.companyCategories = companyCategories;
+        this.user_id = user_id;
     }
 }
-
-const profile = new Profile();
-console.log(profile.name); // "Elon"
