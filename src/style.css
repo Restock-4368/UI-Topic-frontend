@@ -45,6 +45,7 @@
   .p-select-overlay {
     background-color: #ffffff !important;
   }
+
 }
 
 a {
@@ -105,6 +106,8 @@ button:focus-visible {
   color: white !important;
 }
 
+
+
 .red-button {
   border-radius: 9999px !important;
   background-color: #D9534F !important;
@@ -116,3 +119,16 @@ button:focus-visible {
   background-color: #D9534F !important;
   color: white !important;
 }
+
+.gray-button {
+    border-radius: 9999px !important;
+    background-color: #6c757d !important;
+    color: white !important;
+    border: none !important;
+}
+
+.gray-button:hover {
+    background-color: #5a6268 !important;
+    color: white !important;
+}
+

@@ -82,7 +82,7 @@ export default {
           inputClass="w-full"
       />
 
-      <pv-button icon="pi pi-plus" @click="addSupply" />
+      <pv-button icon="pi pi-plus" @click="addSupply"  class="green-button"/>
     </div>
 
     <pv-data-table :value="supplies" class="p-datatable-sm" responsiveLayout="scroll">
