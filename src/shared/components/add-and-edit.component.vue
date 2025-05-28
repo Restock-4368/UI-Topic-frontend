@@ -63,9 +63,14 @@ export default {
           v-model="form[field.name]"
           :id="field.name"
           :placeholder="field.placeholder"
+          :mode="field.format === 'currency' ? 'currency' : 'decimal'"
+          :currency="field.format === 'currency' ? 'PEN' : null"
+          :locale="'es-PE'"
+          :useGrouping="true"
+          :minFractionDigits="field.format === 'currency' ? 2 : 0"
+          :maxFractionDigits="field.format === 'currency' ? 2 : 0"
           class="w-full"
       />
-
       <pv-input-switch
           v-else-if="field.type === 'boolean'"
           v-model="form[field.name]"
@@ -79,6 +84,7 @@ export default {
           customUpload
           auto
           accept="image/*"
+          class="green-button"
           @uploader="event => handleUpload(event, field.name)"
       />
 
@@ -94,12 +100,14 @@ export default {
 
     <slot name="extension" :form="form" />
 
-    <pv-button
-        :label="mode === 'create' ? 'Save' : 'Update'"
-        icon="pi pi-check"
-        type="submit"
-        class="mt-4"
-    />
+    <div class="flex justify-content-end mt-4">
+      <pv-button
+          :label="mode === 'create' ? 'Save' : 'Update'"
+          icon="pi pi-check"
+          type="submit"
+          class="green-button"
+      />
+    </div>
   </form>
 </template>
 
