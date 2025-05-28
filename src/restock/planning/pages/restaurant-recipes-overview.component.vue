@@ -56,13 +56,14 @@ export default {
         {
           name: 'image_url',
           label: 'Dish Image',
+          placeholder: 'Upload an image',
           type: 'file'
         }
       ];
     },
   },
-  async created() {
-    await this.loadRecipes();
+  created() {
+    this.loadRecipes();
   },
   methods: {
     async loadRecipes() {
@@ -82,16 +83,18 @@ export default {
       this.formVisible = false;
     },
     async submitForm(data) {
+      console.log('🔁 Form submitted:', data); // ✅ ¿Se imprime esto?
+
       if (!data.supplies || data.supplies.length === 0) {
-        alert('You must add at least one supply to the recipe.');
+        alert('You must add at least one supply.');
         return;
       }
 
-      if (this.editMode === 'create') {
-        await this.recipeService.create(data);
-      } else {
-        await this.recipeService.update(this.formModel.id, data);
-      }
+      const response = this.editMode === 'create'
+          ? await this.recipeService.create(data)
+          : await this.recipeService.update(this.formModel.id, data);
+
+      console.log('✅ Backend response:', response);
 
       this.formVisible = false;
       await this.loadRecipes();
@@ -164,14 +167,15 @@ export default {
       <AddAndEditForm
           :schema="formSchema"
           :initialData="formModel"
+          :mode="editMode"
           @submit="submitForm"
-      />
-
-      <h4 class="mt-4 mb-2">Recipe Supplies</h4>
-      <SupplySelector v-model="formModel.supplies" />
+      >
+        <template #extension="{ form }">
+          <h4 class="mt-4 mb-2">Recipe Supplies</h4>
+          <SupplySelector v-model="form.supplies" />
+        </template>
+      </AddAndEditForm>
     </CreateAndEdit>
-
-
 
     <DeleteConfirmation
         v-model="deleteVisible"
