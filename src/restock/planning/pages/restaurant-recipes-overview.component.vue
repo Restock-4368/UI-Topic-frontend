@@ -25,13 +25,20 @@ export default {
       selectedRecipe: null,
       deleteVisible: false,
       recipeService: new RecipeService(),
+      sortByPrice: false,
     };
   },
   computed: {
     filteredRecipes() {
-      return this.recipes.filter(r =>
+      let filtered = this.recipes.filter(r =>
           r.name.toLowerCase().includes(this.search.toLowerCase())
       );
+
+      if (this.sortByPrice) {
+        return filtered.sort((a, b) => a.total_price - b.total_price);
+      }
+
+      return filtered;
     },
     formSchema() {
       return [
@@ -51,7 +58,8 @@ export default {
           name: 'total_price',
           label: 'Total Price (S/.)',
           type: 'number',
-          placeholder: 'e.g. 29.90'
+          placeholder: 'e.g. 29.90',
+          format: 'currency',
         },
         {
           name: 'image_url',
@@ -114,26 +122,41 @@ export default {
 </script>
 
 <template>
-  <div class="recipes-view">
+  <div class="recipes-view p-4">
     <!-- Header -->
-    <div class="recipes-header">
+    <div class="recipes-header flex flex-column sm:flex-row justify-content-between sm:align-items-center flex-wrap gap-3 sm:gap-4 mb-4">
+
       <div class="recipes-header__top">
-        <h2 class="recipes-header__title">Recipes</h2>
+        <h2 class="text-2xl font-semibold mr-2">Recipes</h2>
       </div>
-      <div class="recipes-header__controls">
+
+      <div class="recipes-header__middle flex flex-row flex-wrap align-items-center gap-2 sm:gap-5 ">
         <pv-input-text
             v-model="search"
             placeholder="Search recipes..."
-            class="recipes-header__control"
+            class="w-full sm:w-30rem"
         />
+
+        <div class="flex align-items-center gap-2">
+          <label for="sortByPrice" class="text-sm text-color-secondary">Sort by price</label>
+          <pv-input-switch
+              v-model="sortByPrice"
+              inputId="sortByPrice"
+          />
+        </div>
+      </div>
+
+      <div class="recipes-header__actions">
         <pv-button
             label="Create"
-            icon="pi pi-plus"
+            icon="pi pi-plus-circle"
             @click="openCreateDialog"
-            class="recipes-header__control"
+            class="green-button w-full sm:w-auto font-semibold px-3 py-2"
         />
       </div>
     </div>
+
+
 
     <!-- Empty -->
     <EmptySection v-if="filteredRecipes.length === 0">
@@ -190,19 +213,6 @@ export default {
 
 
 <style scoped>
-.recipes-header {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem 0;
-}
-
-.recipes-header__controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-}
 
 .recipes-grid {
   display: grid;
