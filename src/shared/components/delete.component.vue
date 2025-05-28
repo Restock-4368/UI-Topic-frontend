@@ -34,8 +34,8 @@ export default {
 
     <template #footer>
       <div class="flex justify-content-end gap-2">
-        <pv-button label="Cancel" severity="secondary" @click="$emit('cancel')" />
-        <pv-button label="Delete" icon="pi pi-trash" severity="danger" @click="$emit('confirm')" />
+        <pv-button label="Cancel" severity="secondary" @click="$emit('cancel')" class="gray-button" />
+        <pv-button label="Delete" icon="pi pi-trash" severity="danger" @click="$emit('confirm')" class="red-button"/>
       </div>
     </template>
   </BaseModal>
