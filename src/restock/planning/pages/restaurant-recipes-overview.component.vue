@@ -91,8 +91,6 @@ export default {
       this.formVisible = false;
     },
     async submitForm(data) {
-      console.log('🔁 Form submitted:', data); // ✅ ¿Se imprime esto?
-
       if (!data.supplies || data.supplies.length === 0) {
         alert('You must add at least one supply.');
         return;
@@ -101,9 +99,6 @@ export default {
       const response = this.editMode === 'create'
           ? await this.recipeService.create(data)
           : await this.recipeService.update(this.formModel.id, data);
-
-      console.log('✅ Backend response:', response);
-
       this.formVisible = false;
       await this.loadRecipes();
     },
