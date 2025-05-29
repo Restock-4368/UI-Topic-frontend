@@ -5,6 +5,7 @@ import AddAndEditForm from '../../../shared/components/add-and-edit.component.vu
 import DeleteConfirmation from '../../../shared/components/delete.component.vue';
 import SupplySelector from '../components/supply-selector.component.vue';
 import {RecipeService} from "../services/recipe.service.js";
+import {RecipeSupplyService} from "../services/recipe-supply.service.js";
 
 export default {
   name: 'RestaurantRecipesOverview',
@@ -26,6 +27,7 @@ export default {
       deleteVisible: false,
       recipeService: new RecipeService(),
       sortByPrice: false,
+      recipeSupplyService: new RecipeSupplyService(),
     };
   },
   computed: {
@@ -75,32 +77,41 @@ export default {
   },
   methods: {
     async loadRecipes() {
-      this.recipes = await this.recipeService.getAll();
+      const recipes = await this.recipeService.getAll();
+      const enhanced = await Promise.all(
+          recipes.map(async r => {
+            const supplies = await this.recipeSupplyService.getByRecipe(r.id);
+            return { ...r, supplies };
+          })
+      );
+      this.recipes = enhanced;
     },
     openCreateDialog() {
       this.editMode = 'create';
       this.formModel = { supplies: [] };
       this.formVisible = true;
     },
-    openEditDialog(recipe) {
+    async openEditDialog(recipe) {
+      const supplies = await this.recipeSupplyService.getByRecipe(recipe.id);
+      this.formModel = { ...recipe, supplies };
       this.editMode = 'edit';
-      this.formModel = { ...recipe, supplies: recipe.supplies || [] };
       this.formVisible = true;
     },
     closeForm() {
       this.formVisible = false;
     },
-    async submitForm(data) {
-      if (!data.supplies || data.supplies.length === 0) {
-        alert('You must add at least one supply.');
-        return;
+    async submitForm(form) {
+      if (this.editMode === 'create') {
+        const created = await this.recipeService.create(form);
+        await this.recipeSupplyService.bulkCreate(created.id, form.supplies);
+      } else {
+        await this.recipeService.update(form.id, form);
+        await this.recipeSupplyService.deleteByRecipe(form.id);
+        await this.recipeSupplyService.bulkCreate(form.id, form.supplies);
       }
 
-      const response = this.editMode === 'create'
-          ? await this.recipeService.create(data)
-          : await this.recipeService.update(this.formModel.id, data);
-      this.formVisible = false;
       await this.loadRecipes();
+      this.closeForm();
     },
     openDeleteDialog(recipe) {
       this.selectedRecipe = recipe;

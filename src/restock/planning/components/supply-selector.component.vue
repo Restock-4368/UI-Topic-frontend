@@ -14,7 +14,17 @@ export default {
       availableSupplies: [],
       selectedSupply: null,
       selectedQuantity: null,
+      internalValue: [...(this.modelValue || [])]
     };
+  },
+
+  watch: {
+    internalValue: {
+      handler(newVal) {
+        this.$emit('update:modelValue', newVal);
+      },
+      deep: true
+    }
   },
   computed: {
     supplies: {
@@ -32,25 +42,22 @@ export default {
   },
   methods: {
     addSupply() {
-      if (!this.selectedSupply || !this.selectedQuantity) return;
-
-      const exists = this.supplies.find(s => s.supply_id === this.selectedSupply.id);
-      if (exists) return;
-
-      const newSupply = {
-        supply_id: this.selectedSupply.id,
-        description: this.selectedSupply.description,
-        quantity: this.selectedQuantity
-      };
-
-      this.supplies = [...this.supplies, newSupply];
-
-      // Reset
+      const exists = this.internalValue.some(s => s.supply_id === this.selectedSupply);
+      if (!exists) {
+        this.internalValue.push({
+          supply_id: this.selectedSupply.id,
+          quantity: this.selectedQuantity
+        });
+      }
       this.selectedSupply = null;
       this.selectedQuantity = null;
     },
     removeSupply(index) {
-      this.supplies = this.supplies.filter((_, i) => i !== index);
+      this.internalValue.splice(index, 1);
+    },
+    getSupplyDescription(id) {
+      const match = this.availableSupplies.find(s => s.id === id);
+      return match ? match.description : 'Unknown';
     }
   }
 };
@@ -82,20 +89,20 @@ export default {
           inputClass="w-full"
       />
 
-      <pv-button icon="pi pi-plus" @click="addSupply"  class="green-button"/>
+      <pv-button icon="pi pi-plus-circle" @click="addSupply"  class="green-button" :disabled="!selectedSupply || !selectedQuantity"/>
     </div>
 
-    <pv-data-table :value="supplies" class="p-datatable-sm" responsiveLayout="scroll">
-      <pv-column field="description" header="Supply" />
-      <pv-column field="quantity" header="Qty" />
+    <pv-data-table :value="internalValue" class="w-full">
+      <pv-column field="supply_id" header="ID" />
+      <pv-column field="description" header="Supply">
+        <template #body="slotProps">
+          {{ getSupplyDescription(slotProps.data.supply_id) }}
+        </template>
+      </pv-column>
+      <pv-column field="quantity" header="Quantity" />
       <pv-column header="Actions">
-        <template #body="{ rowIndex }">
-          <pv-button
-              icon="pi pi-trash"
-              severity="danger"
-              outlined
-              @click="removeSupply(rowIndex)"
-          />
+        <template #body="slotProps">
+          <pv-button icon="pi pi-trash" @click="removeSupply(slotProps.index)" severity="danger" text />
         </template>
       </pv-column>
     </pv-data-table>
