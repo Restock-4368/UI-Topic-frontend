@@ -430,7 +430,7 @@
       "id": 1,
       "date": "2025-05-28",
       "admin_restaurant_id": 1,
-      "supplier_id": 1,
+      "supplier_id": 2,
       "order_to_supplier_state_id": 1,
       "order_to_supplier_situation_id": 1,
       "total_price": 30.55,
@@ -473,7 +473,7 @@
     {
       "order_to_supplier_id": 1,
       "supply_id": 1,
-      "stock": 10,
+      "quantity": 10,
       "accepted": false
     }
   ],

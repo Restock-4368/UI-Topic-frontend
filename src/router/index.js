@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import SuppliersOrdersOverviewComponent
+    from "../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue";
 
  /**
  * @description Lazy-loaded component imports for route configuration
@@ -11,8 +13,9 @@ const RoleRedirect = () => import('../public/components/role-redirect.component.
 const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplier-summary-overview.component.vue')
 const RestaurantSupplierOverview = () => import('../restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
 const RestaurantSupplierDetail = () => import('../restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
-const RestaurantAlertsOverview = () => import('../restock/monitoring/pages/restaurant-alerts-overview.component.vue')
+const RestaurantAlertsOverview = () => import('../restock/resource/inventory/pages/restaurant-alerts-overview.component.vue')
 const RestaurantRecipesOverview = () => import('../restock/planning/pages/restaurant-recipes-overview.component.vue')
+const SuppliersOrdersOverview = () => import('../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue')
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
@@ -76,6 +79,12 @@ const routes = [
         name: 'supplier-reviews',
         component: SupplierReviewComponent,
         meta: { title: 'sidebar.ratings' }
+    },
+    {
+        path: '/dashboard/supplier/orders',
+        name: 'supplier-orders',
+        component: SuppliersOrdersOverview,
+        meta: { title: 'sidebar.orders' }
     },
     {
         path: '/',
