@@ -440,13 +440,33 @@
   "orders_to_supplier_state": [
     {
       "id": 1,
-      "name": "preparing"
+      "name": "On Hold"
+    },
+    {
+      "id": 2,
+      "name": "Preparing"
+    },
+    {
+      "id": 3,
+      "name": "On the way"
+    },
+    {
+      "id": 4,
+      "name": "Delivered"
     }
   ],
   "orders_to_supplier_situation": [
     {
       "id": 1,
-      "name": "approved"
+      "name": "Pending"
+    },
+    {
+      "id": 2,
+      "name": "Approved"
+    },
+    {
+      "id": 3,
+      "name": "Declined"
     }
   ],
   "orders_to_supplier_supplies": [
