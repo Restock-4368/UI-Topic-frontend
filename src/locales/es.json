@@ -16,5 +16,14 @@
   "footer": {
     "rights-reserved": "todos los derechos reservados.",
     "developed-by": "Desarrollado por"
+  },
+  "recipes": {
+    "title": "Recetas",
+    "add-recipe": "Agregar Receta",
+    "edit-recipe": "Editar Receta",
+    "delete-recipe": "Eliminar Receta",
+    "instructions": "Instrucciones",
+    "save-recipe": "Guardar Receta",
+    "cancel": "Cancelar"
   }
 }

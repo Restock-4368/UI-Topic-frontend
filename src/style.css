@@ -132,3 +132,10 @@ button:focus-visible {
     color: white !important;
 }
 
+.bg-active-sidebar {
+  background-color: #D5E3D8;
+}
+
+.burger-button {
+  color: #4F8A5B !important;
+}
