@@ -1,23 +1,26 @@
 <template>
   <!-- Botón hamburguesa solo visible en pantallas pequeñas -->
-  <button
-      class="hamburger-button p-button p-button-text"
+  <pv-button
+      class="p-button p-button-text text-xl z-6 burger-button"
       @click="sidebarVisible = !sidebarVisible"
       v-show="isMobile"
+      :style="sidebarVisible ? 'position: fixed; top: 1rem; left: 12rem; z-index: 10' : 'position: fixed; top: 1rem; left: 1rem;'"
   >
-    <i class="pi pi-bars text-xl px-3 py-2"></i>
-  </button>
+    <i :class="['pi', sidebarVisible ? 'pi-times' : 'pi-bars']"></i>
+  </pv-button>
+
 
   <aside
-      class="sidebar"
-      :class="{
-    'sidebar--mobile-show': isMobile && sidebarVisible,
-    'sidebar--mobile-hide': isMobile && !sidebarVisible
-  }"
+      class="bg-white shadow-2 h-screen z-5 transition-all"
+      :class="[
+        'p-3',
+        isMobile ? 'fixed top-0 left-0 w-15rem' : 'w-15rem block',
+        sidebarVisible ? 'block' : isMobile ? 'hidden' : ''
+      ]"
   >
-    <div class="logo flex align-items-center gap-2 px-3 pt-4 pb-3">
-      <img :src="logo" alt="Restock logo" class="logo-icon" />
-      <span class="logo-text">Restock</span>
+    <div class="flex align-items-center gap-2 px-3 pt-4 pb-3">
+      <img :src="logo" alt="Restock logo" class="w-2rem" />
+      <span class="text-xl">Restock</span>
     </div>
 
 
@@ -26,17 +29,15 @@
         <RouterLink
             :to="item.route"
             class="menu-link flex align-items-center gap-3 p-4 transition-colors border-left-3 border-transparent w-full"
-            :class="{
-            'menu-link--active': isActive(item.route)
-          }"
+            :class="{ 'bg-active-sidebar': isActive(item.route) }"
         >
           <i :class="item.icon" class="text-lg"></i>
-          <span class="line-height-none">{{ $t(item.label) }}</span>
+          <span>{{ $t(item.label) }}</span>
         </RouterLink>
       </li>
     </ul>
 
-    <div class="py-6 flex justify-content-center">
+    <div class="pt-5 flex justify-content-center mt-auto">
       <LanguageSwitcher />
     </div>
   </aside>
@@ -116,29 +117,24 @@ export default {
 
 /* Base sidebar para todos los tamaños */
 .sidebar {
-  /* width: 30rem;
-  background: var(--surface-0);
-  border-right: 1px solid var(--surface-border); */
   transition: transform 0.3s ease;
   display: flex;
   flex-direction: column;
   box-shadow: 4px 0 8px rgba(0, 0, 0, 0.1);
+  height: 100vh;
 }
 
-/* Desktop (por defecto visible) */
 @media (min-width: 1260px) {
   .sidebar {
-    position: relative;
-    transform: translateX(0);
+    top: 0;
+    left: 0;
   }
 }
 
 @media (max-width: 1259px) {
   .sidebar {
-    position: fixed;
     top: 0;
     left: 0;
-    height: 100%;
     z-index: 5;
     transform: translateX(-100%);
     opacity: 0;
