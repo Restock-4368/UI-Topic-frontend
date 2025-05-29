@@ -133,7 +133,7 @@ export default {
     <div class="recipes-header flex flex-column sm:flex-row justify-content-between sm:align-items-center flex-wrap gap-3 sm:gap-4 mb-4">
 
       <div class="recipes-header__top">
-        <h2 class="text-2xl font-semibold mr-2">Recipes</h2>
+        <h2 class="text-2xl font-semibold mr-2">{{ $t('recipes.title') }}</h2>
       </div>
 
       <div class="recipes-header__middle flex flex-row flex-wrap align-items-center gap-2 sm:gap-5 ">
