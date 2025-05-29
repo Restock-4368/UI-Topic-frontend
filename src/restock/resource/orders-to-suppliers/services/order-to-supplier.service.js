@@ -2,7 +2,7 @@ import { BaseService } from "src/shared/services/base.service.js";
 
 export class OrderToSupplierService extends BaseService {
     constructor() {
-        super("/orders-to-supplier");
+        super(import.meta.env.VITE_ORDERS_TO_SUPPLIER_ENDPOINT_PATH);
     }
 
     getBySupplierId(supplierId) {
