@@ -1,14 +1,14 @@
 export class Supply {
     constructor({
-                    id,
-                    description,
-                    perishable,
-                    min_stock,
-                    max_stock,
-                    category_id,
-                    unit_measurement_id,
-                    price,
-                    user_id,
+                    id = 0,
+                    description = '',
+                    perishable = false,
+                    min_stock = 0,
+                    max_stock = 0,
+                    category_id = 0,
+                    unit_measurement_id = 0,
+                    price = 0.0,
+                    user_id = 0,
                 }) {
         this.id = id;
         this.description = description;

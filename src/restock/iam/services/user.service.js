@@ -1,9 +1,13 @@
 import axios from 'axios';
 import { User } from '../model/user.entity.js';
+import {BaseService} from "../../../shared/services/base.service.js";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export class UserService {
+export class UserService extends BaseService{
+
+    resourceEndpoint = import.meta.env.VITE_USERS_ENDPOINT_PATH;
+
     /**
      * Obtiene un usuario por ID
      * @param {number} id - ID del usuario a obtener
