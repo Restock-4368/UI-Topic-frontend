@@ -3,40 +3,44 @@
 export default {
   name: "new-orders",
   props: {
-    // orders: {
-    //   type: Array,
-    //   required: true,
-    // },
-    // ordersSupplies: {
-    //   type: Array,
-    //   required: true,
-    // },
-    // adminRestaurantsProfiles: { //El padre debería filtrar de los profile por userId con rol 'restaurant'
-    //   type: Array,
-    //   required: true,
-    // }
+    orders: {
+      type: Array,
+      required: true,
+    },
+    ordersSupplies: {
+      type: Array,
+      required: true,
+    },
+    adminRestaurantsProfiles: {
+      type: Array,
+      required: true,
+    },
+    supplies: {
+      type: Array,
+      required: true,
+    }
   },
-  data() {
-    return {
-      orders: [
-        { id: 1, date: "2024-07-01", adminRestaurantId: 101 },
-        { id: 2, date: "2024-07-02", adminRestaurantId: 102 },
-      ],
-      ordersSupplies: [
-        { orderId: 1, supply_id: 201, quantity: 3 },
-        { orderId: 1, supply_id: 202, quantity: 2 },
-        { orderId: 2, supply_id: 201, quantity: 1 },
-      ],
-      supplies: [
-        { id: 201, name: "Tomatoes", price: 2.5 },
-        { id: 202, name: "Lettuce", price: 1.0 },
-      ],
-      adminRestaurantsProfiles: [
-        { user_id: 101, business_name: "El Buen Sabor" },
-        { user_id: 102, business_name: "La Picantería Feliz" },
-      ],
-    };
-  },
+  // data() {
+  //   return {
+  //     orders: [
+  //       { id: 1, date: "2024-07-01", adminRestaurantId: 101 },
+  //       { id: 2, date: "2024-07-02", adminRestaurantId: 102 },
+  //     ],
+  //     ordersSupplies: [
+  //       { orderId: 1, supply_id: 201, quantity: 3 },
+  //       { orderId: 1, supply_id: 202, quantity: 2 },
+  //       { orderId: 2, supply_id: 201, quantity: 1 },
+  //     ],
+  //     supplies: [
+  //       { id: 201, name: "Tomatoes", price: 2.5 },
+  //       { id: 202, name: "Lettuce", price: 1.0 },
+  //     ],
+  //     adminRestaurantsProfiles: [
+  //       { user_id: 101, business_name: "El Buen Sabor" },
+  //       { user_id: 102, business_name: "La Picantería Feliz" },
+  //     ],
+  //   };
+  // },
   computed: {
     suppliesPerOrder() {
       const result = {};
