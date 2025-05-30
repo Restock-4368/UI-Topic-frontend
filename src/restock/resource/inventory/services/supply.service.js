@@ -1,33 +1,82 @@
-import {BaseService} from "../../../../shared/services/base.service.js";
-import {Supply} from "../model/supply.entity.js";
+import httpInstance from "../../../../shared/services/http.instance.js";
 
+/**
+ * @class SupplyService
+ * @description Service class for handling CRUD operations on supplies using HTTP requests
+ */
+export class SupplyService {
+  /** @type {string} The API endpoint for supplies */
+  resourceEndpoint = import.meta.env.VITE_SUPPLIES_ENDPOINT_PATH;
 
-export class SupplyService extends BaseService {
-    constructor() {
-        super(import.meta.env.VITE_SUPPLIES_ENDPOINT_PATH); // e.g. '/api/v1/supplies'
-    }
+  /**
+   * Retrieves all supplies
+   * @returns {Promise<AxiosResponse<any>>} Promise that resolves to an array of supplies
+   */
+  getAll() {
+    return httpInstance.get(this.resourceEndpoint);
+  }
 
-    async getAll() {
-        const response = await super.getAll();
-        return response.data.map(s => new Supply(s));
-    }
+  /**
+   * Retrieves a supply by its ID
+   * @param {number|string} id - The ID of the supply to retrieve
+   * @returns {Promise<AxiosResponse<any>>} Promise that resolves to the supply object
+   */
+  getById(id) {
+    return httpInstance.get(`${this.resourceEndpoint}/${id}`);
+  }
 
-    async getById(id) {
-        const response = await super.getById(id);
-        return new Supply(response.data);
-    }
+  /**
+   * Creates a new supply
+   * @param {Object} resource - The supply object to create
+   * @param {string} resource.name - The name of the supply
+   * @param {string} resource.description - The description of the supply
+   * @param {boolean} resource.perishable - Whether the supply is perishable
+   * @param {number} resource.min_stock - Minimum stock quantity
+   * @param {number} resource.max_stock - Maximum stock quantity
+   * @param {number|string} resource.category_id - ID of the supply category
+   * @param {number|string} resource.unit_measurement_id - ID of the unit measurement
+   * @param {number} resource.price - Price of the supply
+   * @param {number|string} resource.user_id - ID of the user who manages the supply
+   * @returns {Promise<AxiosResponse<any>>} Promise that resolves to the created supply
+   */
+  create(resource) {
+    return httpInstance.post(this.resourceEndpoint, resource);
+  }
 
-    async create(supplyData) {
-        const response = await super.create(supplyData);
-        return new Supply(response.data);
-    }
+  /**
+   * Updates an existing supply
+   * @param {number|string} id - The ID of the supply to update
+   * @param {Object} resource - The updated supply data
+   * @param {string} resource.name - The name of the supply
+   * @param {string} resource.description - The description of the supply
+   * @param {boolean} resource.perishable - Whether the supply is perishable
+   * @param {number} resource.min_stock - Minimum stock quantity
+   * @param {number} resource.max_stock - Maximum stock quantity
+   * @param {number|string} resource.category_id - ID of the supply category
+   * @param {number|string} resource.unit_measurement_id - ID of the unit measurement
+   * @param {number} resource.price - Price of the supply
+   * @param {number|string} resource.user_id - ID of the user who manages the supply
+   * @returns {Promise<AxiosResponse<any>>} Promise that resolves to the updated supply
+   */
+  update(id, resource) {
+    return httpInstance.put(`${this.resourceEndpoint}/${id}`, resource);
+  }
 
-    async update(id, supplyData) {
-        const response = await super.update(id, supplyData);
-        return new Supply(response.data);
-    }
+  /**
+   * Deletes a supply by its ID
+   * @param {number|string} id - The ID of the supply to delete
+   * @returns {Promise<AxiosResponse<any>>} Promise that resolves when the supply is deleted
+   */
+  delete(id) {
+    return httpInstance.delete(`${this.resourceEndpoint}/${id}`);
+  }
 
-    async delete(id) {
-        return await super.delete(id);
-    }
+  /**
+   * Retrieves supplies by description
+   * @param {string} description - The description to search for
+   * @returns {Promise<AxiosResponse<any>>} Promise that resolves to an array of matching supplies
+   */
+  getByDescription(description) {
+    return httpInstance.get(`${this.resourceEndpoint}?description=${encodeURIComponent(description)}`);
+  }
 }
