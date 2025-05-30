@@ -36,8 +36,8 @@ const routes = [
         meta: { title: 'sidebar.restaurant-summary-overview' }
     },
     {
-        path: '/dashboard/restaurant/alerts',
-        name: 'restaurant-alerts',
+        path: '/dashboard/restaurant/notifications',
+        name: 'restaurant-notifications',
         component: RestaurantAlertsOverview,
         meta: { title: 'sidebar.restaurant-alerts-overview' }
     },
