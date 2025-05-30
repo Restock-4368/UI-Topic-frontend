@@ -1,27 +1,20 @@
-export class Role {
-    constructor({ name = '' } = {}) {
-        this.name = name;
-    }
-}
-
-export class Avatar {
-    constructor({ url = '' } = {}) {
-        this.url = url;
-    }
-}
 
 export class User {
     constructor({
                     id = 0,
-                    name = '',
                     email = '',
-                    avatar = {},
-                    role_id = {}
+                    password = '',
+                    subscription_id = 0,
+                    start_date = new Date(),
+                    subscription_payment_details_id = 0,
+                    role_id = 0
                 } = {}) {
         this.id = id;
-        this.name = name;
         this.email = email;
-        this.avatar = new Avatar(avatar);
-        this.role_id = new Role(role_id);
+        this.password = password;
+        this.subscriptionId = subscription_id;
+        this.startDate = start_date;
+        this.subscriptionPaymentDetailsId = subscription_payment_details_id;
+        this.roleId = role_id;
     }
 }
