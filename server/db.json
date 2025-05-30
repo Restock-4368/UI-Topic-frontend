@@ -135,14 +135,14 @@
         {
           "id": 17,
           "recipe_id": 2,
-          "supply_id": 6,
-          "quantity": 2
+          "supply_id": 5,
+          "quantity": 1
         },
         {
           "id": 18,
           "recipe_id": 2,
-          "supply_id": 5,
-          "quantity": 1
+          "supply_id": 6,
+          "quantity": 2
         }
       ]
     },
@@ -165,7 +165,27 @@
       "name": "Ceviche de Pescado",
       "total_price": 37,
       "image_url": "https://treehouselodge.com/wp-content/uploads/2021/09/peruvian-ceviche.png",
-      "user_id": 1
+      "user_id": 1,
+      "supplies": [
+        {
+          "id": 13,
+          "recipe_id": 5,
+          "supply_id": 11,
+          "quantity": 1
+        },
+        {
+          "id": 14,
+          "recipe_id": 5,
+          "supply_id": 12,
+          "quantity": 3
+        },
+        {
+          "id": 15,
+          "recipe_id": 5,
+          "supply_id": 3,
+          "quantity": 1
+        }
+      ]
     }
   ],
   "recipes_supplies": [
@@ -224,40 +244,40 @@
       "quantity": 1
     },
     {
-      "id": 13,
       "recipe_id": 5,
       "supply_id": 11,
-      "quantity": 1
+      "quantity": 1,
+      "id": 19
     },
     {
-      "id": 14,
       "recipe_id": 5,
       "supply_id": 12,
-      "quantity": 3
+      "quantity": 3,
+      "id": 20
     },
     {
-      "id": 15,
       "recipe_id": 5,
       "supply_id": 3,
-      "quantity": 1
+      "quantity": 1,
+      "id": 21
     },
     {
       "recipe_id": 2,
       "supply_id": 4,
       "quantity": 1,
-      "id": 16
+      "id": 22
     },
     {
       "recipe_id": 2,
       "supply_id": 5,
       "quantity": 1,
-      "id": 17
+      "id": 23
     },
     {
       "recipe_id": 2,
       "supply_id": 6,
       "quantity": 2,
-      "id": 18
+      "id": 24
     }
   ],
   "supplies": [
@@ -424,15 +444,15 @@
     {
       "id": 1,
       "date": "2025-05-28",
-      "admin_restaurant_id": 1,
-      "supplier_id": 2,
+      "admin_restaurant_id": 2,
+      "supplier_id": 1,
       "order_to_supplier_state_id": 1,
       "order_to_supplier_situation_id": 1,
       "total_price": 30.55,
       "partially_accepted": false
     }
   ],
-  "orders_to_supplier_state": [
+  "orders_to_supplier_states": [
     {
       "id": 1,
       "name": "On Hold"
@@ -450,7 +470,7 @@
       "name": "Delivered"
     }
   ],
-  "orders_to_supplier_situation": [
+  "orders_to_supplier_situations": [
     {
       "id": 1,
       "name": "Pending"
