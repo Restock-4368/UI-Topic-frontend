@@ -1,13 +1,13 @@
 export class OrderToSupplier {
     constructor({
-                    id,
-                    date,
-                    admin_restaurant_id,
-                    supplier_id,
-                    order_to_supplier_state_id,
-                    order_to_supplier_situation_id,
-                    total_price,
-                    partially_accepted
+                    id = 0,
+                    date = new Date(),
+                    admin_restaurant_id = 0,
+                    supplier_id = 0,
+                    order_to_supplier_state_id = 0,
+                    order_to_supplier_situation_id = 0,
+                    total_price = 0.0,
+                    partially_accepted = false
                 }) {
         this.id = id;
         this.date = date;
