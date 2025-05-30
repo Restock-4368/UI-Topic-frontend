@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SuppliersOrdersOverviewComponent
-    from "../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue";
+
 
  /**
  * @description Lazy-loaded component imports for route configuration
