@@ -3,9 +3,8 @@ import {Supply} from "../model/supply.entity.js";
 
 
 export class SupplyService extends BaseService {
-    constructor() {
-        super(import.meta.env.VITE_SUPPLIES_ENDPOINT_PATH); // e.g. '/api/v1/supplies'
-    }
+
+    resourceEndpoint = import.meta.env.VITE_SUPPLIES_ENDPOINT_PATH;
 
     async getAll() {
         const response = await super.getAll();
