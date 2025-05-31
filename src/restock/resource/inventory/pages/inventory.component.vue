@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      role: 'admin',
+      role: 'supplier',
       showSupplyModal: false,
       search: '',
       showInventoryModal: false,
@@ -60,7 +60,6 @@ export default {
       units: [],
       unitMeasurement: new UnitMeasurement(),
       UnitMeasurementService: new UnitMeasurementService(),
-      supplyService: new SupplyService(),
       supplies: [],
       supplyBatchService: new SupplyBatchService(),
       supplyService: new SupplyService(),
@@ -290,6 +289,82 @@ export default {
     this.loadBatchesWithSupply();
   },
   methods: {
+    async updateBatch(updatedItem) {
+      try {
+        const id = this.selectedInventoryItem.id;
+        console.log("Este es el item: ", this.selectedInventoryItem)
+        const formattedPayload = {
+          supply_id: updatedItem.supply_id,
+          stock: updatedItem.stock,
+          expiration_date: updatedItem.expiration_date
+        };
+
+        await this.supplyBatchService.update(id, formattedPayload);
+
+        await this.loadBatchesWithSupply();
+        this.showInventoryModal = false;
+      } catch (error) {
+        console.error('Error al actualizar batch de insumo:', error);
+      }
+    },
+    async updateSupply(updatedItem) {
+      try {
+        const id = this.supplyToEdit.id;
+
+        const formattedPayload = {
+          name: updatedItem.name,
+          description: updatedItem.description,
+          perishable: updatedItem.perishable,
+          category_id: updatedItem.category_id,
+          unit_measurement_id: updatedItem.unit_measurement_id,
+          min_stock: updatedItem.min_stock ?? null,
+          max_stock: updatedItem.max_stock ?? null,
+          price: updatedItem.price
+        };
+
+        await this.supplyService.update(id, formattedPayload);
+
+        await this.loadSupplies();
+
+        this.showSupplyModal = false;
+      } catch (error) {
+        console.error('Error al actualizar insumo:', error);
+      }
+    },
+    async createBatch(batchData) {
+      try {
+        const payload = {
+          supply_id: batchData.supply_id,
+          stock: batchData.stock,
+          expiration_date: batchData.expiration_date || null,
+          provider: batchData.provider || null
+        };
+
+        const existingBatch = this.batches.find(
+          batch => batch.supply_id === payload.supply_id && batch.expiration_date === null
+        );
+
+        if (existingBatch) {
+          const updatedStock = existingBatch.stock + payload.stock;
+          const updatedPayload = {
+            supply_id: existingBatch.supply_id,
+            stock: updatedStock,
+            expiration_date: existingBatch.expiration_date,
+            provider: existingBatch.provider || null
+          };
+
+          await this.supplyBatchService.update(existingBatch.id, updatedPayload);
+        } else {
+          await this.supplyBatchService.create(payload);
+        }
+
+        await this.loadBatchesWithSupply();
+        this.showInventoryModal = false;
+      } catch (error) {
+        console.error('Error al crear el batch:', error);
+      }
+    }
+    ,
     async loadBatchesWithSupply() {
       try {
         const response = await this.supplyBatchService.getAll();
@@ -299,34 +374,28 @@ export default {
         for (const b of rawBatches) {
           const batch = new SupplyBatch(b);
           try {
-            // Obtener supply para el batch
             const supplyResponse = await this.supplyService.getById(batch.supply_id);
             const supply = new Supply(supplyResponse.data);
 
-            // Obtener categoría y poner el nombre en supply.category
             const categoryResponse = await this.categoryService.getById(supply.category_id);
             supply.category = categoryResponse.data.name;
 
-            // Obtener unidad y poner el nombre en supply.unit
             const unitResponse = await this.UnitMeasurementService.getById(supply.unit_measurement_id);
             supply.unit = unitResponse.data.name;
 
-            // Ahora concatenamos supply (con nombres ya cargados) sobre batch
             enrichedBatches.push({
+              ...supply,
               ...batch,
-              ...supply
+              category: supply.category,
+              unit: supply.unit
             });
 
           } catch (error) {
             console.error(`Error al cargar supply/categoría/unidad para batch id ${batch.id}`, error);
-            // De todos modos agregamos batch sin supply para no perder datos
             enrichedBatches.push(batch);
           }
         }
-
         this.batches = enrichedBatches;
-        console.log('Batches con supply, categoría y unidad cargados:', this.batches);
-
       } catch (error) {
         console.error('Error al cargar los batches:', error);
       }
@@ -353,8 +422,8 @@ export default {
 
             enrichedSupplies.push(supply);
           }
-
           this.supplies = enrichedSupplies;
+          console.log("Estos son los sssss", this.supplies)
         })
         .catch(error => {
           console.error('Error al cargar los supplies:', error);
@@ -371,7 +440,6 @@ export default {
       this.UnitMeasurementService.getAll()
         .then(response => {
           this.units = response.data.map(u => new UnitMeasurement(u));
-          console.log("Unidades de medida cargadas:", this.units);
         })
         .catch(error => {
           console.error("Error al cargar las unidades de medida:", error);
@@ -393,13 +461,14 @@ export default {
       this.showInventoryModal = true;
     },
     openInventoryEditModal(item) {
-      const matchedSupply = this.supplies.find(s => s.name === item.name);
+      const matchedSupply = this.supplies.find(s => s.id === item.supply_id);
 
       this.selectedInventoryItem = {
+        id: item.id,
         supply: matchedSupply || null,
         stock: item.stock,
         provider: item.provider || null,
-        expiry: item.expiry || null
+        expiry: item.expiration_date || null
       };
 
       this.isEditing = true;
@@ -423,13 +492,6 @@ export default {
     ,
     createSupply(newItem) {
       this.supplies.push({ ...newItem });
-      this.showSupplyModal = false;
-    },
-    updateSupply(updatedItem) {
-      const index = this.supplies.findIndex(s => s.name === updatedItem.name);
-      if (index !== -1) {
-        this.supplies[index] = { ...updatedItem };
-      }
       this.showSupplyModal = false;
     },
     handleInventoryUpdate(updatedItem) {
@@ -552,9 +614,8 @@ export default {
       @cancel="showSupplyModal = false" @update:visible="showSupplyModal = $event" />
     <inventorySupplyAddAndEdit :role="role" :visible="showInventoryModal" :isEdit="isEditing"
       :itemToEdit="selectedInventoryItem" :supplies="supplies" :providers="providers"
-      :isPerishable="selectedInventoryItem?.perishable === 'Sí'" @create="handleCreateSupply"
-      @update:visible="showInventoryModal = $event" @update="handleInventoryUpdate"
-      @cancel="showInventoryModal = false" />
+      :isPerishable="selectedInventoryItem?.perishable === 'Sí'" @create="createBatch"
+      @update:visible="showInventoryModal = $event" @update="updateBatch" @cancel="showInventoryModal = false" />
   </div>
 </template>
 
