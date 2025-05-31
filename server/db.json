@@ -448,6 +448,18 @@
       "supplier_id": 1,
       "order_to_supplier_state_id": 1,
       "order_to_supplier_situation_id": 1,
+      "requested_products_count": 2,
+      "total_price": 30.55,
+      "partially_accepted": false
+    },
+    {
+      "id": 2,
+      "date": "2025-01-01",
+      "admin_restaurant_id": 2,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 1,
+      "requested_products_count": 2,
       "total_price": 30.55,
       "partially_accepted": false
     }
@@ -489,6 +501,18 @@
       "order_to_supplier_id": 1,
       "supply_id": 1,
       "quantity": 10,
+      "accepted": false
+    },
+    {
+      "order_to_supplier_id": 1,
+      "supply_id": 2,
+      "quantity": 4,
+      "accepted": false
+    },
+    {
+      "order_to_supplier_id": 2,
+      "supply_id": 3,
+      "quantity": 5,
       "accepted": false
     }
   ],
