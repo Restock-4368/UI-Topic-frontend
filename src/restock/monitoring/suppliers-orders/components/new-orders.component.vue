@@ -1,7 +1,11 @@
 <script>
 
+import EmptySection from "../../../../shared/components/empty-section.component.vue";
+import ManageNewOrders from "./manage-new-orders.component.vue";
+
 export default {
   name: "new-orders",
+  components: {ManageNewOrders, EmptySection},
   props: {
     orders: {
       type: Array,
@@ -20,78 +24,105 @@ export default {
       required: true,
     }
   },
-  // data() {
-  //   return {
-  //     orders: [
-  //       { id: 1, date: "2024-07-01", adminRestaurantId: 101 },
-  //       { id: 2, date: "2024-07-02", adminRestaurantId: 102 },
-  //     ],
-  //     ordersSupplies: [
-  //       { orderId: 1, supply_id: 201, quantity: 3 },
-  //       { orderId: 1, supply_id: 202, quantity: 2 },
-  //       { orderId: 2, supply_id: 201, quantity: 1 },
-  //     ],
-  //     supplies: [
-  //       { id: 201, name: "Tomatoes", price: 2.5 },
-  //       { id: 202, name: "Lettuce", price: 1.0 },
-  //     ],
-  //     adminRestaurantsProfiles: [
-  //       { user_id: 101, business_name: "El Buen Sabor" },
-  //       { user_id: 102, business_name: "La Picantería Feliz" },
-  //     ],
-  //   };
-  // },
-  computed: {
-    suppliesPerOrder() {
-      const result = {};
-      this.orders.forEach(order => {
-        result[order.id] = this.ordersSupplies.filter(os => os.orderId === order.id);
-      });
-      return result;
+  data() {
+    return {
+      finalPricePerOrder: {},
+      suppliesPerOrderCount: {},
+      selectedOrder: null,
+      showManageModal: false
+    }
+  },
+  watch: {
+    ordersSupplies: {
+      handler() {
+        this.calculatePricesAndCounts();
+      },
+      immediate: true,
+      deep: true,
     },
-    suppliesPerOrderCount() {
+    orders: {
+      handler() {
+        this.calculatePricesAndCounts();
+      },
+      immediate: true,
+      deep: true,
+    }
+  },
+  methods: {
+    calculatePricesAndCounts() {
+      if (!this.orders.length || !this.ordersSupplies.length) return;
+
+      const priceMap = {};
       const countMap = {};
 
       this.orders.forEach(order => {
-        const supplies = this.suppliesPerOrder[order.id] || [];
-        countMap[order.id] = supplies.length;
+        const orderId = Number(order.id);
+        const orderSupplies = this.ordersSupplies.find(os => Number(os.orderId) === orderId);
+        console.log("Probando lo de final price en METHODS", orderSupplies);
+
+        if (!orderSupplies) {
+          priceMap[orderId] = 0;
+          countMap[orderId] = 0;
+          return;
+        }
+
+        countMap[orderId] = orderSupplies.supplies?.length || 0;
+
+        priceMap[orderId] = orderSupplies.supplies.reduce((sum, supplyItem) => {
+          const supply = this.supplies.find(s => Number(s.id) === Number(supplyItem.supplyId));
+          const price = supply?.price || 0;
+
+          console.log("Supply Price", price);
+
+          return sum + price * supplyItem.quantity;
+        }, 0);
       });
 
-      return countMap;
+      this.finalPricePerOrder = priceMap;
+      this.suppliesPerOrderCount = countMap;
     },
+    filteredOrders() {
+      return (this.orders || []).filter(order => order.partiallyAccepted === false);
+    },
+    manageNewOrder(order) {
+      this.selectedOrder = order;
+      this.showManageModal = true;
+    },
+    closeManageModal() {
+      this.showManageModal = false;
+      this.selectedOrder = null;
+    }
+  },
+  computed: {
     restaurantBusinessNamesPerOrder() {
       const nameMap = {};
 
       this.orders.forEach(order => {
-        const profile = this.adminRestaurantsProfiles.find(p => p.user_id === order.adminRestaurantId);
-        nameMap[order.id] = profile ? profile.business_name : 'Unknown Restaurant';
+        const profile = this.adminRestaurantsProfiles.find(p => p.userId === order.adminRestaurantId);
+
+        nameMap[order.id] = profile ? profile.businessName : 'Unknown Restaurant';
       });
 
       return nameMap;
-    },
-    finalPricePerOrder() {
-      const pricePerOrder = {};
-
-      this.orders.forEach(order => {
-        const suppliesForOrder = this.suppliesPerOrder[order.id] || [];
-
-        pricePerOrder[order.id] = suppliesForOrder.reduce((sum, os) => {
-          const supply = this.supplies.find(s => s.id === os.supply_id);
-          const price = supply?.price || 0;
-          return sum + price * os.quantity;
-        }, 0);
-      });
-
-      return pricePerOrder;
-    },
+    }
   }
 }
 
 </script>
 
 <template>
+
+  <!-- Empty -->
+  <EmptySection v-if="filteredOrders().length === 0">
+    You currently have no orders received.
+    <template #icon>
+      <i class="pi pi-truck" style="font-size: 3rem; color: #bcbcbc;"></i>
+    </template>
+  </EmptySection>
+
   <pv-data-table
-      :value="orders"
+      v-if="filteredOrders().length > 0"
+      :value="filteredOrders()"
       paginator
       :rows="5"
       :rows-per-page-options="[4, 6, 8, 10]"
@@ -117,7 +148,7 @@ export default {
 
     <pv-column header="Final Price">
       <template #body="{ data }">
-        S/ {{ finalPricePerOrder[data.id].toFixed(2) }}
+        S/ {{ finalPricePerOrder[data.id] }}
       </template>
     </pv-column>
 
@@ -131,8 +162,29 @@ export default {
         />
       </template>
     </pv-column>
+
+    <pv-column header="Manage">
+      <template #body="{ data }">
+        <pv-button
+            class="p-button-icon-style"
+            icon="pi pi-wrench text-base"
+            @click="manageNewOrder(data)"
+            text
+        />
+
+      </template>
+    </pv-column>
   </pv-data-table>
 
+  <manage-new-orders
+      v-if="showManageModal"
+      :order="orders[0]"
+      :supplies="supplies"
+      :supplies-per-order="ordersSupplies[0]"
+      :model-value="showManageModal"
+      @update:modelValue="showManageModal = $event"
+      @close="closeManageModal"
+  />
 </template>
 
 <style>
