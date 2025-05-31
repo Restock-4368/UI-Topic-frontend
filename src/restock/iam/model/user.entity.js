@@ -8,7 +8,7 @@ export class User {
                     start_date = new Date(),
                     subscription_payment_details_id = 0,
                     role_id = 0
-                } = {}) {
+                }) {
         this.id = id;
         this.email = email;
         this.password = password;
