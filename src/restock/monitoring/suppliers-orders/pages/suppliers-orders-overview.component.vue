@@ -5,23 +5,21 @@ import { OrderToSupplierSupplyService } from "../../../resource/orders-to-suppli
 import {OrderToSupplier} from "../../../resource/orders-to-suppliers/model/order-to-supplier.entity.js";
 import {OrderToSupplierSupply} from "../../../resource/orders-to-suppliers/model/order-to-supplier-supply.entity.js";
 import {UserService} from "../../../iam/services/user.service.js";
-import {RoleService} from "../../../iam/services/role.service.js";
 import {ProfileService} from "../../../profiles/services/profile.service.js";
 import {Profile} from "../../../profiles/model/profile.entity.js";
-import {Role} from "../../../iam/model/role.entity.js";
 import {User} from "../../../iam/model/user.entity.js";
 import {SupplyService} from "../../../resource/inventory/services/supply.service.js";
 import {Supply} from "../../../resource/inventory/model/supply.entity.js";
+import EmptySection from "../../../../shared/components/empty-section.component.vue";
 
 export default {
   name: "suppliers-orders-overview",
-  components: {NewOrders},
+  components: {EmptySection, NewOrders},
   data() {
     return {
       orders: [],
       requestedSuppliesInOrders: [],
       users: [],
-      roles: [],
       supplies: [],
       adminRestaurantsProfiles: [],
       suppliesGroupedByOrder: [],
@@ -34,22 +32,13 @@ export default {
   },
   created() {
     this.ordersService = new OrderToSupplierService();
-    this.suppliesService = new OrderToSupplierSupplyService();
+    this.requestedSuppliesInOrdersService = new OrderToSupplierSupplyService();
     this.usersService = new UserService();
-    this.rolesService = new RoleService();
     this.profilesService = new ProfileService();
     this.suppliesService = new SupplyService();
 
-    // 1. Get orders
-    this.ordersService.getAll()
-        .then(response => {
-          this.orders = response.data.map(order => new OrderToSupplier(order));
-          console.log("Orders:", this.orders);
-        })
-        .catch(error => console.error("Orders error:", error));
-
     // 2. Get supplies requested
-    this.suppliesService.getAll()
+    this.requestedSuppliesInOrdersService.getAll()
         .then(response => {
           // 1. Convert each element to class OrderToSupplierSupply
           this.requestedSuppliesInOrders = response.data.map(s => new OrderToSupplierSupply(s));
@@ -66,35 +55,15 @@ export default {
             grouped[orderId].push(orderSupply);
           });
 
-          // 3. Convert the object to an array of arrays
-          this.suppliesGroupedByOrder = Object.values(grouped);
+          // 3. Convert the object to an array of arrays with [key, arr of OrderToSupplierSupply]
+          this.suppliesGroupedByOrder = Object.entries(grouped).map(([orderId, supplies]) => ({
+            orderId,
+            supplies
+          }));
 
           console.log("Supplies grouped by order:", this.suppliesGroupedByOrder);
         })
         .catch(error => console.error("Supply error:", error));
-
-    // 3. Load users, roles, and profiles together and then filter profiles per role name 'restaurant'
-    Promise.all([
-      this.usersService.getAll(),
-      this.rolesService.getAll(),
-      this.profilesService.getAll()
-    ])
-        .then(([usersResponse, rolesResponse, profilesResponse]) => {
-          this.users = usersResponse.data.map(u => new User(u));
-          this.roles = rolesResponse.data.map(r => new Role(r));
-          const allProfiles = profilesResponse.data.map(p => new Profile(p));
-
-          this.adminRestaurantsProfiles = allProfiles.filter(profile => {
-            const user = this.users.find(u => u.id === profile.user_id);
-            const role = this.roles.find(r => r.id === user?.role_id);
-            return role?.name === 'restaurant';
-          });
-
-          console.log("Users:", this.users);
-          console.log("Roles:", this.roles);
-          console.log("Filtered Restaurant Profiles:", this.adminRestaurantsProfiles);
-        })
-        .catch(error => console.error("Users/Roles/Profiles error:", error));
 
     // 4. Get general supplies
     this.suppliesService.getAll()
@@ -103,6 +72,37 @@ export default {
           console.log("Supplies:", this.supplies);
         })
         .catch(error => console.error("Supplies error:", error));
+
+    // 1. Get orders
+    this.ordersService.getAll()
+        .then(response => {
+          this.orders = response.data.map(order => new OrderToSupplier(order));
+          console.log("Orders:", this.orders);
+        })
+        .catch(error => console.error("Orders error:", error));
+
+    // 3. Load users, roles, and profiles together and then filter profiles per role name 'restaurant'
+    Promise.all([
+      this.usersService.getAll(),
+      this.profilesService.getAll()
+    ])
+        .then(([usersResponse, profilesResponse]) => {
+          this.users = usersResponse.data.map(u => new User(u));
+          const allProfiles = profilesResponse.data.map(p => new Profile(p));
+
+          // Here we merge with users and roles to identify the profile role
+          this.adminRestaurantsProfiles = allProfiles.filter(profile => {
+            const user = this.users.find(u => Number(u.id) === Number(profile.userId));
+            console.log("Profile:", profile.userId, "Users", user.id);
+            return user?.roleId === 2;
+
+          });
+          console.log("Filtered Restaurant Profiles:", this.adminRestaurantsProfiles);
+        })
+        .catch(error => console.error("Profiles error:", error));
+
+
+
   }
 }
 </script>
