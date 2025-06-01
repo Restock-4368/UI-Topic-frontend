@@ -24,6 +24,7 @@ export default {
       required: true,
     }
   },
+  emits: ['openModal'],
   data() {
     return {
       finalPricePerOrder: {},
