@@ -25,6 +25,7 @@ import {
     FileUpload,
     Tabs,
     TabPanel, TabList, Tab, TabPanels,
+    Checkbox,
 } from "primevue";
 import router from "./router/index.js";
 
@@ -56,5 +57,6 @@ app
     .component('pv-tab-list', TabList)
     .component('pv-tab', Tab)
     .component('pv-tab-panels', TabPanels)
+    .component('pv-check-box', Checkbox)
 
 .mount('#app');
