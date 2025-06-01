@@ -11,18 +11,27 @@ import {User} from "../../../iam/model/user.entity.js";
 import {SupplyService} from "../../../resource/inventory/services/supply.service.js";
 import {Supply} from "../../../resource/inventory/model/supply.entity.js";
 import EmptySection from "../../../../shared/components/empty-section.component.vue";
+import ManageNewOrders from "../components/manage-new-orders.component.vue";
+import {UnitMeasurementService} from "../../../resource/inventory/services/unit-measurement.service.js";
+import {UnitMeasurement} from "../../../resource/inventory/model/unit-measurement.entity.js";
 
 export default {
   name: "suppliers-orders-overview",
-  components: {EmptySection, NewOrders},
+  components: {ManageNewOrders, EmptySection, NewOrders},
   data() {
     return {
+      showModal: false,
+      selectedOrder: null,
+      selectedOrderSupplies: [],
+      selectedOrderDetailedSupplies: [],
       orders: [],
       requestedSuppliesInOrders: [],
       users: [],
       supplies: [],
       adminRestaurantsProfiles: [],
       suppliesGroupedByOrder: [],
+      detailedSuppliesGroupedByOrder: [],
+      unitsMeasurement: [],
       tabs: [
         { title: 'New Orders', value: 0, content: 'Este es el resumen del pedido.' },
         { title: 'Your Orders', value: 1, content: 'Aquí van los detalles del pedido.' },
@@ -38,10 +47,12 @@ export default {
         this.loadOrders(),
         this.loadSupplies(),
         this.loadRequestedSupplies(),
-        this.loadUsersAndProfiles()
+        this.loadUsersAndProfiles(),
+        this.loadUnitsMeasurement(),
       ]);
 
       this.groupSuppliesByOrder();
+      this.groupSuppliesByOrderWithDetails();
 
     } catch (error) {
       console.error("Error loading initial data:", error);
@@ -54,6 +65,7 @@ export default {
       this.usersService = new UserService();
       this.profilesService = new ProfileService();
       this.suppliesService = new SupplyService();
+      this.unitsMeasurementService = new UnitMeasurementService();
     },
 
     async loadOrders() {
@@ -91,6 +103,12 @@ export default {
       console.log("Filtered Restaurant Profiles:", this.adminRestaurantsProfiles);
     },
 
+    async loadUnitsMeasurement() {
+      const response = await this.unitsMeasurementService.getAll();
+      this.unitsMeasurement = response.data.map(s => new UnitMeasurement(s));
+      console.log("Units measurement:", this.unitsMeasurement);
+    },
+
     groupSuppliesByOrder() {
       const grouped = {};
 
@@ -108,6 +126,43 @@ export default {
       }));
 
       console.log("Supplies grouped by order:", this.suppliesGroupedByOrder);
+
+    },
+
+    groupSuppliesByOrderWithDetails() {
+      const grouped = {};
+
+      this.requestedSuppliesInOrders.forEach(orderSupply => {
+        const { orderId, supplyId } = orderSupply;
+
+        if (!grouped[orderId]) {
+          grouped[orderId] = new Set(); // Usamos Set para evitar duplicados
+        } 
+        grouped[orderId].add(supplyId);
+      });
+
+      // Convertimos el resultado a array de objetos con supplies completos
+      this.detailedSuppliesGroupedByOrder = Object.entries(grouped).map(([orderId, supplyIdsSet]) => {
+        const supplies = [...supplyIdsSet].map(supplyId =>
+            this.supplies.find(supply => supply.id === supplyId)
+        ).filter(Boolean); // Filtramos null por si hay supplyId sin match
+
+        return {
+          orderId,
+          supplies
+        };
+      });
+
+      console.log("Grouped supplies with full details by order:", this.detailedSuppliesGroupedByOrder);
+    },
+
+    openManageModal(order) {
+      this.selectedOrder = order;
+      this.selectedOrderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+      console.log("Selected order supplies ESTO DEVUEVLO 1:", this.selectedOrderSupplies);
+      this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+      console.log("Selected order supplies ESTO DEVUEVLO 2:", this.selectedOrderDetailedSupplies);
+      this.showModal = true;
     }
   }
 };
@@ -124,6 +179,7 @@ export default {
     <pv-tab-panels>
       <pv-tab-panel :value="0">
         <new-orders
+            @open-modal="openManageModal"
             :admin-restaurants-profiles="adminRestaurantsProfiles"
             :orders-supplies="suppliesGroupedByOrder"
             :orders="orders"
@@ -138,6 +194,16 @@ export default {
       </pv-tab-panel>
     </pv-tab-panels>
   </pv-tabs>
+
+  <manage-new-orders
+      v-model="showModal"
+      :order="selectedOrder"
+      :detailed-supplies-per-order="selectedOrderDetailedSupplies"
+      :supplies-per-order="selectedOrderSupplies"
+      :units-measurement="unitsMeasurement"
+      :modelValue="showModal"
+      @update:modelValue="showModal = $event"
+  />
 
 </template>
 

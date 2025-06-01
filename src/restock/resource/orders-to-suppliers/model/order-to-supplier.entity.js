@@ -2,6 +2,7 @@ export class OrderToSupplier {
     constructor({
                     id = 0,
                     date = new Date(),
+                    description = '',
                     admin_restaurant_id = 0,
                     supplier_id = 0,
                     order_to_supplier_state_id = 0,
@@ -12,6 +13,7 @@ export class OrderToSupplier {
                 }) {
         this.id = id;
         this.date = date;
+        this.description = description? description : 'No description provided';
         this.adminRestaurantId = admin_restaurant_id;
         this.supplierId = supplier_id;
         this.stateId = order_to_supplier_state_id;
