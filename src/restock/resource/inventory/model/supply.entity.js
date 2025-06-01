@@ -1,6 +1,7 @@
 export class Supply {
     constructor({
                     id = 0,
+                    name = '',
                     description = '',
                     perishable = false,
                     min_stock = 0,
@@ -11,6 +12,7 @@ export class Supply {
                     user_id = 0,
                 }) {
         this.id = id;
+        this.name = name;
         this.description = description;
         this.perishable = perishable;
         this.min_stock = min_stock;

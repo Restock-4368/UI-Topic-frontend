@@ -283,6 +283,7 @@
   "supplies": [
     {
       "id": 1,
+      "name": "Papa Amarilla",
       "description": "Papas",
       "perishable": true,
       "min_stock": 5,
@@ -294,6 +295,7 @@
     },
     {
       "id": 2,
+       "name": "Carne de Res",
       "description": "Lomo Fino",
       "perishable": true,
       "min_stock": 2,
@@ -305,6 +307,7 @@
     },
     {
       "id": 3,
+      "name": "Cebolla Roja",
       "description": "Cebolla Roja",
       "perishable": true,
       "min_stock": 3,
@@ -316,6 +319,7 @@
     },
     {
       "id": 4,
+      "name": "Pechuga de Pollo",
       "description": "Pechuga de Pollo",
       "perishable": true,
       "min_stock": 2,
@@ -327,6 +331,7 @@
     },
     {
       "id": 5,
+      "name": "Ají Amarillo",
       "description": "Ají Amarillo",
       "perishable": true,
       "min_stock": 1,
@@ -338,6 +343,7 @@
     },
     {
       "id": 6,
+      "name": "Pan frances",
       "description": "Pan",
       "perishable": true,
       "min_stock": 10,
@@ -349,6 +355,7 @@
     },
     {
       "id": 7,
+      "name": "Fideos",
       "description": "Fideos Tallarín",
       "perishable": false,
       "min_stock": 10,
@@ -360,6 +367,7 @@
     },
     {
       "id": 8,
+      "name": "Albahaca",
       "description": "Albahaca",
       "perishable": true,
       "min_stock": 5,
@@ -371,6 +379,7 @@
     },
     {
       "id": 9,
+      "name": "Frijoles",
       "description": "Frijoles",
       "perishable": false,
       "min_stock": 5,
@@ -382,6 +391,7 @@
     },
     {
       "id": 10,
+      "name": "Culantro",
       "description": "Culantro",
       "perishable": true,
       "min_stock": 2,
@@ -393,6 +403,7 @@
     },
     {
       "id": 11,
+      "name": "Pescado Blanco",
       "description": "Pescado Blanco",
       "perishable": true,
       "min_stock": 3,
@@ -404,6 +415,7 @@
     },
     {
       "id": 12,
+      "name": "Limón",
       "description": "Limón",
       "perishable": true,
       "min_stock": 10,
