@@ -144,7 +144,7 @@ export default {
       // Convertimos el resultado a array de objetos con supplies completos
       this.detailedSuppliesGroupedByOrder = Object.entries(grouped).map(([orderId, supplyIdsSet]) => {
         const supplies = [...supplyIdsSet].map(supplyId =>
-            this.supplies.find(supply => supply.id === supplyId)
+            this.supplies.find(supply => Number(supply.id) === Number(supplyId))
         ).filter(Boolean); // Filtramos null por si hay supplyId sin match
 
         return {
@@ -160,6 +160,8 @@ export default {
       this.selectedOrder = order;
       this.selectedOrderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
       console.log("Selected order supplies ESTO DEVUEVLO 1:", this.selectedOrderSupplies);
+
+      console.log("detailedSuppliesGroupedByOrder", this.detailedSuppliesGroupedByOrder);
       this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
       console.log("Selected order supplies ESTO DEVUEVLO 2:", this.selectedOrderDetailedSupplies);
       this.showModal = true;
