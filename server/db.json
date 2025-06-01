@@ -456,6 +456,7 @@
     {
       "id": 1,
       "date": "2025-05-28",
+      "description": "Order for fresh supplies",
       "admin_restaurant_id": 2,
       "supplier_id": 1,
       "order_to_supplier_state_id": 1,
@@ -467,6 +468,7 @@
     {
       "id": 2,
       "date": "2025-01-01",
+      "description": null,
       "admin_restaurant_id": 2,
       "supplier_id": 1,
       "order_to_supplier_state_id": 1,
