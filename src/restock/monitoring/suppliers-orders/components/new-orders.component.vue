@@ -29,7 +29,7 @@ export default {
       finalPricePerOrder: {},
       suppliesPerOrderCount: {},
       selectedOrder: null,
-      showManageModal: false
+      showManageModal: false,
     }
   },
   watch: {
@@ -69,7 +69,7 @@ export default {
         countMap[orderId] = orderSupplies.supplies?.length || 0;
 
         priceMap[orderId] = orderSupplies.supplies.reduce((sum, supplyItem) => {
-          const supply = this.supplies.find(s => Number(s.id) === Number(supplyItem.supplyId));
+          const supply = this.supplies.find(s => Number(s.id) === Number(supplyItem.supplyId)); //CORRIGE °
           const price = supply?.price || 0;
 
           console.log("Supply Price", price);
@@ -87,10 +87,7 @@ export default {
     manageNewOrder(order) {
       this.selectedOrder = order;
       this.showManageModal = true;
-    },
-    closeManageModal() {
-      this.showManageModal = false;
-      this.selectedOrder = null;
+      this.$emit('open-modal', order);
     }
   },
   computed: {
@@ -113,12 +110,12 @@ export default {
 <template>
 
   <!-- Empty -->
-  <EmptySection v-if="filteredOrders().length === 0">
+  <empty-section v-if="filteredOrders().length === 0">
     You currently have no orders received.
     <template #icon>
       <i class="pi pi-truck" style="font-size: 3rem; color: #bcbcbc;"></i>
     </template>
-  </EmptySection>
+  </empty-section>
 
   <pv-data-table
       v-if="filteredOrders().length > 0"
@@ -176,15 +173,15 @@ export default {
     </pv-column>
   </pv-data-table>
 
-  <manage-new-orders
-      v-if="showManageModal"
-      :order="orders[0]"
-      :supplies="supplies"
-      :supplies-per-order="ordersSupplies[0]"
-      :model-value="showManageModal"
-      @update:modelValue="showManageModal = $event"
-      @close="closeManageModal"
-  />
+<!--  <manage-new-orders-->
+<!--      v-if="showManageModal"-->
+<!--      :order="orders[0]"-->
+<!--      :supplies="supplies"-->
+<!--      :supplies-per-order="ordersSupplies[0]"-->
+<!--      :model-value="showManageModal"-->
+<!--      @update:modelValue="showManageModal = $event"-->
+<!--      @close="closeManageModal"-->
+<!--  />-->
 </template>
 
 <style>
