@@ -33,120 +33,107 @@
         name: 'Culantro fresco',
         category: 'Hierba',
         description: 'Entregar en bolsas húmedas, refrigerado'
-      }, {name: 'Pimiento rojo', category: 'Vegetal', description: 'Se requiere lavado y listo para picar'}],
-      currentIndex: 0,
-      visibleCount: 5
+      }, {name: 'Pimiento rojo', category: 'Vegetal', description: 'Se requiere lavado y listo para picar'},]
     };
-  }, computed: {
-    visibleIngredients() {
-      return this.ingredients.slice(this.currentIndex, this.currentIndex + this.visibleCount)
-    }
-  }, mounted() {
-    this.updateVisibleCount()
-    window.addEventListener('resize', this.updateVisibleCount)
-  }, beforeUnmount() {
-    window.removeEventListener('resize', this.updateVisibleCount)
   }, methods: {
-    updateVisibleCount() {
-      const width = window.innerWidth
-      if (width < 640) this.visibleCount = 2
-      else if (width < 900) this.visibleCount = 3
-      else if (width < 1200) this.visibleCount = 4
-      else this.visibleCount = 5
-    }, next() {
-      if (this.currentIndex + this.visibleCount < this.ingredients.length) {
-        this.currentIndex++
-      }
-    }, prev() {
-      if (this.currentIndex > 0) {
-        this.currentIndex--
-      }
-    }, getPairs() {
+    getPairs() {
       const pairs = []
       for (let i = 0; i < this.ingredients.length; i += 2) {
         pairs.push(this.ingredients.slice(i, i + 2))
       }
       return pairs
+    }, scrollLeft() {
+      this.$refs.carousel.scrollBy({left: -220, behavior: 'smooth'})
+    }, scrollRight() {
+      this.$refs.carousel.scrollBy({left: 220, behavior: 'smooth'})
     }
   }
-} </script>
+}
+</script>
 <template>
-  <div class="carousel-container"><h3 class="widget-title">Last added supplies</h3>
-    <!-- Desktop Carousel -->
-    <div class="carousel">
-      <pv-button icon="pi pi-chevron-left" text @click="prev" :disabled="currentIndex === 0"/>
-      <div class="carousel-track">
-        <div class="ingredient-card" v-for="(i, index) in visibleIngredients" :key="index">
-          <h4>{{ i.name }}</h4>
-          <p class="category">{{ i.category }}</p>
-          <p class="description">{{ i.description }}</p>
-        </div>
-      </div>
-      <pv-button icon="pi pi-chevron-right" text @click="next"
-                 :disabled="currentIndex + visibleCount >= ingredients.length"/>
-    </div>
 
-    <!-- Mobile Scrollable Grid -->
-    <div class="supplies-grid">
-      <div class="ingredient-pair" v-for="(pair, i) in getPairs()" :key="i">
-        <div class="ingredient-card" v-for="(i, j) in pair" :key="j">
-          <h4>{{ i.name }}</h4>
-          <p class="category">{{ i.category }}</p>
+  <div class="last-supplies-wrapper"><h3 class="widget-title">Last added supplies</h3>
+    <div class="last-supplies-widget">
+      <!-- Desktop Carousel -->
+      <div class="carousel-wrapper">
+        <button class="nav-button left" @click="scrollLeft"><i class="pi pi-chevron-left"/></button>
+        <div ref="carousel" class="carousel-container">
+          <div class="supply-card" v-for="(i, index) in ingredients" :key="index"><h4>{{ i.name }}</h4>
+            <p class="category">{{ i.category }}</p>
+            <p class="description">{{ i.description }}</p></div>
+        </div>
+        <button class="nav-button right" @click="scrollRight"><i class="pi pi-chevron-right"/></button>
+      </div>
+      <!-- Mobile Scrollable Grid -->
+      <div class="supplies-grid">
+        <div class="ingredient-pair" v-for="(pair, i) in getPairs()" :key="i">
+          <div class="ingredient-card" v-for="(i, j) in pair" :key="j">
+            <h4>{{ i.name }}</h4>
+            <p class="category">{{ i.category }}</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-<style scoped>
+<style>
+.last-supplies-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .widget-title {
   font-family: Poppins, sans-serif;
-  font-weight: 400;
+  font-weight: 500;
   font-size: 23px;
-  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Box con shadow */
+.last-supplies-widget {
+  background: #fff;
+  padding: 20px 50px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 30px;
+}
+
+/* Desktop carousel */
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 0 10px;
 }
 
 .carousel-container {
-  margin-top: 2rem;
-}
-
-.carousel {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  overflow: hidden;
-}
-
-.carousel-track {
-  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
   gap: 1rem;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  width: 100%;
-  max-width: 1000px;
+  scrollbar-width: none;
 }
 
-.ingredient-card {
-  flex: 0 0 calc(20% - 1rem);
-  background-color: #CDE7D3;
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+.supply-card {
+  background: #e8f5e9;
   border-radius: 12px;
   padding: 1rem;
-  box-sizing: border-box;
-  min-width: 150px;
-  height: 180px;
-  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.1);
-  align-content: space-around;
+  max-width: 200px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.ingredient-card h4 {
-  margin: 0;
+.supply-card h4 {
   font-size: 16px;
   font-weight: 600;
 }
 
 .category {
+  font-size: 14px;
   font-weight: 500;
-  margin: 0.25rem 0;
   color: #757575;
 }
 
@@ -155,20 +142,52 @@
   color: #444;
 }
 
+.nav-button {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #9E9E9E;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 30px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-button.left {
+  left: -3%;
+}
+
+.nav-button.right {
+  right: -3%;
+}
+
+/* Mobile Scroll Grid */
 .supplies-grid {
   display: none;
 }
 
 @media (max-width: 800px) {
+  .last-supplies-widget{
+    padding: 20px 20px 10px 20px ;
+  }
+
+  .carousel-wrapper {
+    display: none;
+  }
+
   .supplies-grid {
     display: flex;
     gap: 1rem;
     overflow-x: auto;
     background: #fff;
-    padding: 20px 30px;
-    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 30px;
-    height: 180px;
+    padding: 0;
+    padding-bottom: 10px;
   }
 
   .ingredient-pair {
@@ -181,13 +200,26 @@
     background-color: #F4F4F4;
     border-radius: 15px;
     width: 215px;
-    padding: 0 0 0 15px;
-    min-height: 60px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    align-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.5rem;
   }
 
-  .carousel {
-    display: none;
+  .ingredient-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .ingredient-card .category {
+    font-size: 13px;
+    color: #757575;
+    margin: 0;
+  }
+
+  .widget-title {
+    font-size: 18px;
   }
 } </style>

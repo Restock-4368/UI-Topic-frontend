@@ -192,7 +192,7 @@ export default {
 }
 
 .p-datatable thead th {
-  background-color: #f9f9f9;
+  background-color: #ffff;
   color: #757575;
   font-weight: 600;
   border-right: none;
