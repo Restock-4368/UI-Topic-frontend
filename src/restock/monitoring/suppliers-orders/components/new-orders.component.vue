@@ -8,6 +8,10 @@ export default {
   name: "new-orders",
   components: {ManageNewOrders, EmptySection},
   props: {
+    orderSituations: {
+      type: Array,
+      required: true,
+    },
     orders: {
       type: Array,
       required: true,
@@ -85,7 +89,11 @@ export default {
       this.suppliesPerOrderCount = countMap;
     },
     filteredOrders() {
-      return (this.orders || []).filter(order => order.partiallyAccepted === false);
+
+      return (this.orders || []).filter(order => {
+        const situation = this.orderSituations.find(situation => Number(situation.id) === Number(order.situationId));
+        return situation && Number(situation.id) === 1; // Filtra solo los 'Approved'
+      });
     },
     manageNewOrder(order) {
       this.selectedOrder = order;
