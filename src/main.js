@@ -26,6 +26,7 @@ import {
     Tabs,
     TabPanel, TabList, Tab, TabPanels,
     Checkbox,
+    ConfirmDialog, useConfirm, ConfirmationService,
 } from "primevue";
 import router from "./router/index.js";
 
@@ -35,6 +36,7 @@ app
     .use(router)
     .use(index)
     .use(PrimeVue, {ripple: true, theme: {preset: Aura }})
+    .use(ConfirmationService)
     .component('pv-button', Button)
     .component('pv-card', Card)
     .component('pv-select-button', SelectButton)
@@ -58,5 +60,7 @@ app
     .component('pv-tab', Tab)
     .component('pv-tab-panels', TabPanels)
     .component('pv-check-box', Checkbox)
+    .component('pv-confirm-dialog', ConfirmDialog)
+    .component('useConfirm', useConfirm)
 
 .mount('#app');

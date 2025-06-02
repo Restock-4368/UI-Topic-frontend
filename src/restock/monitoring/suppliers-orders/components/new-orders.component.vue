@@ -2,6 +2,7 @@
 
 import EmptySection from "../../../../shared/components/empty-section.component.vue";
 import ManageNewOrders from "./manage-new-orders.component.vue";
+import {ConfirmDialog, useConfirm} from "primevue";
 
 export default {
   name: "new-orders",
@@ -31,6 +32,7 @@ export default {
       suppliesPerOrderCount: {},
       selectedOrder: null,
       showManageModal: false,
+      confirm: null,
     }
   },
   watch: {
@@ -89,7 +91,30 @@ export default {
       this.selectedOrder = order;
       this.showManageModal = true;
       this.$emit('open-modal', order);
+    },
+    declineOrder(order) {
+      // Aquí lógica para rechazar el pedido
+      // Por ejemplo, hacer una llamada a la API para actualizar el estado del pedido
+    },
+    confirmDecline(order) {
+      this.confirm.require({
+        message: 'Are you sure you want to reject this order?',
+        header: 'Confirm action',
+        icon: 'pi pi-exclamation-triangle',
+        acceptLabel: 'Yes, decline',
+        rejectLabel: 'Cancel',
+        acceptClass: 'p-button-danger',
+        accept: () => {
+          this.declineOrder(order); // asegúrate de tener esta función implementada
+        },
+        reject: () => {
+          // Opcional: acción al cancelar
+        }
+      });
     }
+  },
+  mounted() {
+    this.confirm = useConfirm();
   },
   computed: {
     restaurantBusinessNamesPerOrder() {
@@ -150,7 +175,7 @@ export default {
       </template>
     </pv-column>
 
-    <pv-column header="Details">
+    <pv-column header="Actions">
       <template #body="{ data }">
         <pv-button
             class="p-button-icon-style"
@@ -158,31 +183,28 @@ export default {
             @click="getDetails(data)"
             text
         />
-      </template>
-    </pv-column>
 
-    <pv-column header="Manage">
-      <template #body="{ data }">
         <pv-button
             class="p-button-icon-style"
-            icon="pi pi-wrench text-base"
+            icon="pi pi-check text-base"
             @click="manageNewOrder(data)"
             text
         />
 
+        <pv-button
+            class="p-button-icon-style"
+            icon="pi pi-times text-base"
+            @click="confirmDecline(data)"
+            text
+        />
+
+
       </template>
     </pv-column>
+
   </pv-data-table>
 
-<!--  <manage-new-orders-->
-<!--      v-if="showManageModal"-->
-<!--      :order="orders[0]"-->
-<!--      :supplies="supplies"-->
-<!--      :supplies-per-order="ordersSupplies[0]"-->
-<!--      :model-value="showManageModal"-->
-<!--      @update:modelValue="showManageModal = $event"-->
-<!--      @close="closeManageModal"-->
-<!--  />-->
+  <pv-confirm-dialog></pv-confirm-dialog>
 </template>
 
 <style>
