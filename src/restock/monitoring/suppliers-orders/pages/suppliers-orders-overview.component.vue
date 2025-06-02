@@ -14,10 +14,19 @@ import EmptySection from "../../../../shared/components/empty-section.component.
 import ManageNewOrders from "../components/manage-new-orders.component.vue";
 import {UnitMeasurementService} from "../../../resource/inventory/services/unit-measurement.service.js";
 import {UnitMeasurement} from "../../../resource/inventory/model/unit-measurement.entity.js";
+import {
+  OrderToSupplierSituationService
+} from "../../../resource/orders-to-suppliers/services/order-to-supplier-situation.service.js";
+import {
+  OrderToSupplierStateService
+} from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.service.js";
+import {OrderToSupplierSituation} from "../../../resource/orders-to-suppliers/model/order-to-supplier-situation.vo.js";
+import {OrderToSupplierState} from "../../../resource/orders-to-suppliers/model/order-to-supplier-state.vo.js";
+import ManageAcceptedOrders from "../components/manage-accepted-orders.components.vue";
 
 export default {
   name: "suppliers-orders-overview",
-  components: {ManageNewOrders, EmptySection, NewOrders},
+  components: {ManageAcceptedOrders, ManageNewOrders, EmptySection, NewOrders},
   data() {
     return {
       showModal: false,
@@ -25,6 +34,8 @@ export default {
       selectedOrderSupplies: [],
       selectedOrderDetailedSupplies: [],
       orders: [],
+      orderSituations: [],
+      orderStates: [],
       requestedSuppliesInOrders: [],
       users: [],
       supplies: [],
@@ -34,7 +45,7 @@ export default {
       unitsMeasurement: [],
       tabs: [
         { title: 'New Orders', value: 0, content: 'Este es el resumen del pedido.' },
-        { title: 'Your Orders', value: 1, content: 'Aquí van los detalles del pedido.' },
+        { title: 'Pending Orders', value: 1, content: 'Aquí van los detalles del pedido.' },
         { title: 'Orders Historial', value: 2, content: 'Historial de cambios del pedido.' }
       ]
     };
@@ -44,6 +55,8 @@ export default {
 
     try {
       await Promise.all([
+          this.loadOrderSituations(),
+          this.loadOrderStates(),
         this.loadOrders(),
         this.loadSupplies(),
         this.loadRequestedSupplies(),
@@ -60,12 +73,26 @@ export default {
   },
   methods: {
     initServices() {
+      this.orderSituationsSituation = new OrderToSupplierSituationService();
+      this.orderSituationsState = new OrderToSupplierStateService();
       this.ordersService = new OrderToSupplierService();
       this.requestedSuppliesInOrdersService = new OrderToSupplierSupplyService();
       this.usersService = new UserService();
       this.profilesService = new ProfileService();
       this.suppliesService = new SupplyService();
       this.unitsMeasurementService = new UnitMeasurementService();
+    },
+
+    async loadOrderSituations() {
+      const response = await this.orderSituationsSituation.getAll();
+      this.orderSituations = response.data.map(s => new OrderToSupplierSituation(s));
+      console.log("Order Situations:", this.orderSituations);
+    },
+
+    async loadOrderStates() {
+      const response = await this.orderSituationsState.getAll();
+      this.orderStates = response.data.map(s => new OrderToSupplierState(s));
+      console.log("Order States:", this.orderStates);
     },
 
     async loadOrders() {
@@ -182,14 +209,23 @@ export default {
       <pv-tab-panel :value="0">
         <new-orders
             @open-modal="openManageModal"
+            :order-situations="orderSituations"
             :admin-restaurants-profiles="adminRestaurantsProfiles"
             :orders-supplies="suppliesGroupedByOrder"
             :orders="orders"
             :supplies="supplies"
         ></new-orders>
       </pv-tab-panel>
-      <pv-tab-panel>
-        {{ tabs[1].content }}
+      <pv-tab-panel :value="1">
+<!--        <manage-accepted-orders-->
+<!--            :detailed-supplies-per-order="detailedSuppliesGroupedByOrder"-->
+<!--            :admin-restaurants-profiles="adminRestaurantsProfiles"-->
+<!--            :orders-supplies="suppliesGroupedByOrder"-->
+<!--            :orders="orders"-->
+<!--            :order-states="orderStates"-->
+<!--            :order-situations="orderSituations">-->
+
+<!--        </manage-accepted-orders>-->
       </pv-tab-panel>
       <pv-tab-panel>
         {{ tabs[2].content }}
