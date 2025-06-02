@@ -57,6 +57,11 @@ export default {
     },
   },
   watch: {
+    modelValue(newVal) {
+      if (newVal) {
+        this.step = 1; // Cuando se abre, reinicia el paso
+      }
+    },
     checkedSupplies(newVal) {
       this.selectAll = newVal.length === this.suppliesPerOrder.length;
     }
@@ -82,11 +87,11 @@ export default {
 
     <div class="p-4">
 
-        <p>Complete the order details to start tracking your order. </p>
+        <p class="block text-sm font-medium text-gray-700 mb-1">Complete the order details to start tracking your order. </p>
 
       <div v-if="step === 1">
         <h4>Supplies</h4>
-        <p>Select the supplies you have available for the order.</p>
+        <p class="block text-sm font-medium text-gray-700 mb-1">Select the supplies you have available for the order.</p>
 
         <div class="check-all">
           <label class="ml-2 mr-2">Select All</label>
@@ -100,7 +105,7 @@ export default {
             :value="suppliesPerOrder"
             paginator
             :rows="4"
-            :rows-per-page-options="[4, 6, 8, 10]"
+            :rows-per-page-options="[2, 3, 4]"
             responsive-layout="scroll"
         >
           <pv-column field="date" header="Product name">
@@ -132,9 +137,9 @@ export default {
           </pv-column>
         </pv-data-table>
 
-        <p>Total Price: {{ order.totalPrice }}</p>
+        <p class="block text-sm font-medium text-gray-700 mb-1" >Total Price: {{ order.totalPrice }}</p>
 
-        <p>Order Description: </p>
+        <p class="block text-sm font-medium text-gray-700 mb-1">Order Description: </p>
         <p>{{ order.description }}</p>
 
       </div>
@@ -147,10 +152,33 @@ export default {
             {{ productName(id) }} ({{ productUnitMeasurement(id) }})
           </li>
         </ul>
+
+
+        <label for="expiry" class="block text-sm font-medium text-gray-700 mb-1">Estimated Shipping Date</label>
+        <pv-calendar
+            id="expiry"
+            v-model="order.estimatedShipDate"
+            showIcon
+            class="w-full mb-3"
+            placeholder="Seleccionar fecha"
+        />
+
+        <label for="shipTime" class="block text-sm font-medium text-gray-700 mb-1">
+          Estimated Shipping Time
+        </label>
+        <pv-calendar
+            id="shipTime"
+            v-model="order.estimatedShipTime"
+            timeOnly
+            hourFormat="24"
+            showIcon
+            class="w-full mb-3"
+            placeholder="Seleccionar hora"
+        />
+
       </div>
 
     </div>
-
 
     <template #footer>
       <button
@@ -174,13 +202,8 @@ export default {
           class="p-button p-component p-button-success"
           @click="submitOrder"
       >
-        Confirm
+        Accept selection
       </button>
-
-      <button class="p-button p-component p-button-text" @click="close">
-        Close
-      </button>
-
       <button class="p-button p-component p-button-text" @click="$emit('close')">Close</button>
     </template>
   </base-modal>
