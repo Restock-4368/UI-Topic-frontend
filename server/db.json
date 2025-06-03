@@ -219,27 +219,7 @@
       "name": "Ceviche de Pescado",
       "total_price": 37,
       "image_url": "https://treehouselodge.com/wp-content/uploads/2021/09/peruvian-ceviche.png",
-      "user_id": 1,
-      "supplies": [
-        {
-          "id": 13,
-          "recipe_id": 5,
-          "supply_id": 11,
-          "quantity": 1
-        },
-        {
-          "id": 14,
-          "recipe_id": 5,
-          "supply_id": 12,
-          "quantity": 3
-        },
-        {
-          "id": 15,
-          "recipe_id": 5,
-          "supply_id": 3,
-          "quantity": 1
-        }
-      ]
+      "user_id": 1
     }
   ],
   "recipes_supplies": [
