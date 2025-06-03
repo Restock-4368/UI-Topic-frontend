@@ -22,14 +22,18 @@ import {
 } from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.service.js";
 import {OrderToSupplierSituation} from "../../../resource/orders-to-suppliers/model/order-to-supplier-situation.vo.js";
 import {OrderToSupplierState} from "../../../resource/orders-to-suppliers/model/order-to-supplier-state.vo.js";
-import ManageAcceptedOrders from "../components/manage-accepted-orders.components.vue";
+import ApprovedOrdersComponents from "../components/approved-orders.components.vue";
+import OrderDetails from "../components/order-details.component.vue";
+import EditOrder from "../components/edit-order.component.vue";
 
 export default {
   name: "suppliers-orders-overview",
-  components: {ManageAcceptedOrders, ManageNewOrders, EmptySection, NewOrders},
+  components: {EditOrder, OrderDetails, ManageAcceptedOrders: ApprovedOrdersComponents, ManageNewOrders, EmptySection, NewOrders},
   data() {
     return {
-      showModal: false,
+      showManageNewOrderModal: false,
+      showEditModal: false,
+      showAcceptedOrderDetailsModal: false,
       selectedOrder: null,
       selectedOrderSupplies: [],
       selectedOrderDetailedSupplies: [],
@@ -73,8 +77,8 @@ export default {
   },
   methods: {
     initServices() {
-      this.orderSituationsSituation = new OrderToSupplierSituationService();
-      this.orderSituationsState = new OrderToSupplierStateService();
+      this.orderSituationsService = new OrderToSupplierSituationService();
+      this.orderStatesService = new OrderToSupplierStateService();
       this.ordersService = new OrderToSupplierService();
       this.requestedSuppliesInOrdersService = new OrderToSupplierSupplyService();
       this.usersService = new UserService();
@@ -84,13 +88,13 @@ export default {
     },
 
     async loadOrderSituations() {
-      const response = await this.orderSituationsSituation.getAll();
+      const response = await this.orderSituationsService.getAll();
       this.orderSituations = response.data.map(s => new OrderToSupplierSituation(s));
       console.log("Order Situations:", this.orderSituations);
     },
 
     async loadOrderStates() {
-      const response = await this.orderSituationsState.getAll();
+      const response = await this.orderStatesService.getAll();
       this.orderStates = response.data.map(s => new OrderToSupplierState(s));
       console.log("Order States:", this.orderStates);
     },
@@ -183,15 +187,26 @@ export default {
       console.log("Grouped supplies with full details by order:", this.detailedSuppliesGroupedByOrder);
     },
 
-    openManageModal(order) {
+    openEditModal(order) {
       this.selectedOrder = order;
       this.selectedOrderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
-      console.log("Selected order supplies ESTO DEVUEVLO 1:", this.selectedOrderSupplies);
 
-      console.log("detailedSuppliesGroupedByOrder", this.detailedSuppliesGroupedByOrder);
       this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
-      console.log("Selected order supplies ESTO DEVUEVLO 2:", this.selectedOrderDetailedSupplies);
-      this.showModal = true;
+      this.showEditModal = true;
+    },
+    openOrderAcceptedDetailsModal(order) {
+      this.selectedOrder = order;
+      this.selectedOrderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+
+      this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+      this.showAcceptedOrderDetailsModal = true;
+    },
+    openManageNewModal(order) {
+      this.selectedOrder = order;
+      this.selectedOrderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+
+      this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+      this.showManageNewOrderModal = true;
     }
   }
 };
@@ -208,7 +223,7 @@ export default {
     <pv-tab-panels>
       <pv-tab-panel :value="0">
         <new-orders
-            @open-modal="openManageModal"
+            @open-modal="openManageNewModal"
             :order-situations="orderSituations"
             :admin-restaurants-profiles="adminRestaurantsProfiles"
             :orders-supplies="suppliesGroupedByOrder"
@@ -217,15 +232,17 @@ export default {
         ></new-orders>
       </pv-tab-panel>
       <pv-tab-panel :value="1">
-<!--        <manage-accepted-orders-->
-<!--            :detailed-supplies-per-order="detailedSuppliesGroupedByOrder"-->
-<!--            :admin-restaurants-profiles="adminRestaurantsProfiles"-->
-<!--            :orders-supplies="suppliesGroupedByOrder"-->
-<!--            :orders="orders"-->
-<!--            :order-states="orderStates"-->
-<!--            :order-situations="orderSituations">-->
+        <manage-accepted-orders
+            @open-edit-modal="openEditModal"
+            @open-details-modal="openOrderAcceptedDetailsModal"
+            :detailed-supplies-per-order="detailedSuppliesGroupedByOrder"
+            :admin-restaurants-profiles="adminRestaurantsProfiles"
+            :orders-supplies="suppliesGroupedByOrder"
+            :orders="orders"
+            :order-states="orderStates"
+            :order-situations="orderSituations">
 
-<!--        </manage-accepted-orders>-->
+        </manage-accepted-orders>
       </pv-tab-panel>
       <pv-tab-panel>
         {{ tabs[2].content }}
@@ -234,15 +251,23 @@ export default {
   </pv-tabs>
 
   <manage-new-orders
-      v-model="showModal"
+      v-model="showManageNewOrderModal"
       :order="selectedOrder"
       :detailed-supplies-per-order="selectedOrderDetailedSupplies"
       :supplies-per-order="selectedOrderSupplies"
       :units-measurement="unitsMeasurement"
-      :modelValue="showModal"
-      @update:modelValue="showModal = $event"
+      @update:modelValue="showManageNewOrderModal = $event"
   />
 
+  <edit-order
+      v-model="showEditModal"
+      @update:modelValue="showEditModal = $event"
+      />
+
+  <order-details
+      v-model="showAcceptedOrderDetailsModal"
+      @update:modelValue="showAcceptedOrderDetailsModal = $event"
+  />
 </template>
 
 <style scoped>
