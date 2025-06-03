@@ -2,7 +2,7 @@
 
 import EmptySection from "../../../../shared/components/empty-section.component.vue";
 import ManageNewOrders from "./manage-new-orders.component.vue";
-import {ConfirmDialog, useConfirm} from "primevue";
+
 
 export default {
   name: "new-orders",
@@ -29,7 +29,7 @@ export default {
       required: true,
     }
   },
-  emits: ['openModal'],
+  emits: ['open-modal'],
   data() {
     return {
       finalPricePerOrder: {},
@@ -105,7 +105,7 @@ export default {
       // Por ejemplo, hacer una llamada a la API para actualizar el estado del pedido
     },
     confirmDecline(order) {
-      this.confirm.require({
+      this.$confirm.require({
         message: 'Are you sure you want to reject this order?',
         header: 'Confirm action',
         icon: 'pi pi-exclamation-triangle',
@@ -120,9 +120,6 @@ export default {
         }
       });
     }
-  },
-  mounted() {
-    this.confirm = useConfirm();
   },
   computed: {
     restaurantBusinessNamesPerOrder() {
@@ -212,7 +209,7 @@ export default {
 
   </pv-data-table>
 
-  <pv-confirm-dialog></pv-confirm-dialog>
+  <pv-confirm-dialog/>
 </template>
 
 <style>
