@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import SubscriptionOverviewComponent from '../restock/subscription/pages/subscription-overview.component.vue';
 
 
- /**
- * @description Lazy-loaded component imports for route configuration
- * Using dynamic imports to enable code splitting and improve performance
- */
+/**
+* @description Lazy-loaded component imports for route configuration
+* Using dynamic imports to enable code splitting and improve performance
+*/
 const Inventory = () => import('../restock/resource/inventory/pages/inventory.component.vue')
 const RestaurantSummaryOverview = () => import('../restock/Analytics/pages/restaurant-summary-overview.component.vue')
 const SupplierReviewComponent = () => import('../restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
@@ -49,17 +50,22 @@ const routes = [
 
     // Suppliers Routes
     {
-        path: '/dashboard/supplier/inventory',
-        name: 'supplier-inventory',
-        component: Inventory,
-        meta: { title: 'sidebar.inventory' }
-    },
-
-    {
         path: '/dashboard/supplier/summary',
         name: 'supplier-summary',
         component: SupplierSummaryOverview,
         meta: { title: 'sidebar.supplier-summary-overview' }
+    },
+    {
+        path: '/dashboard/supplier/subscription',
+        name: 'supplier-subscription',
+        component: SubscriptionOverviewComponent,
+        meta: { title: 'sidebar.supplier-summary-overview' }
+    },
+    {
+        path: '/dashboard/supplier/inventory',
+        name: 'supplier-inventory',
+        component: Inventory,
+        meta: { title: 'sidebar.inventory' }
     },
     {
         path: '/dashboard/restaurant/suppliers',
