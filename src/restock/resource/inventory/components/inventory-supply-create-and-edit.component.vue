@@ -74,9 +74,9 @@
 
       <!-- Botones -->
       <div class="flex justify-content-around pt-4">
-        <pv-button :label="isEdit ? 'EDITAR' : 'CREAR'" :icon="isEdit ? 'pi pi-pen-to-square' : 'pi pi-save'"
-          class="green-button" @click="submit" />
         <pv-button label="CANCELAR" icon="pi pi-times-circle" severity="danger" class="red-button" @click="cancel" />
+        <pv-button :label="isEdit ? 'GUARDAR' : 'CREAR'" :icon="isEdit ? 'pi pi-pen-to-square' : 'pi pi-save'"
+          class="green-button" @click="submit" />
       </div>
     </div>
   </pv-dialog>

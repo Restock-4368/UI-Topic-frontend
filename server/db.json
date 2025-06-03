@@ -402,6 +402,17 @@
       "unit_measurement_id": 1,
       "price": 0.4,
       "user_id": 1
+    },
+    {
+      "name": "Sillao",
+      "description": "Spicy yellow chili peppers used to enhance sauces and marinades.",
+      "perishable": true,
+      "category_id": 1,
+      "unit_measurement_id": 2,
+      "min_stock": 0,
+      "max_stock": 0,
+      "price": 12,
+      "id": 13
     }
   ],
   "sales": [
@@ -522,22 +533,21 @@
     },
     {
       "supply_id": 1,
-      "stock": 20,
+      "stock": 30,
       "expiration_date": "2025-05-09",
-      "provider": null,
       "id": 4
     },
     {
       "supply_id": 7,
-      "stock": 30,
+      "stock": 40,
       "expiration_date": null,
-      "provider": null,
       "id": 5
     },
     {
-      "supply_id": 8,
-      "stock": 30,
-      "expiration_date": "2025-05-15",
+      "supply_id": 13,
+      "stock": 20,
+      "expiration_date": "2025-06-24",
+      "provider": null,
       "id": 6
     }
   ],

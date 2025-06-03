@@ -292,7 +292,6 @@ export default {
     async updateBatch(updatedItem) {
       try {
         const id = this.selectedInventoryItem.id;
-        console.log("Este es el item: ", this.selectedInventoryItem)
         const formattedPayload = {
           supply_id: updatedItem.supply_id,
           stock: updatedItem.stock,
@@ -305,6 +304,38 @@ export default {
         this.showInventoryModal = false;
       } catch (error) {
         console.error('Error al actualizar batch de insumo:', error);
+      }
+    },
+    async deleteBatch() {
+      try {
+        await this.supplyBatchService.delete(this.itemToDelete.id);
+        await this.loadBatchesWithSupply();
+        this.showDeleteModal = false;
+        this.itemToDelete = null;
+      } catch (error) {
+        console.error('Error al eliminar el batch:', error);
+      }
+    },
+    async createSupply(newItem) {
+      try {
+        const payload = {
+          name: newItem.name,
+          description: newItem.description,
+          perishable: newItem.perishable,
+          category_id: newItem.category_id,
+          unit_measurement_id: newItem.unit_measurement_id,
+          min_stock: newItem.min_stock ?? null,
+          max_stock: newItem.max_stock ?? null,
+          price: newItem.price
+        };
+
+        await this.supplyService.create(payload);
+
+        await this.loadSupplies();
+
+        this.showSupplyModal = false;
+      } catch (error) {
+        console.error('Error al crear el insumo:', error);
       }
     },
     async updateSupply(updatedItem) {
@@ -488,12 +519,8 @@ export default {
       );
       this.showDeleteModal = false;
       this.itemToDelete = null;
-    }
-    ,
-    createSupply(newItem) {
-      this.supplies.push({ ...newItem });
-      this.showSupplyModal = false;
     },
+
     handleInventoryUpdate(updatedItem) {
       const index = this.currentInventory.findIndex(i => i.name === updatedItem.name);
       if (index !== -1) {
@@ -580,8 +607,8 @@ export default {
             <pv-column field="perishable" header="Perecible" />
             <pv-column header="Acciones">
               <template #body="slotProps">
-                <pv-button icon="pi pi-pen-to-square" text @click="() => { openInventoryEditModal(slotProps.data) }" />
                 <pv-button icon="pi pi-trash" text severity="danger" @click="() => confirmDelete(slotProps.data)" />
+                <pv-button icon="pi pi-pen-to-square" text @click="() => { openInventoryEditModal(slotProps.data) }" />
               </template>
             </pv-column>
           </pv-data-table>
@@ -603,8 +630,8 @@ export default {
       </div>
       <template #footer>
         <div class="flex justify-content-end gap-2">
-          <pv-button label="CONFIRMAR" severity="success" @click="deleteInventoryItem" class="green-button" />
           <pv-button label="CANCELAR" severity="danger" @click="showDeleteModal = false" class="red-button" />
+          <pv-button label="CONFIRMAR" severity="success" @click="deleteBatch" class="green-button" />
         </div>
       </template>
     </pv-dialog>

@@ -42,9 +42,9 @@
 
       <!-- Botones -->
       <div class="flex justify-content-around pt-4">
+        <pv-button label="CANCELAR" icon="pi pi-times-circle" severity="danger" class="red-button" @click="cancel" />
         <pv-button :label="isEdit ? 'GUARDAR' : 'AÑADIR'" :icon="isEdit ? 'pi pi-pen-to-square' : 'pi pi-plus-circle'"
           class="green-button" @click="submit" />
-        <pv-button label="CANCELAR" icon="pi pi-times-circle" severity="danger" class="red-button" @click="cancel" />
       </div>
     </div>
   </pv-dialog>
@@ -93,7 +93,6 @@ const resetForm = () => {
 
 // Detectar si el insumo seleccionado es perecible
 watch(() => form.value.supply, (selectedSupply) => {
-  console.log('Insumo seleccionado:', selectedSupply);
   form.value.perishable = selectedSupply?.perishable === true;
 });
 
