@@ -4,37 +4,28 @@
       "id": 1,
       "email": "pepe@gmail.com",
       "password": "password123",
+      "role_id": 1,
       "subscription_id": 1,
       "start_date": "2023-01-01",
-      "subscription_payment_details_id": 1,
-      "role_id": 1
+      "subscription_payment_details_id": 1
     },
     {
       "id": 2,
-      "email": "rosa@gmail.com",
-      "password": "password1234",
+      "email": "maria@example.com",
+      "password": "maria456",
+      "role_id": 2,
       "subscription_id": 2,
-      "start_date": "2023-02-01",
-      "subscription_payment_details_id": 2,
-      "role_id": 2
+      "start_date": "2023-02-15",
+      "subscription_payment_details_id": 2
     },
     {
       "id": 3,
-      "email": "proveedorprueba@example.com",
-      "password": "test123",
+      "email": "juanito@gmail.com",
+      "password": "juan123",
+      "role_id": 1,
       "subscription_id": 1,
-      "start_date": "2023-03-01",
-      "subscription_payment_details_id": 1,
-      "role_id": 1
-    },
-    {
-      "id": 4,
-      "email": "elhuarique@gmail.com",
-      "password": "restaurante2024",
-      "subscription_id": 2,
-      "start_date": "2024-03-01",
-      "subscription_payment_details_id": 2,
-      "role_id": 2
+      "start_date": "2023-03-10",
+      "subscription_payment_details_id": 3
     }
   ],
   "roles": [
@@ -485,6 +476,13 @@
       "quantity": 10
     }
   ],
+  "sales_additional_supplies": [
+    {
+      "sale_id": 1,
+      "supply_id": 1,
+      "quantity": 1
+    }
+  ],
   "comments": [
     {
       "id": 1,
@@ -544,13 +542,6 @@
       "supply_id": 1,
       "quantity": 10,
       "accepted": false
-    }
-  ],
-  "sales_additional_supplies": [
-    {
-      "sale_id": 1,
-      "supply_id": 1,
-      "quantity": 1
     }
   ],
   "units_measurement": [
@@ -750,70 +741,6 @@
       "card_type": "Visa",
       "payment_method": "Paypal",
       "paid_at": "2023-01-01"
-    }
-  ],
-  "features": [
-    {
-      "id": 1,
-      "name": "Automated inventory management"
-    },
-    {
-      "id": 2,
-      "name": "Ordering and purchasing control"
-    },
-    {
-      "id": 3,
-      "name": "Reporting and analytics"
-    },
-    {
-      "id": 4,
-      "name": "Critical stock notifications"
-    },
-    {
-      "id": 5,
-      "name": "Integration with suppliers"
-    }
-  ],
-  "subscription_features": [
-    {
-      "subscription_id": 1,
-      "feature_id": 1
-    },
-    {
-      "subscription_id": 1,
-      "feature_id": 2
-    },
-    {
-      "subscription_id": 1,
-      "feature_id": 3
-    },
-    {
-      "subscription_id": 1,
-      "feature_id": 4
-    },
-    {
-      "subscription_id": 1,
-      "feature_id": 5
-    },
-    {
-      "subscription_id": 2,
-      "feature_id": 1
-    },
-    {
-      "subscription_id": 2,
-      "feature_id": 2
-    },
-    {
-      "subscription_id": 2,
-      "feature_id": 3
-    },
-    {
-      "subscription_id": 2,
-      "feature_id": 4
-    },
-    {
-      "subscription_id": 2,
-      "feature_id": 5
     }
   ]
 }
