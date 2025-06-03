@@ -10,6 +10,10 @@ import { Supply } from '../model/supply.entity';
 import { SupplyService } from '../services/supply.service';
 import { SupplyBatch } from '../model/supply-batch.entity';
 import { SupplyBatchService } from '../services/supply-batch.service';
+import { SupplyAssembler } from '../services/supply.assembler';
+import { UnitMeasurementAssembler } from '../services/unit-measurement.assembler';
+import { SupplyCategoryAssembler } from '../services/supply-category.assembler';
+import { SupplyBatchAssembler } from '../services/supply-batch.assembler';
 
 export default {
 
@@ -64,220 +68,6 @@ export default {
       supplyBatchService: new SupplyBatchService(),
       supplyService: new SupplyService(),
       batches: [],
-      adminInventory: [
-        {
-          name: 'Tomate',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Tomate fresco, orgánico, ideal para ensaladas y salsas.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-06-01',
-          stock: 20
-        },
-        {
-          name: 'Pollo',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Pechuga de pollo sin piel, rica en proteínas, lista para cocinar.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-05-10',
-          stock: 15
-        },
-        {
-          name: 'Leche',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Leche entera pasteurizada, ideal para consumo diario o recetas.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-05-18',
-          stock: 25
-        },
-        {
-          name: 'Papa',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Papa blanca andina, firme y versátil para todo tipo de platos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-06-10',
-          stock: 30
-        },
-        {
-          name: 'Carne molida',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Carne de res molida fresca, perfecta para hamburguesas y guisos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-05-19',
-          stock: 10
-        },
-        {
-          name: 'Agua mineral',
-          category: 'Bebidas',
-          unit: 'l',
-          description: 'Agua mineral sin gas, purificada, embotellada en origen natural.',
-          min: 10,
-          max: 50,
-          perishable: 'No',
-          expiry: null,
-          stock: 50
-        },
-        {
-          name: 'Yogurt',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Yogurt natural sin azúcar, con cultivos vivos, fuente de probióticos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-05-18',
-          stock: 18
-        },
-        {
-          name: 'Zanahoria',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Zanahoria fresca, crocante y dulce, rica en betacarotenos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-06-12',
-          stock: 22
-        },
-        {
-          name: 'Lentejas',
-          category: 'Granos',
-          unit: 'kg',
-          description: 'Lentejas secas seleccionadas, ideales para guisos y ensaladas.',
-          min: 10,
-          max: 50,
-          perishable: 'No',
-          expiry: null,
-          stock: 40
-        },
-        {
-          name: 'Cebolla',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Cebolla roja fresca, de sabor intenso, ideal para sofritos y ensaladas.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-06-05',
-          stock: 35
-        }
-      ],
-      supplierInventory: [
-        {
-          name: 'Tomate',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Tomate fresco, orgánico, ideal para ensaladas y salsas.',
-          perishable: 'Sí',
-          unitPrice: 2.50,
-          stock: 500,
-          expiry: '2025-06-01'
-        },
-        {
-          name: 'Pollo',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Pechuga de pollo sin piel, rica en proteínas, lista para cocinar.',
-          perishable: 'Sí',
-          unitPrice: 5.75,
-          stock: 300,
-          expiry: '2025-05-10'
-        },
-        {
-          name: 'Leche',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Leche entera pasteurizada, ideal para consumo diario o recetas.',
-          perishable: 'Sí',
-          unitPrice: 1.20,
-          stock: 400,
-          expiry: '2025-05-18'
-        },
-        {
-          name: 'Papa',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Papa blanca andina, firme y versátil para todo tipo de platos.',
-          perishable: 'Sí',
-          unitPrice: 1.10,
-          stock: 450,
-          expiry: '2025-06-10'
-        },
-        {
-          name: 'Carne molida',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Carne de res molida fresca, perfecta para hamburguesas y guisos.',
-          perishable: 'Sí',
-          unitPrice: 6.40,
-          stock: 200,
-          expiry: '2025-05-19'
-        },
-        {
-          name: 'Agua mineral',
-          category: 'Bebidas',
-          unit: 'l',
-          description: 'Agua mineral sin gas, purificada, embotellada en origen natural.',
-          perishable: 'No',
-          unitPrice: 0.90,
-          stock: 1000,
-          expiry: null
-        },
-        {
-          name: 'Yogurt',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Yogurt natural sin azúcar, con cultivos vivos, fuente de probióticos.',
-          perishable: 'Sí',
-          unitPrice: 1.80,
-          stock: 320,
-          expiry: '2025-05-18'
-        },
-        {
-          name: 'Zanahoria',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Zanahoria fresca, crocante y dulce, rica en betacarotenos.',
-          perishable: 'Sí',
-          unitPrice: 1.30,
-          stock: 380,
-          expiry: '2025-06-12'
-        },
-        {
-          name: 'Lentejas',
-          category: 'Granos',
-          unit: 'kg',
-          description: 'Lentejas secas seleccionadas, ideales para guisos y ensaladas.',
-          perishable: 'No',
-          unitPrice: 2.00,
-          stock: 600,
-          expiry: null
-        },
-        {
-          name: 'Cebolla',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Cebolla roja fresca, de sabor intenso, ideal para sofritos y ensaladas.',
-          perishable: 'Sí',
-          unitPrice: 1.60,
-          stock: 420,
-          expiry: '2025-06-05'
-        }
-      ],
       providers: ['Proveedor A', 'Proveedor B', 'Proveedor C'],
     }
 
@@ -432,45 +222,47 @@ export default {
       }
     },
     async loadSupplies() {
-      this.supplyService.getAll()
-        .then(async response => {
-          const rawSupplies = response.data;
-          const enrichedSupplies = [];
+      try {
+        const response = await this.supplyService.getAll();
+        const supplies = SupplyAssembler.toEntitiesFromResponse(response);
 
-          for (const s of rawSupplies) {
-            const supply = new Supply(s);
+        const enrichedSupplies = [];
 
-            try {
-              const categoryResponse = await this.categoryService.getById(s.category_id);
-              supply.category = categoryResponse.data.name;
+        for (const supply of supplies) {
+          try {
+            const [categoryResponse, unitResponse] = await Promise.all([
+              this.categoryService.getById(supply.category_id),
+              this.UnitMeasurementService.getById(supply.unit_measurement_id)
+            ]);
 
-              const unitResponse = await this.UnitMeasurementService.getById(s.unit_measurement_id);
-              supply.unit = unitResponse.data.name;
+            supply.category = categoryResponse.data.name;
+            supply.unit = unitResponse.data.name;
 
-            } catch (error) {
-              console.error(`Error obteniendo detalles de supply con ID ${s.id}`, error);
-            }
-
-            enrichedSupplies.push(supply);
+          } catch (error) {
+            console.error(`Error obteniendo detalles de supply con ID ${supply.id}`, error);
           }
-          this.supplies = enrichedSupplies;
-          console.log("Estos son los sssss", this.supplies)
-        })
-        .catch(error => {
-          console.error('Error al cargar los supplies:', error);
-        });
+
+          enrichedSupplies.push(supply);
+        }
+
+        this.supplies = enrichedSupplies;
+        console.log("Estos son los supplies:", this.supplies);
+      } catch (error) {
+        console.error('Error al cargar los supplies:', error);
+      }
     },
     async loadCategories() {
-      this.categoryService.getAll().then(response => {
-        this.categories = response.data.map(c => new SupplyCategory(c));
-      }).catch(error => {
+      try {
+        const response = await this.categoryService.getAll();
+        this.categories = SupplyCategoryAssembler.toEntitiesFromResponse(response);
+      } catch (error) {
         console.error("Error loading categories:", error);
-      });
+      }
     },
     async loadUnits() {
       this.UnitMeasurementService.getAll()
         .then(response => {
-          this.units = response.data.map(u => new UnitMeasurement(u));
+          this.units = UnitMeasurementAssembler.toEntitiesFromResponse(response);
         })
         .catch(error => {
           console.error("Error al cargar las unidades de medida:", error);

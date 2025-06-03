@@ -413,6 +413,17 @@
       "max_stock": 0,
       "price": 12,
       "id": 13
+    },
+    {
+      "name": "Gaseosa",
+      "description": "Una gacela",
+      "perishable": true,
+      "category_id": 3,
+      "unit_measurement_id": 2,
+      "min_stock": 0,
+      "max_stock": 0,
+      "price": 5,
+      "id": 14
     }
   ],
   "sales": [
@@ -542,13 +553,6 @@
       "stock": 40,
       "expiration_date": null,
       "id": 5
-    },
-    {
-      "supply_id": 13,
-      "stock": 20,
-      "expiration_date": "2025-06-24",
-      "provider": null,
-      "id": 6
     }
   ],
   "batch_notifications_states": [
