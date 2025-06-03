@@ -1,3 +1,9 @@
+export class Avatar {
+    constructor(name) {
+        this.name = name || '';
+    }
+}
+
 
 export class User {
     constructor({
