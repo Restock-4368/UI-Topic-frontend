@@ -215,6 +215,6 @@ export default {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-bottom: 1rem; /* opcional para separación visual */
+  margin-bottom: 1rem;
 }
 </style>
