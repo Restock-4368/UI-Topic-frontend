@@ -51,7 +51,7 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
 .plans-grid {
   margin-top: 60px;
 }
