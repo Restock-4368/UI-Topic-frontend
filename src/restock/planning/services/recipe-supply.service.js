@@ -2,9 +2,8 @@ import {BaseService} from "../../../shared/services/base.service.js";
 import {RecipeSupply} from "../model/recipe-supply.entity.js";
 
 export class RecipeSupplyService extends BaseService {
-    constructor() {
-        super(import.meta.env.VITE_RECIPES_SUPPLIES_ENDPOINT_PATH);
-    }
+
+    resourceEndpoint = import.meta.env.VITE_RECIPES_SUPPLIES_ENDPOINT_PATH;
 
     async getByRecipe(recipeId) {
         const response = await this.getByQuery('recipe_id', recipeId);

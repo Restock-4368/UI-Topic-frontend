@@ -1,14 +1,3 @@
-export class Role {
-    constructor({ name = '' } = {}) {
-        this.name = name;
-    }
-}
-
-export class Avatar {
-    constructor({ url = '' } = {}) {
-        this.url = url;
-    }
-}
 
 export class User {
     constructor({

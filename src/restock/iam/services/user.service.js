@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { User } from '../model/user.entity.js';
-import { BaseService } from "../../../shared/services/base.service.js";
+import {BaseService} from "../../../shared/services/base.service.js";
 
 export class UserService extends BaseService {
     constructor() {

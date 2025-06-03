@@ -22,10 +22,12 @@ import {
     Toolbar,
     Calendar,
     InputNumber,
-    ToggleSwitch, FileUpload
+    ToggleSwitch,
+    FileUpload,
+    Tabs,
+    TabPanel, TabList, Tab, TabPanels,
 } from "primevue";
 import router from "./router/index.js";
-
 
 const app = createApp(App);
 
@@ -51,5 +53,10 @@ app
     .component('pv-input-switch', ToggleSwitch)
     .component('ToggleSwitch', ToggleSwitch)
     .component('FileUpload', FileUpload)
+    .component('pv-tabs', Tabs)
+    .component('pv-tab-panel', TabPanel)
+    .component('pv-tab-list', TabList)
+    .component('pv-tab', Tab)
+    .component('pv-tab-panels', TabPanels)
 
 .mount('#app');
