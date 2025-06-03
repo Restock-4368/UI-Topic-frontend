@@ -9,8 +9,8 @@ export default {
 
 <template>
   <div class="flex">
-    <Sidebar class="w-64 flex-shrink-0" />
-    <main class="flex-1 w-full" >
+    <Sidebar />
+    <main class="w-full overflow-y-auto">
     <router-view />
     </main>
   </div>
