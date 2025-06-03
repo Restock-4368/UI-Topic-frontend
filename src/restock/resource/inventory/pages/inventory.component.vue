@@ -344,7 +344,7 @@ export default {
 </script>
 
 <template>
-  <div class="">
+  <div>
     <div class="flex flex-column gap-4">
 
       <div class="surface-card shadow-4 p-4 border-round-3xl">
