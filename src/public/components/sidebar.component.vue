@@ -48,6 +48,7 @@ import { RouterLink } from 'vue-router'
 import LanguageSwitcher from './language-switcher.component.vue'
 import logo from '../../assets/images/logo-restock.png'
 import { mockUser } from '../../shared/mocks/user.mock.ts';
+import {UserService} from "../../restock/iam/services/user.service.js";
 
 export default {
   name: 'Sidebar',
@@ -59,12 +60,15 @@ export default {
       sidebarVisible: false,
       isMobile: window.innerWidth < 1260,
       menuItems: [], // se llenará según el rol
+      userService: new UserService()
     }
   },
   created() {
-      this.user = mockUser;
+    this.userService.getById(1).then(user => {
+      this.user = user;
+      const role = this.user.role;  // Accede al nombre del rol directamente
 
-      const role = this.user.role_id?.name;
+      console.log(role); // Verifica si el rol es correcto
 
       if (role === 'supplier') {
         this.menuItems = [
@@ -86,7 +90,7 @@ export default {
           { label: 'sidebar.sales', icon: 'pi pi-chart-line', route: '/dashboard/restaurant/sales' }
         ];
       }
-  
+    });
   },
   mounted() {
     window.addEventListener('resize', this.checkMobile)
