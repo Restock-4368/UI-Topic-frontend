@@ -9,6 +9,7 @@ import 'primeflex/primeflex.css'
 import {
     Button,
     Column,
+    Dropdown,
     DataTable,
     Carousel,
     Select,
@@ -38,6 +39,7 @@ app
     .use(PrimeVue, {ripple: true, theme: {preset: Aura }})
     .use(ConfirmationService)
     .component('pv-button', Button)
+    .component('pv-dropdown', Dropdown)
     .component('pv-card', Card)
     .component('pv-select-button', SelectButton)
     .component('pv-menubar', Menubar)

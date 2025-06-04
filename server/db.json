@@ -11,8 +11,8 @@
     },
     {
       "id": 2,
-      "email": "rosa@gmail.com",
-      "password": "password1234",
+      "email": "maria@example.com",
+      "password": "maria456",
       "subscription_id": 2,
       "start_date": "2023-02-01",
       "subscription_payment_details_id": 2,
@@ -20,8 +20,8 @@
     },
     {
       "id": 3,
-      "email": "proveedorprueba@example.com",
-      "password": "test123",
+      "email": "juanito@gmail.com",
+      "password": "juan123",
       "subscription_id": 1,
       "start_date": "2023-03-01",
       "subscription_payment_details_id": 1,
@@ -219,27 +219,7 @@
       "name": "Ceviche de Pescado",
       "total_price": 37,
       "image_url": "https://treehouselodge.com/wp-content/uploads/2021/09/peruvian-ceviche.png",
-      "user_id": 1,
-      "supplies": [
-        {
-          "id": 13,
-          "recipe_id": 5,
-          "supply_id": 11,
-          "quantity": 1
-        },
-        {
-          "id": 14,
-          "recipe_id": 5,
-          "supply_id": 12,
-          "quantity": 3
-        },
-        {
-          "id": 15,
-          "recipe_id": 5,
-          "supply_id": 3,
-          "quantity": 1
-        }
-      ]
+      "user_id": 1
     }
   ],
   "recipes_supplies": [
@@ -337,8 +317,8 @@
   "supplies": [
     {
       "id": 1,
-      "name": "Papa Amarilla",
-      "description": "Papas",
+      "name": "Potatoes",
+      "description": "Fresh organic potatoes used for various side dishes and stews.",
       "perishable": true,
       "min_stock": 5,
       "max_stock": 50,
@@ -349,8 +329,8 @@
     },
     {
       "id": 2,
-       "name": "Carne de Res",
-      "description": "Lomo Fino",
+      "name": "Beef Tenderloine",
+      "description": "High-quality beef tenderloin, ideal for premium meat dishes.",
       "perishable": true,
       "min_stock": 2,
       "max_stock": 20,
@@ -361,8 +341,8 @@
     },
     {
       "id": 3,
-      "name": "Cebolla Roja",
-      "description": "Cebolla Roja",
+      "name": "Red Onione",
+      "description": "Crisp red onions used to add flavor and color to meals.",
       "perishable": true,
       "min_stock": 3,
       "max_stock": 30,
@@ -373,8 +353,8 @@
     },
     {
       "id": 4,
-      "name": "Pechuga de Pollo",
-      "description": "Pechuga de Pollo",
+      "name": "Chicken Breaste",
+      "description": "Boneless, skinless chicken breast, perfect for grilling and baking.",
       "perishable": true,
       "min_stock": 2,
       "max_stock": 15,
@@ -385,8 +365,8 @@
     },
     {
       "id": 5,
-      "name": "Ají Amarillo",
-      "description": "Ají Amarillo",
+      "name": "Yellow Chili Pepper",
+      "description": "Spicy yellow chili peppers used to enhance sauces and marinades.",
       "perishable": true,
       "min_stock": 1,
       "max_stock": 10,
@@ -397,8 +377,8 @@
     },
     {
       "id": 6,
-      "name": "Pan frances",
-      "description": "Pan",
+      "name": "Bread",
+      "description": "Freshly baked bread served with meals or used for sandwiches.",
       "perishable": true,
       "min_stock": 10,
       "max_stock": 100,
@@ -409,8 +389,8 @@
     },
     {
       "id": 7,
-      "name": "Fideos",
-      "description": "Fideos Tallarín",
+      "name": "Spaghetti Pasta",
+      "description": "Durum wheat spaghetti used for pasta dishes and casseroles.",
       "perishable": false,
       "min_stock": 10,
       "max_stock": 100,
@@ -421,8 +401,8 @@
     },
     {
       "id": 8,
-      "name": "Albahaca",
-      "description": "Albahaca",
+      "name": "Basil",
+      "description": "Aromatic fresh basil leaves used in sauces and garnishing.",
       "perishable": true,
       "min_stock": 5,
       "max_stock": 30,
@@ -433,8 +413,8 @@
     },
     {
       "id": 9,
-      "name": "Frijoles",
-      "description": "Frijoles",
+      "name": "Beans",
+      "description": "Dried beans rich in protein, used in stews and soups.",
       "perishable": false,
       "min_stock": 5,
       "max_stock": 50,
@@ -445,8 +425,8 @@
     },
     {
       "id": 10,
-      "name": "Culantro",
-      "description": "Culantro",
+      "name": "Cilantro",
+      "description": "Fresh cilantro used to enhance flavor in a variety of dishes.",
       "perishable": true,
       "min_stock": 2,
       "max_stock": 20,
@@ -457,8 +437,8 @@
     },
     {
       "id": 11,
-      "name": "Pescado Blanco",
-      "description": "Pescado Blanco",
+      "name": "White Fish",
+      "description": "Lean white fish fillets ideal for grilling or baking.",
       "perishable": true,
       "min_stock": 3,
       "max_stock": 30,
@@ -469,8 +449,8 @@
     },
     {
       "id": 12,
-      "name": "Limón",
-      "description": "Limón",
+      "name": "Lime",
+      "description": "Juicy limes used for dressing, seasoning, and beverages.",
       "perishable": true,
       "min_stock": 10,
       "max_stock": 50,
@@ -478,6 +458,28 @@
       "unit_measurement_id": 1,
       "price": 0.4,
       "user_id": 1
+    },
+    {
+      "id": 13,
+      "name": "Sillao",
+      "description": "Spicy yellow chili peppers used to enhance sauces and marinades.",
+      "perishable": true,
+      "category_id": 1,
+      "unit_measurement_id": 2,
+      "min_stock": 0,
+      "max_stock": 0,
+      "price": 12
+    },
+    {
+      "id": 14,
+      "name": "Gaseosa",
+      "description": "Una gacela",
+      "perishable": true,
+      "category_id": 3,
+      "unit_measurement_id": 2,
+      "min_stock": 0,
+      "max_stock": 0,
+      "price": 5
     }
   ],
   "sales": [
@@ -495,6 +497,13 @@
       "sale_id": 1,
       "recipe_id": 1,
       "quantity": 10
+    }
+  ],
+  "sales_additional_supplies": [
+    {
+      "sale_id": 1,
+      "supply_id": 1,
+      "quantity": 1
     }
   ],
   "comments": [
@@ -646,13 +655,6 @@
       "accepted": false
     }
   ],
-  "sales_additional_supplies": [
-    {
-      "sale_id": 1,
-      "supply_id": 1,
-      "quantity": 1
-    }
-  ],
   "units_measurement": [
     {
       "id": 1,
@@ -702,6 +704,18 @@
       "id": 3,
       "supply_id": 3,
       "stock": 200,
+      "expiration_date": "2025-06-03"
+    },
+    {
+      "id": 4,
+      "supply_id": 1,
+      "stock": 30,
+      "expiration_date": "2025-05-09"
+    },
+    {
+      "id": 5,
+      "supply_id": 7,
+      "stock": 40,
       "expiration_date": null
     }
   ],
