@@ -1,10 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 :root {
   font-family: 'Poppins', sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme:normal;
+  color-scheme: normal;
   color: rgba(0, 0, 0, 0.87);
   background-color: #ffffff;
 
@@ -17,31 +18,39 @@
   -moz-osx-font-smoothing: grayscale;
   --p-dialog-background: #ffffff !important;
   --p-dialog-color: black !important;
-  .p-datatable-header-cell{
+
+  .p-datatable-header-cell {
     background-color: #ffffff !important;
     color: black !important;
     background: white !important;
   }
+
   --p-content-background: #ffffff !important;
-    --p-content-color: black !important;
-  .p-inputtext{
+  --p-content-color: black !important;
+
+  .p-inputtext {
     background-color: #ffffff !important;
     color: black !important;
   }
+
   .p-datepicker-dropdown {
     background-color: #ffffff !important;
   }
+
   .p-select {
     background-color: #ffffff !important;
     color: black !important;
   }
+
   .p-select-option {
     background-color: #ffffff !important;
     color: black !important;
   }
+
   .p-select-label {
     color: black !important;
   }
+
   .p-select-overlay {
     background-color: #ffffff !important;
   }
@@ -53,12 +62,13 @@ a {
   color: #6b6a6a;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #4b4b4b;
 }
 
 body {
-
+  overflow-y: hidden;
 }
 
 h1 {
@@ -77,9 +87,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -91,8 +103,7 @@ button:focus-visible {
 
 
 
-#app {
-}
+#app {}
 
 .green-button {
   border-radius: 9999px !important;
@@ -121,15 +132,15 @@ button:focus-visible {
 }
 
 .gray-button {
-    border-radius: 9999px !important;
-    background-color: #6c757d !important;
-    color: white !important;
-    border: none !important;
+  border-radius: 9999px !important;
+  background-color: #6c757d !important;
+  color: white !important;
+  border: none !important;
 }
 
 .gray-button:hover {
-    background-color: #5a6268 !important;
-    color: white !important;
+  background-color: #5a6268 !important;
+  color: white !important;
 }
 
 .bg-active-sidebar {

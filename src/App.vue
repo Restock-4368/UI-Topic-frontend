@@ -31,7 +31,7 @@ export default {
 .layout-container {
   display: flex;
   height: 100vh;
-  overflow: hidden;
+  
 }
 
 
