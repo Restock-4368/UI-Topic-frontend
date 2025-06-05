@@ -315,8 +315,8 @@
       "perishable": true,
       "category_id": 1,
       "unit_measurement_id": 1,
-      "min_stock": null,
-      "max_stock": null,
+      "min_stock": 1,
+      "max_stock": 100,
       "price": 2.5,
       "id": 1
     },
@@ -326,6 +326,8 @@
       "perishable": true,
       "category_id": 2,
       "unit_measurement_id": 2,
+      "min_stock": 3,
+      "max_stock": 30,
       "price": 12,
       "id": 2
     },
@@ -459,14 +461,36 @@
     },
     {
       "name": "Gaseosa",
-      "description": "Una gacela",
+      "description": "Una gasela bien heladita q riko",
       "perishable": true,
       "category_id": 3,
       "unit_measurement_id": 2,
-      "min_stock": 0,
-      "max_stock": 0,
+      "min_stock": null,
+      "max_stock": null,
       "price": 5,
       "id": 14
+    },
+    {
+      "name": "Papitas",
+      "description": "Papitas q rico",
+      "perishable": false,
+      "category_id": 3,
+      "unit_measurement_id": 3,
+      "min_stock": 0,
+      "max_stock": 0,
+      "price": 20,
+      "id": 15
+    },
+    {
+      "name": "Coquita",
+      "description": "current user",
+      "perishable": false,
+      "category_id": 3,
+      "unit_measurement_id": 3,
+      "min_stock": 10,
+      "max_stock": 101,
+      "price": null,
+      "id": 16
     }
   ],
   "sales": [
@@ -606,16 +630,60 @@
       "expiration_date": "2025-06-03"
     },
     {
+      "supply_id": 7,
+      "stock": 83,
+      "expiration_date": null,
+      "provider": null,
+      "id": 5
+    },
+    {
+      "supply_id": 2,
+      "stock": 10,
+      "expiration_date": "2025-06-27",
+      "provider": null,
+      "id": 6
+    },
+    {
+      "supply_id": 8,
+      "stock": 35,
+      "expiration_date": "2025-06-26",
+      "provider": null,
+      "id": 7
+    },
+    {
       "supply_id": 1,
-      "stock": 30,
-      "expiration_date": "2025-05-09",
-      "id": 4
+      "stock": 10,
+      "expiration_date": "2025-06-27",
+      "provider": null,
+      "id": 8
+    },
+    {
+      "supply_id": 2,
+      "stock": 5,
+      "expiration_date": "2025-06-18",
+      "provider": null,
+      "id": 9
     },
     {
       "supply_id": 7,
-      "stock": 40,
+      "stock": 5,
       "expiration_date": null,
-      "id": 5
+      "provider": null,
+      "id": 10
+    },
+    {
+      "supply_id": 15,
+      "stock": 45,
+      "expiration_date": null,
+      "provider": null,
+      "id": 11
+    },
+    {
+      "supply_id": 16,
+      "stock": 100,
+      "expiration_date": null,
+      "provider": null,
+      "id": 12
     }
   ],
   "batch_notifications_states": [
