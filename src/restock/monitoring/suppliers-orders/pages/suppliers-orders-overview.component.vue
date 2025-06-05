@@ -266,6 +266,10 @@ export default {
 
   <order-details
       v-model="showAcceptedOrderDetailsModal"
+      :order="selectedOrder"
+      :detailed-supplies-per-order="selectedOrderDetailedSupplies"
+      :supplies-per-order="selectedOrderSupplies"
+      :units-measurement="unitsMeasurement"
       @update:modelValue="showAcceptedOrderDetailsModal = $event"
   />
 </template>
