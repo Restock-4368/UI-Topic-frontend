@@ -344,10 +344,10 @@
       "name": "Red Onione",
       "description": "Crisp red onions used to add flavor and color to meals.",
       "perishable": true,
-      "min_stock": 3,
-      "max_stock": 30,
       "category_id": 1,
       "unit_measurement_id": 1,
+      "min_stock": 3,
+      "max_stock": 30,
       "price": 1,
       "user_id": 1
     },
@@ -468,7 +468,8 @@
       "unit_measurement_id": 2,
       "min_stock": 0,
       "max_stock": 0,
-      "price": 12
+      "price": 12,
+      "user_id": 1
     },
     {
       "id": 14,
@@ -477,9 +478,38 @@
       "perishable": true,
       "category_id": 3,
       "unit_measurement_id": 2,
+      "min_stock": null,
+      "max_stock": null,
+      "price": 5,
+      "user_id": 2
+    },
+    {
+      "id": 15,
+      "name": "Papitas",
+      "description": "Papitas q rico",
+      "perishable": false,
+      "category_id": 3,
+      "unit_measurement_id": 3,
       "min_stock": 0,
       "max_stock": 0,
-      "price": 5
+      "price": 20,
+      "user_id": 16
+
+    },
+    {
+      "id": 16,
+      "name": "Coquita",
+      "description": "current user",
+      "perishable": false,
+      "category_id": 3,
+      "unit_measurement_id": 3,
+      "min_stock": 10,
+      "max_stock": 101,
+      "price": null,
+      "user_id": 16
+    },
+    {
+
     }
   ],
   "sales": [
@@ -709,14 +739,32 @@
     {
       "id": 4,
       "supply_id": 1,
-      "stock": 30,
-      "expiration_date": "2025-05-09"
+      "stock": 10,
+      "expiration_date": "2025-06-27"
     },
     {
-      "id": 5,
+      "supply_id": 2,
+      "stock": 5,
+      "expiration_date": "2025-06-18",
+      "id": 9
+    },
+    {
       "supply_id": 7,
-      "stock": 40,
-      "expiration_date": null
+      "stock": 5,
+      "expiration_date": "2025-06-18",
+      "id": 10
+    },
+    {
+      "supply_id": 15,
+      "stock": 45,
+      "expiration_date": "2025-06-18",
+      "id": 11
+    },
+    {
+      "supply_id": 16,
+      "stock": 100,
+      "expiration_date": "2025-06-18",
+      "id": 12
     }
   ],
   "batch_notifications_states": [

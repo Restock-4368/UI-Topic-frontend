@@ -25,25 +25,31 @@ export default {
   },
   computed: {
     filteredInventory() {
-      const currentInventory = this.batches;
-      if (!this.search.trim()) return currentInventory;
+      if (!this.search.trim()) return this.batches;
       const term = this.search.toLowerCase();
-      return currentInventory.filter(item => item.name.toLowerCase().includes(term));
+      return this.batches.filter(item =>
+        item.name.toLowerCase().includes(term) ||
+        (item.category && item.category.toLowerCase().includes(term))
+      );
     },
-    currentInventory: {
-      get() {
-        return this.this.batches;
-      },
-      set(newVal) {
-
-        this.batches = newVal;
-
-      }
-    }
+    paginationStart() {
+      return (this.currentPage - 1) * this.itemsPerPage + 1;
+    },
+    paginationEnd() {
+      return Math.min(this.currentPage * this.itemsPerPage, this.filteredInventory.length);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredInventory.length / this.itemsPerPage);
+    },
+    paginatedInventory() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredInventory.slice(start, end);
+    },
   },
   data() {
     return {
-      role: 'supplier',
+      role: 'admin',
       showSupplyModal: false,
       search: '',
       showInventoryModal: false,
@@ -52,12 +58,6 @@ export default {
       supplyToEdit: null,
       itemToDelete: null,
       showDeleteModal: false,
-      newSupply: {
-        name: '',
-        category: null,
-        unit: null,
-        description: ''
-      },
       categories: [],
       category: new SupplyCategory(),
       categoryService: new SupplyCategoryService(),
@@ -69,6 +69,8 @@ export default {
       supplyService: new SupplyService(),
       batches: [],
       providers: ['Proveedor A', 'Proveedor B', 'Proveedor C'],
+      currentPage: 1,
+      itemsPerPage: 5,
     }
 
   },
@@ -157,28 +159,10 @@ export default {
         const payload = {
           supply_id: batchData.supply_id,
           stock: batchData.stock,
-          expiration_date: batchData.expiration_date || null,
+          expiration_date: batchData.expiration_date !== undefined ? batchData.expiration_date : null,
           provider: batchData.provider || null
         };
-
-        const existingBatch = this.batches.find(
-          batch => batch.supply_id === payload.supply_id && batch.expiration_date === null
-        );
-
-        if (existingBatch) {
-          const updatedStock = existingBatch.stock + payload.stock;
-          const updatedPayload = {
-            supply_id: existingBatch.supply_id,
-            stock: updatedStock,
-            expiration_date: existingBatch.expiration_date,
-            provider: existingBatch.provider || null
-          };
-
-          await this.supplyBatchService.update(existingBatch.id, updatedPayload);
-        } else {
-          await this.supplyBatchService.create(payload);
-        }
-
+        await this.supplyBatchService.create(payload);
         await this.loadBatchesWithSupply();
         this.showInventoryModal = false;
       } catch (error) {
@@ -301,42 +285,8 @@ export default {
       this.itemToDelete = item;
       this.showDeleteModal = true;
     },
-    deleteInventoryItem() {
-      this.currentInventory = this.currentInventory.filter(i =>
-        !(
-          i.name === this.itemToDelete.name &&
-          i.stock === this.itemToDelete.stock &&
-          i.expiry === this.itemToDelete.expiry
-        )
-      );
-      this.showDeleteModal = false;
-      this.itemToDelete = null;
-    },
-
-    handleInventoryUpdate(updatedItem) {
-      const index = this.currentInventory.findIndex(i => i.name === updatedItem.name);
-      if (index !== -1) {
-        this.currentInventory[index] = { ...updatedItem };
-      }
-      this.showInventoryModal = false;
-    },
-    handleCreateSupply(newInventoryItem) {
-      this.currentInventory.push(newInventoryItem);
-      this.showInventoryModal = false;
-    },
-    getRowClass(data) {
-      if (!data.expiry) {
-        return '';
-      }
-
-      const today = new Date();
-      const expiryDate = new Date(data.expiry);
-
-      if (expiryDate < today) {
-        return 'expired-row';
-      }
-
-      return '';
+    getExpirationRowClass(data) {
+      return data.expiration_date && new Date(data.expiration_date) < new Date() ? 'expired-row' : '';
     }
   }
 
@@ -378,17 +328,15 @@ export default {
 
           <pv-input-text v-model="search" placeholder="Buscar insumo" style="width: 400px" class="font-light" />
           <pv-button label="AÑADIR" icon="pi pi-plus-circle" @click="openAddModal" class="green-button" />
-
-
           <div class="flex align-items-center gap-2">
-            <span>1-5 de 10</span>
-            <pv-button icon="pi pi-angle-left" text />
-            <pv-button icon="pi pi-angle-right" text />
+            <span>{{ paginationStart }}-{{ paginationEnd }} de {{ filteredInventory.length }}</span>
+            <pv-button icon="pi pi-angle-left" text :disabled="currentPage === 1" @click="currentPage--" />
+            <pv-button icon="pi pi-angle-right" text :disabled="currentPage >= totalPages" @click="currentPage++" />
           </div>
         </div>
         <div style="max-height: 300px; overflow-y: auto;">
-          <pv-data-table :value="filteredInventory" responsiveLayout="scroll" :rowClass="(data) => getRowClass(data)"
-            class="overflow-x-auto">
+          <pv-data-table :value="paginatedInventory" responsiveLayout="scroll"
+            :rowClass="(data) => getExpirationRowClass(data)" class="overflow-x-auto">
             <pv-column field="name" header="Insumos" />
             <pv-column field="category" header="Categoría" />
             <pv-column field="unit" header="Unidad de medida" />
@@ -432,8 +380,7 @@ export default {
       :supplyToEdit="supplyToEdit" :categories="categories" :units="units" @create="createSupply" @update="updateSupply"
       @cancel="showSupplyModal = false" @update:visible="showSupplyModal = $event" />
     <inventorySupplyAddAndEdit :role="role" :visible="showInventoryModal" :isEdit="isEditing"
-      :itemToEdit="selectedInventoryItem" :supplies="supplies" :providers="providers"
-      :isPerishable="selectedInventoryItem?.perishable === 'Sí'" @create="createBatch"
+      :itemToEdit="selectedInventoryItem" :supplies="supplies" :providers="providers" @create="createBatch"
       @update:visible="showInventoryModal = $event" @update="updateBatch" @cancel="showInventoryModal = false" />
   </div>
 </template>
@@ -441,7 +388,6 @@ export default {
 <style>
 h1 {
   font-weight: 400;
-  /* Regular */
   font-size: 23px;
 }
 
