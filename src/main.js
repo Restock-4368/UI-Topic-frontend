@@ -27,7 +27,7 @@ import {
     Tabs,
     TabPanel, TabList, Tab, TabPanels,
     Checkbox,
-    ConfirmDialog, useConfirm, ConfirmationService,
+    ConfirmDialog, useConfirm, ConfirmationService, Chip,
 } from "primevue";
 import router from "./router/index.js";
 
@@ -64,5 +64,6 @@ app
     .component('pv-check-box', Checkbox)
     .component('pv-confirm-dialog', ConfirmDialog)
     .component('useConfirm', useConfirm)
+    .component('pv-chip', Chip)
 
 .mount('#app');
