@@ -2,11 +2,12 @@
 
 import EmptySection from "../../../../shared/components/empty-section.component.vue";
 import ManageNewOrders from "./manage-new-orders.component.vue";
+import FiltersSection from "./filters-section.vue";
 
 
 export default {
   name: "new-orders",
-  components: {ManageNewOrders, EmptySection},
+  components: {FiltersSection, ManageNewOrders, EmptySection},
   props: {
     orderSituations: {
       type: Array,
@@ -37,6 +38,11 @@ export default {
       selectedOrder: null,
       showManageModal: false,
       confirm: null,
+      // Filters
+      searchQuery: '',
+      selectedDateRange: null,
+      sortField: 'date',
+      sortOrder: 1, // 1 para ascendente, -1 para descendente
     }
   },
   watch: {
@@ -89,11 +95,52 @@ export default {
       this.suppliesPerOrderCount = countMap;
     },
     filteredOrders() {
-
-      return (this.orders || []).filter(order => {
+      let filtered = (this.orders || []).filter(order => {
         const situation = this.orderSituations.find(situation => Number(situation.id) === Number(order.situationId));
         return situation && Number(situation.id) === 1; // Filtra solo los 'Approved'
       });
+
+      // Filtro por búsqueda
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        filtered = filtered.filter(order => {
+          const restaurantName = this.restaurantBusinessNamesPerOrder[order.id]?.toLowerCase() || '';
+          const orderDate = order.date?.toLowerCase() || '';
+
+          return restaurantName.includes(query) ||
+              orderDate.includes(query)
+        });
+      }
+
+      // Filtro por rango de fecha
+      if (this.selectedDateRange) {
+        const now = new Date();
+        let dateLimit;
+
+        switch (this.selectedDateRange) {
+          case '7days':
+            dateLimit = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case '30days':
+            dateLimit = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+          case '3months':
+            dateLimit = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+            break;
+        }
+
+        if (dateLimit) {
+          filtered = filtered.filter(order => {
+            const orderDate = new Date(order.date);
+            return orderDate >= dateLimit;
+          });
+        }
+      }
+
+      return filtered;
+    },
+    toggleSort() {
+      this.sortOrder = this.sortOrder === 1 ? -1 : 1;
     },
     manageNewOrder(order) {
       this.selectedOrder = order;
@@ -139,6 +186,20 @@ export default {
 </script>
 
 <template>
+
+
+  <!-- Sección de filtros superior -->
+  <filters-section
+      title="Orders"
+      v-model:search-query="searchQuery"
+      v-model:selected-date-range="selectedDateRange"
+      :search-placeholder="'Search orders by restaurant...'"
+      :sort-order="sortOrder"
+      sort-label="Order Date"
+      @toggle-sort="toggleSort"
+  >
+
+  </filters-section>
 
   <!-- Empty -->
   <empty-section v-if="filteredOrders().length === 0">

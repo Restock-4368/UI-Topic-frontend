@@ -1,29 +1,43 @@
 <script>
-  export default {
+export default {
   name: "filters-section",
   props: {
-  title: {
-  type: String,
-  default: 'Orders'
-},
-  searchQuery: {
-  type: String,
-  default: ''
-},
-  searchPlaceholder: {
-  type: String,
-  default: 'Search...'
-},
-  sortOrder: {
-  type: Number,
-  default: 1
-},
-  sortLabel: {
-  type: String,
-  default: 'Order Date'
-}
-},
-  emits: ['update:searchQuery', 'toggle-sort']
+    title: {
+      type: String,
+      default: 'Orders'
+    },
+    searchQuery: {
+      type: String,
+      default: ''
+    },
+    selectedDateRange: {
+      type: String,
+      default: ''
+    },
+    searchPlaceholder: {
+      type: String,
+      default: 'Search...'
+    },
+    sortOrder: {
+      type: Number,
+      default: 1
+    },
+    sortLabel: {
+      type: String,
+      default: 'Order Date'
+    }
+  },
+  emits: ['update:searchQuery', 'update:selectedDateRange', 'toggle-sort'],
+  data() {
+    return {
+      dateRangeOptions: [
+        { label: 'All Dates', value: null },
+        { label: 'Last 7 days', value: '7days' },
+        { label: 'Last 30 days', value: '30days' },
+        { label: 'Last 3 months', value: '3months' }
+      ]
+    };
+  },
 }
 </script>
 
@@ -35,10 +49,9 @@
       <!-- Barra de búsqueda -->
       <div class="search-container">
         <i class="pi pi-search search-icon"></i>
-        <input
+        <pv-input-text
             :value="searchQuery"
-            @input="$emit('update:searchQuery', $event.target.value)"
-            type="text"
+            @update:modelValue="$emit('update:searchQuery', $event)"
             :placeholder="searchPlaceholder"
             class="search-input"
         />
@@ -46,6 +59,19 @@
 
       <!-- Slot para filtros personalizados -->
       <slot name="filters"></slot>
+
+      <div class="range-date-container">
+        <!-- Filtro de rango de fecha -->
+        <pv-dropdown
+            :value="selectedDateRange"
+            @update:modelValue="$emit('update:selectedDateRange', $event)"
+            :options="dateRangeOptions"
+            option-label="label"
+            option-value="value"
+            placeholder="Date range"
+            class="filter-dropdown"
+        />
+      </div>
 
       <!-- Botón de ordenamiento -->
       <button
@@ -63,6 +89,7 @@
     </div>
   </div>
 </template>
+
 <style scoped>
 .filters-section {
   display: flex;
@@ -106,16 +133,13 @@
   position: absolute;
   left: 0.75rem;
   color: #6b7280;
-  z-index: 1;
+  z-index: 10;
+  pointer-events: none;
 }
 
 .search-input {
-  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 0.875rem;
+  padding-left: 2.5rem !important;
   min-width: 250px;
-  background-color: white;
 }
 
 .search-input:focus {
