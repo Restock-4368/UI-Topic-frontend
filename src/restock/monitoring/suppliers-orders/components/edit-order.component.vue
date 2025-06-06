@@ -4,25 +4,30 @@ import BaseModal from "../../../../shared/components/base-modal.component.vue";
 export default {
   name: "edit-order",
   components: {BaseModal},
-  // props: {
-  //   order: {
-  //     type: [Object, null],
-  //     required: true,
-  //   },
-  //   situation: {
-  //     type: String,
-  //     default: "Approved",
-  //   },
-  //   state: {
-  //     type: String,
-  //     default: "Preparing",
-  //   },
-  //
-  // },
+  props: {
+    order: {
+      type: [Object, null],
+      required: true,
+    },
+    state: {
+      type: [Object, null],
+      required: true,
+    },
+    situation: {
+      type: [Object, null],
+      required: true,
+    }
+  },
   data() {
     return {
       steps: ["On hold", "Preparing", "On the way", "Delivered"],
-      currentIndex: 1, // ejemplo: "Preparing"
+      statusToStepIndex: {
+        1: 0,  // -> "On hold"
+        2: 1,  //  -> "Preparing"
+        3: 2,  // -> "On the way"
+        4: 3,  //  -> "Delivered"
+      },
+      currentIndex: 0, // Se inicializará con el estado actual
       draggingIndex: null
     };
   },
@@ -31,19 +36,51 @@ export default {
       this.$emit('close');
     },
     handleDragStart(index) {
-      // Lógica para drag start si es necesario
       console.log('Drag start from index:', index);
     },
     handleDrop(index) {
       this.currentIndex = index;
       console.log('Dropped at index:', index);
     },
+    initializeCurrentState() {
+      // Inicializar con el estado actual de la orden
+      if (this.state && this.state.id) {
+        this.currentIndex = this.statusToStepIndex[this.state.id] || 0;
+      } else if (this.order && this.order.state_id) {
+        this.currentIndex = this.statusToStepIndex[this.order.state_id] || 0;
+      } else {
+        this.currentIndex = 0; // Default: "On hold"
+      }
+    },
+    submitOrder() {
+      // Método que faltaba
+      console.log('Order submitted with state:', this.currentIndex);
+      this.$emit('close');
+    }
   },
   watch: {
     modelValue(newVal) {
       if (newVal) {
-        this.step = 1; // Cuando se abre, reinicia el paso
+        // Cuando se abre el modal, inicializar con el estado actual
+        this.initializeCurrentState();
       }
+    },
+    // Observar cambios en state u order para actualizar el estado
+    state: {
+      handler(newState) {
+        if (this.modelValue && newState) {
+          this.initializeCurrentState();
+        }
+      },
+      deep: true
+    },
+    order: {
+      handler(newOrder) {
+        if (this.modelValue && newOrder) {
+          this.initializeCurrentState();
+        }
+      },
+      deep: true
     }
   },
   computed: {
@@ -56,10 +93,15 @@ export default {
       },
     },
   },
-
-
+  mounted() {
+    // Inicializar el estado al montar el componente si ya está visible
+    if (this.modelValue) {
+      this.initializeCurrentState();
+    }
+  }
 }
 </script>
+
 <template>
   <base-modal :model-value="internalVisible"
               :title="'Update Order'"
@@ -70,16 +112,13 @@ export default {
         Situation
         <pv-chip class=" text-sm ml-1 mt-1 mb-1">Approved</pv-chip>
       </label>
-
     </div>
-
 
     <div class="p-4">
       <label class="block text-sm font-bold text-gray-700 mb-1">State</label>
 
       <!-- Contenedor del stepper -->
       <div class="stepper-container">
-
         <!-- Línea de progreso principal -->
         <div class="progress-line">
           <div
@@ -129,7 +168,6 @@ export default {
           </div>
         </div>
       </div>
-
     </div>
 
     <div class="information">
@@ -155,12 +193,10 @@ export default {
       />
 
       <p class="block text-sm font-medium text-gray-700 mb-1">Order Description: </p>
-      <p>Description here</p>
-
+      <p>{{ order?.description || 'Description here' }}</p>
     </div>
 
     <template #footer>
-
       <button
           class="p-button p-component p-button-success"
           @click="submitOrder"
@@ -277,7 +313,6 @@ export default {
   color: #3b82f6;
   font-weight: 600;
 }
-
 
 /* Animations */
 @keyframes bounce {

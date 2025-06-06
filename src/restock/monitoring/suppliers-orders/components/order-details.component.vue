@@ -17,6 +17,14 @@ export default {
       type: [Object, null],
       required: true,
     },
+    orderState: {
+      type: [Object, null],
+      required: true,
+    },
+    orderSituation: {
+      type: [Object, null],
+      required: true,
+    },
     unitsMeasurement: {
       type: Array,
       required: true,
@@ -26,7 +34,13 @@ export default {
     return {
       step: 1,
       steps: ["On hold", "Preparing", "On the way", "Delivered"],
-      currentIndex: 1, // ejemplo: "Preparing"
+      statusToStepIndex: {
+        1: 0,  // -> "On hold"
+        2: 1,  //  -> "Preparing"
+        3: 2,  // -> "On the way"
+        4: 3,  //  -> "Delivered"
+      },
+      currentIndex: 1, // Default: "On hold"
       draggingIndex: null
     };
   },
@@ -46,6 +60,15 @@ export default {
       const unitMeasurement = this.unitsMeasurement.find(u => Number(u.id) === Number(supply.unit_measurement_id));
       return unitMeasurement ? unitMeasurement.name : 'Unknown unit';
     },
+    getSituationChipClass() {
+      const situationClasses = {
+        1: 'situation-pending',   // Pending
+        2: 'situation-approved',   // Approved
+        3: 'situation-declined',    // Declined
+      };
+
+      return situationClasses[this.order?.situationId] || 'situation-default';
+    },
     close() {
       this.$emit('close');
     },
@@ -53,11 +76,25 @@ export default {
   watch: {
     modelValue(newVal) {
       if (newVal) {
-        this.step = 1; // Cuando se abre, reinicia el paso
+        this.step = 1;
       }
     }
   },
   computed: {
+    currentIndex() {
+      if (!this.orderState) {
+        return 1;
+      }
+
+      const stepIndex = this.statusToStepIndex[this.orderState.id];
+      return stepIndex !== undefined ? stepIndex : 0;
+    },
+    currentStateName() {
+      if (!this.orderState) {
+        return 'Unknown';
+      }
+      return this.orderState ? this.orderState.name : 'Unknown';
+    },
     internalVisible: {
       get() {
         return this.modelValue;
