@@ -582,7 +582,7 @@
       "estimated_ship_time": "10:00:00",
       "admin_restaurant_id": 2,
       "supplier_id": 1,
-      "order_to_supplier_state_id": 1,
+      "order_to_supplier_state_id": 3,
       "order_to_supplier_situation_id": 2,
       "requested_products_count": 2,
       "total_price": 75.55,
@@ -600,6 +600,20 @@
       "order_to_supplier_situation_id": 2,
       "requested_products_count": 4,
       "total_price": 60.55,
+      "partially_accepted": true
+    },
+    {
+      "id": 5,
+      "date": "2025-03-12",
+      "description": "Order for meals supplies",
+      "estimated_ship_date": "2025-03-20",
+      "estimated_ship_time": "08:00:00",
+      "admin_restaurant_id": 2,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 4,
+      "order_to_supplier_situation_id": 2,
+      "requested_products_count": 5,
+      "total_price": 64.55,
       "partially_accepted": true
     }
   ],
@@ -681,6 +695,18 @@
     {
       "order_to_supplier_id": 4,
       "supply_id": 8,
+      "quantity": 2,
+      "accepted": false
+    },
+    {
+      "order_to_supplier_id": 5,
+      "supply_id": 3,
+      "quantity": 5,
+      "accepted": true
+    },
+    {
+      "order_to_supplier_id": 5,
+      "supply_id": 2,
       "quantity": 2,
       "accepted": false
     }
