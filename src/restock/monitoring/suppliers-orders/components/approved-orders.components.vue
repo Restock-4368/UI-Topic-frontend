@@ -3,7 +3,7 @@ import EmptySection from "../../../../shared/components/empty-section.component.
 import FiltersSection from "./filters-section.vue";
 
 export default {
-  name: "manage-accepted-orders",
+  name: "approved-orders",
   components: {FiltersSection, EmptySection},
   props: {
     orderSituations: {
@@ -48,14 +48,7 @@ export default {
         { label: 'All Status', value: null },
         { label: 'On Hold', value: 'on hold' },
         { label: 'Preparing', value: 'preparing' },
-        { label: 'On the Way', value: 'on the way' },
-        { label: 'Delivered', value: 'delivered' }
-      ],
-      dateRangeOptions: [
-        { label: 'All Dates', value: null },
-        { label: 'Last 7 days', value: '7days' },
-        { label: 'Last 30 days', value: '30days' },
-        { label: 'Last 3 months', value: '3months' }
+        { label: 'On the Way', value: 'on the way' }
       ]
     }
   },
@@ -63,7 +56,8 @@ export default {
     filteredOrders() {
       let filtered = (this.orders || []).filter(order => {
         const situation = this.orderSituations.find(situation => Number(situation.id) === Number(order.situationId));
-        return situation && Number(situation.id) === 2; // Filtra solo los 'Approved'
+        const state = this.getOrderState(order);
+        return situation && Number(situation.id) === 2 && state && Number(state.id) !== 4; // Filtra solo los 'Approved' y no 'Delivered'
       });
 
       // Filtro por búsqueda
@@ -179,34 +173,6 @@ export default {
     },
     toggleSort() {
       this.sortOrder = this.sortOrder === 1 ? -1 : 1;
-    },
-    downloadHistory() {
-      // Implementar lógica de descarga
-      console.log('Downloading order history...');
-      // Aquí puedes generar un CSV o Excel con los datos filtrados
-      this.generateCSV();
-    },
-    generateCSV() {
-      const orders = this.filteredOrders();
-      let csv = 'Order Date,State,Ship Date,Restaurant Name,Requested Products,Final Price\n';
-
-      orders.forEach(order => {
-        const restaurantName = this.restaurantBusinessNamesPerOrder[order.id] || 'Unknown';
-        const state = this.getOrderState(order).name || 'Without State';
-        const shipDate = order.estimatedShipDate || 'Not set';
-        const requestedCount = this.requestedSuppliesCount(order);
-
-        csv += `${order.date},${state},${shipDate},${restaurantName},${requestedCount},S/ ${order.totalPrice}\n`;
-      });
-
-      // Crear y descargar el archivo
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'orders_history.csv';
-      a.click();
-      window.URL.revokeObjectURL(url);
     }
   },
   computed: {
@@ -231,6 +197,7 @@ export default {
   <filters-section
       title="Orders"
       v-model:search-query="searchQuery"
+      v-model:selected-date-range="selectedDateRange"
       :search-placeholder="'Search orders by restaurant...'"
       :sort-order="sortOrder"
       sort-label="Order Date"
@@ -247,30 +214,7 @@ export default {
           placeholder="Status"
           class="filter-dropdown"
       />
-
-      <!-- Filtro de rango de fecha -->
-      <pv-dropdown
-          v-model="selectedDateRange"
-          :options="dateRangeOptions"
-          option-label="label"
-          option-value="value"
-          placeholder="Date range"
-          class="filter-dropdown"
-      />
     </template>
-
-    <!-- Slot para acciones del lado derecho -->
-    <template #actions>
-      <pv-button
-          @click="downloadHistory"
-          class="download-button"
-          severity="success"
-      >
-        <i class="pi pi-download"></i>
-        DOWNLOAD HISTORY
-      </pv-button>
-    </template>
-
   </filters-section>
 
   <!-- Empty -->

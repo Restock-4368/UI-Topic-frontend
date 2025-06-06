@@ -22,19 +22,22 @@ import {
 } from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.service.js";
 import {OrderToSupplierSituation} from "../../../resource/orders-to-suppliers/model/order-to-supplier-situation.vo.js";
 import {OrderToSupplierState} from "../../../resource/orders-to-suppliers/model/order-to-supplier-state.vo.js";
-import ApprovedOrdersComponents from "../components/approved-orders.components.vue";
 import OrderDetails from "../components/order-details.component.vue";
 import EditOrder from "../components/edit-order.component.vue";
+import ApprovedOrders from "../components/approved-orders.components.vue";
+import DeliveredOrders from "../components/delivered-orders.component.vue";
 
 export default {
   name: "suppliers-orders-overview",
-  components: {EditOrder, OrderDetails, ManageAcceptedOrders: ApprovedOrdersComponents, ManageNewOrders, EmptySection, NewOrders},
+  components: {DeliveredOrders, ApprovedOrders, EditOrder, OrderDetails, ManageNewOrders, EmptySection, NewOrders},
   data() {
     return {
       showManageNewOrderModal: false,
       showEditModal: false,
       showAcceptedOrderDetailsModal: false,
       selectedOrder: null,
+      selectedOrderState: null,
+      selectedOrderSituation: null,
       selectedOrderSupplies: [],
       selectedOrderDetailedSupplies: [],
       orders: [],
@@ -186,10 +189,12 @@ export default {
 
       console.log("Grouped supplies with full details by order:", this.detailedSuppliesGroupedByOrder);
     },
-
     openEditModal(order) {
       this.selectedOrder = order;
       this.selectedOrderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+
+      this.selectedOrderState = this.orderStates.find(s => Number(s.id) === Number(order.stateId)) || { name: 'Without State' };
+      this.selectedOrderSituation = this.orderSituations.find(s => Number(s.id) === Number(order.situationId)) || { name: 'Without Situation' };
 
       this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
       this.showEditModal = true;
@@ -197,6 +202,9 @@ export default {
     openOrderAcceptedDetailsModal(order) {
       this.selectedOrder = order;
       this.selectedOrderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+
+      this.selectedOrderState = this.orderStates.find(s => Number(s.id) === Number(order.stateId)) || { name: 'Without State' };
+      this.selectedOrderSituation = this.orderSituations.find(s => Number(s.id) === Number(order.situationId)) || { name: 'Without Situation' };
 
       this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
       this.showAcceptedOrderDetailsModal = true;
@@ -207,6 +215,19 @@ export default {
 
       this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
       this.showManageNewOrderModal = true;
+    }
+  },
+  computed: {
+    deliveredOrders() {
+      let deliveredOrders = [];
+      deliveredOrders = this.orders.filter(order => {
+        const state = this.orderStates.find(s => Number(s.id) === Number(order.stateId));
+
+        return state && Number(state.id) === 4; // Filtra solo los 'Delivered'
+      });
+
+      console.log("Delivered orders:", deliveredOrders);
+      return deliveredOrders;
     }
   }
 };
@@ -232,7 +253,7 @@ export default {
         ></new-orders>
       </pv-tab-panel>
       <pv-tab-panel :value="1">
-        <manage-accepted-orders
+        <approved-orders
             @open-edit-modal="openEditModal"
             @open-details-modal="openOrderAcceptedDetailsModal"
             :detailed-supplies-per-order="detailedSuppliesGroupedByOrder"
@@ -241,11 +262,16 @@ export default {
             :orders="orders"
             :order-states="orderStates"
             :order-situations="orderSituations">
-
-        </manage-accepted-orders>
+        </approved-orders>
       </pv-tab-panel>
-      <pv-tab-panel>
-        {{ tabs[2].content }}
+      <pv-tab-panel :value="2">
+        <delivered-orders
+            @open-details-modal="openOrderAcceptedDetailsModal"
+            :detailed-supplies-per-order="detailedSuppliesGroupedByOrder"
+            :admin-restaurants-profiles="adminRestaurantsProfiles"
+            :orders-supplies="suppliesGroupedByOrder"
+            :orders="deliveredOrders">
+        </delivered-orders>
       </pv-tab-panel>
     </pv-tab-panels>
   </pv-tabs>
@@ -261,6 +287,9 @@ export default {
 
   <edit-order
       v-model="showEditModal"
+      :order="selectedOrder"
+      :order-situation="selectedOrderSituation"
+      :order-state="selectedOrderState"
       @update:modelValue="showEditModal = $event"
       />
 
@@ -270,8 +299,11 @@ export default {
       :detailed-supplies-per-order="selectedOrderDetailedSupplies"
       :supplies-per-order="selectedOrderSupplies"
       :units-measurement="unitsMeasurement"
+      :order-situation="selectedOrderSituation"
+      :order-state="selectedOrderState"
       @update:modelValue="showAcceptedOrderDetailsModal = $event"
   />
+
 </template>
 
 <style scoped>
