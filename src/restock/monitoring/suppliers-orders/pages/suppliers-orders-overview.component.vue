@@ -26,6 +26,17 @@ import OrderDetails from "../components/order-details.component.vue";
 import EditOrder from "../components/edit-order.component.vue";
 import ApprovedOrders from "../components/approved-orders.components.vue";
 import DeliveredOrders from "../components/delivered-orders.component.vue";
+import {OrderToSupplierAssembler} from "../../../resource/orders-to-suppliers/services/order-to-supplier.assembler.js";
+import {
+  OrderToSupplierStateAssembler
+} from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.assembler.js";
+import {
+  OrderToSupplierSituationAssembler
+} from "../../../resource/orders-to-suppliers/services/order-to-supplier-situation.assembler.js";
+import {
+  OrderToSupplierSupplyAssembler
+} from "../../../resource/orders-to-suppliers/services/order-to-supplier-supply.assembler.js";
+import {SupplyAssembler} from "../../../resource/inventory/services/supply.assembler.js";
 
 export default {
   name: "suppliers-orders-overview",
@@ -92,31 +103,31 @@ export default {
 
     async loadOrderSituations() {
       const response = await this.orderSituationsService.getAll();
-      this.orderSituations = response.data.map(s => new OrderToSupplierSituation(s));
+      this.orderSituations = OrderToSupplierSituationAssembler.toEntitiesFromResponse(response);
       console.log("Order Situations:", this.orderSituations);
     },
 
     async loadOrderStates() {
       const response = await this.orderStatesService.getAll();
-      this.orderStates = response.data.map(s => new OrderToSupplierState(s));
+      this.orderStates = OrderToSupplierStateAssembler.toEntitiesFromResponse(response);
       console.log("Order States:", this.orderStates);
     },
 
     async loadOrders() {
       const response = await this.ordersService.getAll();
-      this.orders = response.data.map(order => new OrderToSupplier(order));
+      this.orders = OrderToSupplierAssembler.toEntitiesFromResponse(response);
       console.log("Orders:", this.orders);
     },
 
     async loadSupplies() {
       const response = await this.suppliesService.getAll();
-      this.supplies = response.data.map(s => new Supply(s));
+      this.supplies = SupplyAssembler.toEntitiesFromResponse(response);
       console.log("Supplies:", this.supplies);
     },
 
     async loadRequestedSupplies() {
       const response = await this.requestedSuppliesInOrdersService.getAll();
-      this.requestedSuppliesInOrders = response.data.map(s => new OrderToSupplierSupply(s));
+      this.requestedSuppliesInOrders = OrderToSupplierSupplyAssembler.toEntitiesFromResponse(response);
       console.log("Requested Supplies:", this.requestedSuppliesInOrders);
     },
 
@@ -126,7 +137,7 @@ export default {
         this.profilesService.getAll()
       ]);
 
-      this.users = usersResponse.data.map(u => new User(u));
+      this.users = usersResponse.data.map(u => new User(u)); //Assemblr
       const allProfiles = profilesResponse.data.map(p => new Profile(p));
 
       this.adminRestaurantsProfiles = allProfiles.filter(profile => {
