@@ -172,27 +172,7 @@
       "name": "Ají de Gallina",
       "total_price": 24.9,
       "image_url": "https://buenazo.cronosmedia.glr.pe/original/2023/06/26/6499bf204fb28f54f91a9289.png",
-      "user_id": 1,
-      "supplies": [
-        {
-          "id": 16,
-          "recipe_id": 2,
-          "supply_id": 4,
-          "quantity": 1
-        },
-        {
-          "id": 17,
-          "recipe_id": 2,
-          "supply_id": 5,
-          "quantity": 1
-        },
-        {
-          "id": 18,
-          "recipe_id": 2,
-          "supply_id": 6,
-          "quantity": 2
-        }
-      ]
+      "user_id": 1
     },
     {
       "id": 3,
@@ -293,19 +273,19 @@
       "recipe_id": 2,
       "supply_id": 4,
       "quantity": 1,
-      "id": 22
-    },
-    {
-      "recipe_id": 2,
-      "supply_id": 5,
-      "quantity": 1,
-      "id": 23
+      "id": 27
     },
     {
       "recipe_id": 2,
       "supply_id": 6,
       "quantity": 2,
-      "id": 24
+      "id": 28
+    },
+    {
+      "recipe_id": 2,
+      "supply_id": 5,
+      "quantity": 1,
+      "id": 29
     }
   ],
   "supplies": [

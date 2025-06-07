@@ -1,7 +1,6 @@
-
-
 <script>
 import {SupplyService} from "../../resource/inventory/services/supply.service.js";
+import {SupplyAssembler} from "../../resource/inventory/services/supply.assembler.js";
 
 export default {
   name: 'SupplySelector',
@@ -38,11 +37,12 @@ export default {
   },
   async created() {
     const service = new SupplyService();
-    this.availableSupplies = await service.getAll();
+    const response = await service.getAll();
+    this.availableSupplies = SupplyAssembler.toEntitiesFromResponse(response);
   },
   methods: {
     addSupply() {
-      const exists = this.internalValue.some(s => s.supply_id === this.selectedSupply);
+      const exists = this.internalValue.some(s => s.supply_id === this.selectedSupply?.id);
       if (!exists) {
         this.internalValue.push({
           supply_id: this.selectedSupply.id,
@@ -55,9 +55,9 @@ export default {
     removeSupply(index) {
       this.internalValue.splice(index, 1);
     },
-    getSupplyDescription(id) {
+    getSupplyName(id) {
       const match = this.availableSupplies.find(s => s.id === id);
-      return match ? match.description : 'Unknown';
+      return match ? match.name : 'Unknown';
     }
   }
 };
@@ -73,11 +73,11 @@ export default {
           class="w-full"
       >
         <template #option="{ option }">
-          {{ option.description }}
+          {{ option.name }}
         </template>
 
         <template #value="{ value }">
-          {{ value?.description || 'Select supply' }}
+          {{ value?.name || 'Select supply' }}
         </template>
 
       </pv-select>
@@ -96,7 +96,7 @@ export default {
       <pv-column field="supply_id" header="ID" />
       <pv-column field="description" header="Supply">
         <template #body="slotProps">
-          {{ getSupplyDescription(slotProps.data.supply_id) }}
+          {{ getSupplyName(slotProps.data.supply_id) }}
         </template>
       </pv-column>
       <pv-column field="quantity" header="Quantity" />

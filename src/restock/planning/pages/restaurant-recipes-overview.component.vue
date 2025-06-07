@@ -6,6 +6,8 @@ import DeleteConfirmation from '../../../shared/components/delete.component.vue'
 import SupplySelector from '../components/supply-selector.component.vue';
 import {RecipeService} from "../services/recipe.service.js";
 import {RecipeSupplyService} from "../services/recipe-supply.service.js";
+import {RecipeAssembler} from "../services/recipe.assembler.js";
+import {RecipeSupplyAssembler} from "../services/recipe-supply.assembler.js";
 
 export default {
   name: 'RestaurantRecipesOverview',
@@ -77,10 +79,12 @@ export default {
   },
   methods: {
     async loadRecipes() {
-      const recipes = await this.recipeService.getAll();
+      const response = await this.recipeService.getAll();
+      const recipes = RecipeAssembler.toEntitiesFromResponse(response);
       const enhanced = await Promise.all(
           recipes.map(async r => {
-            const supplies = await this.recipeSupplyService.getByRecipe(r.id);
+            const respSupplies = await this.recipeSupplyService.getByRecipe(r.id)
+            const supplies = RecipeSupplyAssembler.toEntitiesFromResponse(respSupplies);
             return { ...r, supplies };
           })
       );
@@ -92,7 +96,8 @@ export default {
       this.formVisible = true;
     },
     async openEditDialog(recipe) {
-      const supplies = await this.recipeSupplyService.getByRecipe(recipe.id);
+      const respSupplies = await this.recipeSupplyService.getByRecipe(recipe.id);
+      const supplies = RecipeSupplyAssembler.toEntitiesFromResponse(respSupplies);
       this.formModel = { ...recipe, supplies };
       this.editMode = 'edit';
       this.formVisible = true;
@@ -102,7 +107,8 @@ export default {
     },
     async submitForm(form) {
       if (this.editMode === 'create') {
-        const created = await this.recipeService.create(form);
+        const response = await this.recipeService.create(form);
+        const created = RecipeAssembler.toEntityFromResponse(response);
         await this.recipeSupplyService.bulkCreate(created.id, form.supplies);
       } else {
         await this.recipeService.update(form.id, form);
@@ -118,6 +124,7 @@ export default {
       this.deleteVisible = true;
     },
     async confirmDelete() {
+      await this.recipeSupplyService.deleteByRecipe(this.selectedRecipe.id);
       await this.recipeService.delete(this.selectedRecipe.id);
       this.deleteVisible = false;
       this.selectedRecipe = null;
