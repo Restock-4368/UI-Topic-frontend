@@ -143,7 +143,6 @@ export default {
       this.orders.forEach(order => {
         const orderId = Number(order.id);
         const orderSupplies = this.ordersSupplies.find(os => Number(os.orderId) === orderId);
-        console.log("Probando lo de final price en METHODS", orderSupplies);
 
         if (!orderSupplies) {
           priceMap[orderId] = 0;
@@ -156,8 +155,6 @@ export default {
         priceMap[orderId] = orderSupplies.supplies.reduce((sum, supplyItem) => {
           const supply = this.supplies.find(s => Number(s.id) === Number(supplyItem.supplyId)); //CORRIGE °
           const price = supply?.price || 0;
-
-          console.log("Supply Price", price);
 
           return sum + price * supplyItem.quantity;
         }, 0);

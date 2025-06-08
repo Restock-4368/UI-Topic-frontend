@@ -38,7 +38,7 @@ export default {
         2: 3,  // "On the way"
         3: 4,  // "Delivered"
       },
-      currentIndex: 0, // Se inicializará con el estado actual
+      currentIndex: 0, // Current state
       draggingIndex: null,
       localOrder: {
         description: '',
@@ -53,12 +53,8 @@ export default {
       this.$emit('update:modelValue', false); // esto cierra el modal desde el padre
       this.$emit('close', false);
     },
-    handleDragStart(index) {
-      console.log('Drag start from index:', index);
-    },
     handleDrop(index) {
       this.currentIndex = index;
-      console.log('Dropped at index:', index);
     },
     resetForm() {
       this.currentIndex = null;
@@ -70,11 +66,10 @@ export default {
       };
     },
     initializeCurrentState() {
-      // Inicializar con el estado actual de la orden
       if (this.state && this.state.id) {
         this.currentIndex = this.statusToStepIndex[this.state.id] || 0;
-      } else if (this.order && this.order.state_id) {
-        this.currentIndex = this.statusToStepIndex[this.order.state_id] || 0;
+      } else if (this.order && this.order.stateId) {
+        this.currentIndex = this.statusToStepIndex[this.order.stateId] || 0;
       } else {
         this.currentIndex = 0; // Default: "On hold"
       }
@@ -102,7 +97,6 @@ export default {
         this.initializeCurrentState();
       }
     },
-    // Observar cambios en state u order para actualizar el estado
     state: {
       handler(newState) {
         if (this.modelValue && newState) {
@@ -137,7 +131,6 @@ export default {
     },
   },
   mounted() {
-    // Inicializar el estado al montar el componente si ya está visible
     if (this.modelValue) {
       this.initializeCurrentState();
     }
@@ -163,9 +156,9 @@ export default {
 
       <h4 class="section-title">State</h4>
 
-      <!-- Contenedor del stepper -->
+      <!-- Stepper container -->
       <div class="stepper-container">
-        <!-- Línea de progreso principal -->
+        <!-- Main progress line -->
         <div class="progress-line">
           <div
               class="progress-fill"
@@ -187,12 +180,11 @@ export default {
                 v-if="currentIndex === index"
                 class="truck-container"
                 draggable="true"
-                @dragstart="handleDragStart(index)"
             >
               <i class="pi pi-truck truck-icon"></i>
             </div>
 
-            <!-- Punto del paso -->
+            <!-- Points -->
             <div
                 class="step-point"
                 :class="{
@@ -218,7 +210,7 @@ export default {
 
 
       <div class="date-section">
-        <p for="expiry" class="date-label">Estimated Shipping Date</p>
+        <p class="date-label">Estimated Shipping Date</p>
         <pv-date-picker
             id="expiry"
             v-model="localOrder.estimatedShipDate"
@@ -229,7 +221,7 @@ export default {
       </div>
 
       <div class="time-section">
-        <p for="shipTime" class="date-label">
+        <p class="date-label">
           Estimated Shipping Time
         </p>
         <pv-date-picker
@@ -274,7 +266,6 @@ export default {
   padding: 1rem 0;
 }
 
-/* Línea de progreso principal */
 .progress-line {
   position: absolute;
   top: 3rem;
@@ -292,7 +283,6 @@ export default {
   transition: width 0.3s ease;
 }
 
-/* Contenedor de pasos */
 .steps-wrapper {
   display: flex;
   justify-content: space-between;
@@ -309,7 +299,6 @@ export default {
   flex: 1;
 }
 
-/* Camión */
 .truck-container {
   cursor: grab;
   animation: bounce 2s infinite;
@@ -325,7 +314,6 @@ export default {
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-/* Puntos de los pasos */
 .step-point {
   width: 1rem;
   height: 1rem;
@@ -358,7 +346,6 @@ export default {
   font-weight: bold;
 }
 
-/* Etiquetas de los pasos */
 .step-label {
   font-size: 0.875rem;
   color: #6b7280;

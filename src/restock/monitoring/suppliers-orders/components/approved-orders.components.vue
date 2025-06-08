@@ -35,7 +35,7 @@ export default {
       selectedStatus: null,
       selectedDateRange: null,
       sortField: 'date',
-      sortOrder: 1, // 1 para ascendente, -1 para descendente
+      sortOrder: 1, // 1 to increase, -1 to descendent
       statusOptions: [
         { label: 'All Status', value: null },
         { label: 'On Hold', value: 'on hold' },
@@ -56,7 +56,7 @@ export default {
         return situation && Number(situation.id) === 2 && state && Number(state.id) !== 4; // Filtra solo los 'Approved' y no 'Delivered'
       });
 
-      // Filtro por búsqueda
+      // Search filter
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         filtered = filtered.filter(order => {
@@ -70,7 +70,7 @@ export default {
         });
       }
 
-      // Filtro por estado
+      // State filter
       if (this.selectedStatus) {
         filtered = filtered.filter(order => {
           const state = this.getOrderState(order);
@@ -78,7 +78,7 @@ export default {
         });
       }
 
-      // Filtro por rango de fecha
+      // Date Range filter
       if (this.selectedDateRange) {
         const now = new Date();
         let dateLimit;
@@ -116,7 +116,6 @@ export default {
     },
     rowClass(order) {
       const state = this.getOrderState(order);
-      console.log("Entre a ROWCLASS estado:", state);
       if (!state || !state.name) return '';
 
       switch (state.name.toLowerCase()) {
@@ -191,7 +190,6 @@ export default {
   watch: {
     orders: {
       handler() {
-
       },
       immediate: true,
       deep: true,
@@ -202,7 +200,6 @@ export default {
 
 <template>
 
-    <!-- Sección de filtros superior -->
   <filters-section
       title="Orders"
       @clear-filters="resetFilters"
@@ -213,9 +210,9 @@ export default {
       sort-label="Order Date"
       @toggle-sort="toggleSort"
   >
-    <!-- Slot para filtros específicos -->
+    <!-- Slot to personalize filters -->
     <template #filters>
-      <!-- Filtro de estado -->
+      <!-- State filter -->
       <pv-dropdown
           v-model="selectedStatus"
           :options="statusOptions"
@@ -328,7 +325,7 @@ export default {
 .row-delivered {
   background-color: rgba(76, 138, 58, 0.3) !important; /* verde muy claro */
 }
-/* Estilos para los dropdowns */
+
 .filter-dropdown {
   min-width: 120px;
 }

@@ -33,14 +33,14 @@ export default {
       searchQuery: '',
       selectedDateRange: '',
       sortField: 'date',
-      sortOrder: 1, // 1 para ascendente, -1 para descendente
+      sortOrder: 1, // 1 to increase, -1 to descendent
     }
   },
   methods: {
     filteredOrders() {
       let filteredOrders = [...this.orders];
 
-      // Filtro por búsqueda
+      // Search filter
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase();
         filteredOrders = filteredOrders.filter(order => {
@@ -52,7 +52,7 @@ export default {
         });
       }
 
-      // Filtro por rango de fecha
+      // Date Range filter
       if (this.selectedDateRange && this.selectedDateRange !== '') {
         const now = new Date();
         let dateLimit;
@@ -77,7 +77,7 @@ export default {
         }
       }
 
-      // Aplicar ordenamiento
+      // Sort by date
       filteredOrders.sort((a, b) => {
         const dateA = new Date(a.date);
         const dateB = new Date(b.date);
@@ -127,7 +127,6 @@ export default {
     generateExcelWithSheetJS() {
       const orders = this.filteredOrders();
 
-      // Preparar los datos
       const data = orders.map(order => ({
         'Order Date': order.date,
         'Ship Date': order.estimatedShipDate || 'Not set',
@@ -136,14 +135,11 @@ export default {
         'Final Price': `S/ ${order.totalPrice}`
       }));
 
-      // Crear workbook y worksheet
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.json_to_sheet(data);
 
-      // Agregar worksheet al workbook
       XLSX.utils.book_append_sheet(wb, ws, 'Orders');
 
-      // Descargar el archivo
       XLSX.writeFile(wb, 'orders_history.xlsx');
     },
   },
@@ -165,7 +161,6 @@ export default {
 
 <template>
 
-  <!-- Sección de filtros superior -->
   <filters-section
       title="Orders"
       @update:searchQuery="searchQuery = $event"
@@ -258,7 +253,6 @@ export default {
   background-color: rgba(76, 138, 58, 0.3) !important; /* verde muy claro */
 }
 
-/* Estilos para los dropdowns */
 .filter-dropdown {
   min-width: 120px;
 }

@@ -45,7 +45,7 @@ export default {
     <div class="filters-left">
       <h3 class="orders-title">{{ title }}</h3>
 
-      <!-- Barra de búsqueda -->
+      <!-- Search container -->
       <div class="search-container">
         <i class="pi pi-search search-icon"></i>
         <pv-input-text
@@ -56,11 +56,11 @@ export default {
         />
       </div>
 
-      <!-- Slot para filtros personalizados -->
+      <!-- Slot to personalize filters -->
       <slot name="filters"></slot>
 
       <div class="range-date-container">
-        <!-- Filtro de rango de fecha -->
+        <!-- Date Range -->
         <pv-dropdown
             :value="selectedDateRange"
             @update:modelValue="$emit('update:selectedDateRange', $event)"
@@ -73,7 +73,7 @@ export default {
         />
       </div>
 
-      <!-- Botón de ordenamiento -->
+      <!-- Sort button -->
       <button
           @click="$emit('toggle-sort')"
           class="sort-button"
@@ -84,7 +84,7 @@ export default {
 
     </div>
 
-    <!-- Slot para botones del lado derecho -->
+    <!-- Slot to buttons of right side -->
     <div class="filters-right">
       <slot name="actions"></slot>
     </div>
@@ -128,7 +128,6 @@ export default {
   color: #333;
 }
 
-/* Barra de búsqueda */
 .search-container {
   position: relative;
   display: flex;
@@ -174,7 +173,6 @@ export default {
   border-color: #9ca3af;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .filters-section {
     flex-direction: column;
