@@ -30,13 +30,14 @@ export default {
       required: true,
     }
   },
-  emits: ['open-modal'],
+  emits: ['open-modal', 'decline-order', 'open-details-modal'],
   data() {
     return {
       finalPricePerOrder: {},
       suppliesPerOrderCount: {},
       selectedOrder: null,
       showManageModal: false,
+      showDetailsModal: false,
       confirm: null,
       // Filters
       searchQuery: '',
@@ -62,6 +63,24 @@ export default {
     }
   },
   methods: {
+    resetFilters() {
+      this.searchQuery = '';
+      this.selectedDateRange = null;
+    },
+    formatDate(dateStr) {
+      if (!dateStr) return 'Not set';
+      const date = new Date(dateStr);
+      return date.toLocaleString('es-PE', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+      });
+    },
+    openNewOrderDetailsModal(order) {
+      this.selectedOrder = order;
+      this.showDetailsModal = true;
+      this.$emit('open-details-modal', order);
+    },
     calculatePricesAndCounts() {
       if (!this.orders.length || !this.ordersSupplies.length) return;
 
@@ -79,7 +98,7 @@ export default {
           return;
         }
 
-        countMap[orderId] = orderSupplies.supplies?.length || 0;
+        countMap[orderId] = orderSupplies.supplies?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
         priceMap[orderId] = orderSupplies.supplies.reduce((sum, supplyItem) => {
           const supply = this.supplies.find(s => Number(s.id) === Number(supplyItem.supplyId)); //CORRIGE °
@@ -97,7 +116,7 @@ export default {
     filteredOrders() {
       let filtered = (this.orders || []).filter(order => {
         const situation = this.orderSituations.find(situation => Number(situation.id) === Number(order.situationId));
-        return situation && Number(situation.id) === 1; // Filtra solo los 'Approved'
+        return situation && Number(situation.id) === 1; // Filtra solo los 'Pending'
       });
 
       // Filtro por búsqueda
@@ -112,7 +131,6 @@ export default {
         });
       }
 
-      // Filtro por rango de fecha
       if (this.selectedDateRange) {
         const now = new Date();
         let dateLimit;
@@ -137,8 +155,15 @@ export default {
         }
       }
 
+      filtered.sort((a, b) => {
+        const fieldA = new Date(a[this.sortField]);
+        const fieldB = new Date(b[this.sortField]);
+        return (fieldA - fieldB) * this.sortOrder;
+      });
+
       return filtered;
     },
+
     toggleSort() {
       this.sortOrder = this.sortOrder === 1 ? -1 : 1;
     },
@@ -148,25 +173,25 @@ export default {
       this.$emit('open-modal', order);
     },
     declineOrder(order) {
-      // Aquí lógica para rechazar el pedido
-      // Por ejemplo, hacer una llamada a la API para actualizar el estado del pedido
+      this.$emit('decline-order', order);
     },
     confirmDecline(order) {
       this.$confirm.require({
-        message: 'Are you sure you want to reject this order?',
-        header: 'Confirm action',
-        icon: 'pi pi-exclamation-triangle',
+        message: 'This action is irreversible. Are you sure you want to decline the entire selected order?',
+        header: 'Decline Order',
         acceptLabel: 'Yes, decline',
+        rejectClass: 'btn-cancel',
         rejectLabel: 'Cancel',
-        acceptClass: 'p-button-danger',
+        acceptClass: 'btn-decline',
         accept: () => {
-          this.declineOrder(order); // asegúrate de tener esta función implementada
+          this.declineOrder(order);
         },
         reject: () => {
-          // Opcional: acción al cancelar
+          close();
         }
       });
-    }
+    },
+
   },
   computed: {
     restaurantBusinessNamesPerOrder() {
@@ -190,12 +215,13 @@ export default {
 
   <!-- Sección de filtros superior -->
   <filters-section
-      title="Orders"
       v-model:search-query="searchQuery"
       v-model:selected-date-range="selectedDateRange"
       :search-placeholder="'Search orders by restaurant...'"
       :sort-order="sortOrder"
       sort-label="Order Date"
+      title="Orders"
+      @clear-filters="resetFilters"
       @toggle-sort="toggleSort"
   >
 
@@ -211,15 +237,15 @@ export default {
 
   <pv-data-table
       v-if="filteredOrders().length > 0"
-      :value="filteredOrders()"
-      paginator
       :rows="5"
       :rows-per-page-options="[4, 6, 8, 10]"
+      :value="filteredOrders()"
+      paginator
       responsive-layout="scroll"
   >
     <pv-column field="date" header="Order date">
       <template #body="{ data }">
-        {{ data.date }}
+        {{ formatDate(data.date) }}
       </template>
     </pv-column>
 
@@ -246,22 +272,22 @@ export default {
         <pv-button
             class="p-button-icon-style"
             icon="pi pi-book text-base"
-            @click="getDetails(data)"
             text
+            @click="openNewOrderDetailsModal(data)"
         />
 
         <pv-button
             class="p-button-icon-style"
             icon="pi pi-check text-base"
-            @click="manageNewOrder(data)"
             text
+            @click="manageNewOrder(data)"
         />
 
         <pv-button
             class="p-button-icon-style"
             icon="pi pi-times text-base"
-            @click="confirmDecline(data)"
             text
+            @click="confirmDecline(data)"
         />
 
 
@@ -270,7 +296,6 @@ export default {
 
   </pv-data-table>
 
-  <pv-confirm-dialog/>
 </template>
 
 <style>
@@ -282,6 +307,7 @@ export default {
   color: #131313 !important;
   background-color: rgba(128, 128, 128, 0.2) !important;
 }
+
 .p-button-icon-style {
   border: none !important;
   color: #131313 !important;
@@ -289,11 +315,35 @@ export default {
 
 .p-button-icon-style:hover,
 .p-button-icon-style:focus,
-.p-button-icon-style:active{
+.p-button-icon-style:active {
   color: #186728 !important;
   background-color: rgba(128, 128, 128, 0.2) !important; /* gris medio con transparencia */
   outline: none !important;
   box-shadow: none !important;
   border: none !important;
 }
+
+.btn-cancel {
+  background-color: #f8f6f6 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+  border-radius: 5px !important;
+}
+
+.btn-cancel:hover {
+  background-color: #c8c7c7 !important;
+}
+
+.btn-decline {
+  background-color: #D9534F !important;
+  color: white !important;
+  border: none !important;
+}
+
+.btn-decline:hover {
+  background-color: #bc3737 !important;
+  border: none !important;
+}
+
+
 </style>
