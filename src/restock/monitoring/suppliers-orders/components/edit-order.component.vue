@@ -1,10 +1,15 @@
 <script>
 import BaseModal from "../../../../shared/components/base-modal.component.vue";
+import {DatePicker as PvDatePicker} from "primevue";
 
 export default {
   name: "edit-order",
-  components: {BaseModal},
+  components: {PvDatePicker, BaseModal},
   props: {
+    modelValue: {
+      type: Boolean,
+      default: false,
+    },
     order: {
       type: [Object, null],
       required: true,
@@ -27,13 +32,26 @@ export default {
         3: 2,  // -> "On the way"
         4: 3,  //  -> "Delivered"
       },
+      stepIndexToStatus: {
+        0: 1,  // "On hold"
+        1: 2,  // "Preparing"
+        2: 3,  // "On the way"
+        3: 4,  // "Delivered"
+      },
       currentIndex: 0, // Se inicializará con el estado actual
-      draggingIndex: null
+      draggingIndex: null,
+      localOrder: {
+        description: '',
+        estimatedShipDate: null,
+        estimatedShipTime: null
+      }
     };
   },
+  emits: ['close', 'submit-order', 'update:modelValue'],
   methods: {
     close() {
-      this.$emit('close');
+      this.$emit('update:modelValue', false); // esto cierra el modal desde el padre
+      this.$emit('close', false);
     },
     handleDragStart(index) {
       console.log('Drag start from index:', index);
@@ -41,6 +59,15 @@ export default {
     handleDrop(index) {
       this.currentIndex = index;
       console.log('Dropped at index:', index);
+    },
+    resetForm() {
+      this.currentIndex = null;
+      this.draggingIndex = null;
+      this.localOrder = {
+        description: '',
+        estimatedShipDate: null,
+        estimatedShipTime: null
+      };
     },
     initializeCurrentState() {
       // Inicializar con el estado actual de la orden
@@ -52,16 +79,26 @@ export default {
         this.currentIndex = 0; // Default: "On hold"
       }
     },
-    submitOrder() {
-      // Método que faltaba
-      console.log('Order submitted with state:', this.currentIndex);
-      this.$emit('close');
-    }
+    async submitOrder() {
+
+      const updateData = {
+        order: this.order,
+        newEstimatedShipDate: this.localOrder.estimatedShipDate? this.localOrder.estimatedShipDate : this.order.estimatedShipDate,
+        newEstimatedShipTime: this.localOrder.estimatedShipTime? this.localOrder.estimatedShipTime : this.order.estimatedShipTime,
+        newDescription: this.localOrder.description? this.localOrder.description : this.order.description,
+        newState: this.stepIndexToStatus[this.currentIndex]? this.stepIndexToStatus[this.currentIndex] : this.order.stateId,
+      };
+
+      this.$emit('submit-order', updateData);
+      this.resetForm();
+      this.close();
+    },
   },
+
   watch: {
     modelValue(newVal) {
       if (newVal) {
-        // Cuando se abre el modal, inicializar con el estado actual
+        this.resetForm();
         this.initializeCurrentState();
       }
     },
@@ -76,10 +113,16 @@ export default {
     },
     order: {
       handler(newOrder) {
-        if (this.modelValue && newOrder) {
+        if (newOrder) {
           this.initializeCurrentState();
+          this.localOrder = {
+            ...newOrder,
+            estimatedShipDate: newOrder.estimatedShipDate || null,
+            estimatedShipTime: newOrder.estimatedShipTime || null
+          };
         }
       },
+      immediate: true,
       deep: true
     }
   },
@@ -103,19 +146,22 @@ export default {
 </script>
 
 <template>
-  <base-modal :model-value="internalVisible"
+  <base-modal :model-value="modelValue"
               :title="'Update Order'"
-              @close="$emit('close')"
+              @close="close"
   >
     <div class="situation">
-      <label class="block text-sm font-bold text-gray-700 mb-1">
+      <p class="block text-sm font-bold text-gray-700 mb-1">
         Situation
         <pv-chip class=" text-sm ml-1 mt-1 mb-1">Approved</pv-chip>
-      </label>
+      </p>
     </div>
 
-    <div class="p-4">
-      <label class="block text-sm font-bold text-gray-700 mb-1">State</label>
+    <div class="modal-content">
+
+      <p class="subtitle">Update the details of a registered order</p>
+
+      <h4 class="section-title">State</h4>
 
       <!-- Contenedor del stepper -->
       <div class="stepper-container">
@@ -170,41 +216,55 @@ export default {
       </div>
     </div>
 
-    <div class="information">
-      <h3>Estimated Hour</h3>
-      <label for="expiry" class="block text-sm font-medium text-gray-700 mb-1">Estimated Shipping Date</label>
-      <pv-calendar
-          id="expiry"
-          showIcon
-          class="w-full mb-3"
-          placeholder="Seleccionar fecha"
-      />
 
-      <label for="shipTime" class="block text-sm font-medium text-gray-700 mb-1">
-        Estimated Shipping Time
-      </label>
-      <pv-calendar
-          id="shipTime"
-          timeOnly
-          hourFormat="24"
-          showIcon
-          class="w-full mb-3"
-          placeholder="Seleccionar hora"
-      />
+      <div class="date-section">
+        <p for="expiry" class="date-label">Estimated Shipping Date</p>
+        <pv-date-picker
+            id="expiry"
+            v-model="localOrder.estimatedShipDate"
+            showIcon
+            class="date-picker"
+            placeholder="Seleccionar fecha"
+        />
+      </div>
 
-      <p class="block text-sm font-medium text-gray-700 mb-1">Order Description: </p>
-      <p>{{ order?.description || 'Description here' }}</p>
+      <div class="time-section">
+        <p for="shipTime" class="date-label">
+          Estimated Shipping Time
+        </p>
+        <pv-date-picker
+            id="shipTime"
+            v-model="localOrder.estimatedShipTime"
+            timeOnly
+            hourFormat="24"
+            showIcon
+            placeholder="Seleccionar hora"
+            class="date-picker"
+        />
+
+      <!-- Description -->
+      <div class="section-description">
+        <p for="description" class="block text-sm font-medium text-gray-700 mt-3 mb-2">Order Description</p>
+        <pv-input-text id="description" v-model="localOrder.description" placeholder="Description" class="description-input"  />
+      </div>
+
     </div>
 
     <template #footer>
-      <button
-          class="p-button p-component p-button-success"
-          @click="submitOrder"
-      >
-        Accept selection
-      </button>
-      <button class="p-button p-component p-button-text" @click="$emit('close')">Close</button>
+      <div class="modal-footer">
+        <button class="btn btn-close" @click="close">Close</button>
+
+        <button
+            class="btn btn-accept"
+            @click="submitOrder"
+        >
+          Update Order
+        </button>
+
+      </div>
+
     </template>
+
   </base-modal>
 </template>
 
@@ -340,10 +400,87 @@ export default {
   .truck-icon {
     font-size: 1.25rem;
   }
+}
+.modal-content {
+  padding: 1rem;
+  color: #333;
+}
 
-  .controls-section {
-    flex-direction: column;
-    align-items: center;
-  }
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.4;
+}
+
+.section-description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.description-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.date-section, .time-section {
+  margin-bottom: 16px;
+}
+
+.date-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.date-picker {
+  width: 100%;
+}
+
+.btn {
+  padding: 8px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.btn-close {
+  background-color: #D9534F;
+  color: white;
+}
+
+.btn-close:hover {
+  background-color: #c82333;
+}
+
+.btn-accept {
+  background-color: #4F8A5B;
+  color: white;
+}
+
+.btn-accept:hover {
+  background-color: #2c4e33;
 }
 </style>
