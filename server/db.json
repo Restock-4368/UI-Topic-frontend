@@ -651,63 +651,80 @@
   ],
   "orders_to_supplier_supplies": [
     {
+      "id": 1,
       "order_to_supplier_id": 1,
       "supply_id": 1,
       "quantity": 10,
       "accepted": false
     },
     {
+      "id": 2,
       "order_to_supplier_id": 1,
       "supply_id": 2,
       "quantity": 4,
       "accepted": false
     },
     {
+      "id": 3,
       "order_to_supplier_id": 2,
       "supply_id": 3,
       "quantity": 5,
       "accepted": false
     },
     {
+      "id": 4,
       "order_to_supplier_id": 3,
       "supply_id": 5,
       "quantity": 5,
       "accepted": true
     },
     {
+      "id": 5,
       "order_to_supplier_id": 3,
       "supply_id": 4,
       "quantity": 2,
       "accepted": true
     },
     {
+      "id": 6,
       "order_to_supplier_id": 4,
       "supply_id": 6,
       "quantity": 2,
       "accepted": true
     },
     {
+      "id": 7,
       "order_to_supplier_id": 4,
       "supply_id": 7,
       "quantity": 3,
       "accepted": true
     },
     {
+      "id": 8,
       "order_to_supplier_id": 4,
       "supply_id": 8,
       "quantity": 2,
       "accepted": false
     },
     {
+      "id": 9,
       "order_to_supplier_id": 5,
       "supply_id": 3,
       "quantity": 5,
       "accepted": true
     },
     {
+      "id": 10,
       "order_to_supplier_id": 5,
       "supply_id": 2,
       "quantity": 2,
+      "accepted": false
+    },
+    {
+      "id": 11,
+      "order_to_supplier_id": 2,
+      "supply_id": 2,
+      "quantity": 4,
       "accepted": false
     }
   ],
