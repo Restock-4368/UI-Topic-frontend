@@ -5,6 +5,14 @@ export default {
   name: "order-details",
   components: {BaseModal},
   props: {
+    hideState: {
+      type: Boolean,
+      default: false,
+    },
+    modelValue: {
+      type: Boolean,
+      required: true,
+    },
     suppliesPerOrder: {
       type: Array,
       required: true,
@@ -19,7 +27,7 @@ export default {
     },
     orderState: {
       type: [Object, null],
-      required: true,
+      required: false,
     },
     orderSituation: {
       type: [Object, null],
@@ -29,6 +37,10 @@ export default {
       type: Array,
       required: true,
     },
+    adminRestaurantsProfiles: {
+      type: Array,
+      required: true,
+    }
   },
   data() {
     return {
@@ -60,6 +72,23 @@ export default {
       const unitMeasurement = this.unitsMeasurement.find(u => Number(u.id) === Number(supply.unit_measurement_id));
       return unitMeasurement ? unitMeasurement.name : 'Unknown unit';
     },
+    formatDate(dateStr) {
+      if (!dateStr) return 'Not set';
+      const date = new Date(dateStr);
+      return date.toLocaleString('es-PE', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+      });
+    },
+    formatTime(dateStr) {
+      if (!dateStr) return 'Not set';
+      const date = new Date(dateStr);
+      return date.toLocaleString('es-PE', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    },
     getSituationChipClass() {
       const situationClasses = {
         1: 'situation-pending',   // Pending
@@ -69,8 +98,13 @@ export default {
 
       return situationClasses[this.order?.situationId] || 'situation-default';
     },
+    restaurantBusinessName(order) {
+        const profile = this.adminRestaurantsProfiles.find(p => p.userId === order.adminRestaurantId);
+        return profile ? profile.businessName : 'Unknown Restaurant';
+    },
     close() {
-      this.$emit('close');
+      this.$emit('update:modelValue', false);
+      this.$emit('close', false);
     },
   },
   watch: {
@@ -81,7 +115,7 @@ export default {
     }
   },
   computed: {
-    currentIndex() {
+    computedCurrentIndex() {
       if (!this.orderState) {
         return 1;
       }
@@ -95,32 +129,31 @@ export default {
       }
       return this.orderState ? this.orderState.name : 'Unknown';
     },
-    internalVisible: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit('update:modelValue', value);
-      },
-    },
   },
+  emits: ['update:modelValue', 'close'],
 }
 </script>
 
 <template>
-  <base-modal :model-value="internalVisible"
-  :title="'Order Details'"
-  @close="$emit('close')"
+  <base-modal :model-value="modelValue"
+              :title="'Order Details'"
+              @close="close"
   >
 
-  <div class="p-4">
-    <p class="block text-sm font-medium text-gray-700 mb-1">View the details of a registered order.</p>
+  <div class="modal-content">
+
+    <p class="subtitle">View the details of a registered order.</p>
+
 
     <div v-if="step === 1">
-      <h4>Supplies</h4>
-      <p class="block text-sm font-medium text-gray-700 mb-1">View the supplies you have available for the order.</p>
+      <div class="section-header">
+        <h4 class="section-title">Supplies</h4>
+        <p class="section-description">View the supplies you have available for the order.</p>
+      </div>
 
+      <div class="table-container">
       <pv-data-table
+          class="supplies-table"
           :value="suppliesPerOrder"
           paginator
           :rows="4"
@@ -146,109 +179,127 @@ export default {
         </pv-column>
       </pv-data-table>
 
-      <p class="block text-sm font-medium text-gray-700 mb-1" >Total Price: {{ order.totalPrice }}</p>
+    </div>
 
-
-        <label class="block text-sm font-bold text-gray-700 mb-1">State</label>
-
-        <!-- Contenedor del stepper -->
-        <div class="stepper-container">
-
-          <!-- Línea de progreso principal -->
-          <div class="progress-line">
-            <div
-                class="progress-fill"
-                :style="{ width: `${(currentIndex / (steps.length - 1)) * 100}%` }"
-            ></div>
-          </div>
-
-          <!-- For of stepper -->
-          <div class="steps-wrapper">
-            <div
-                v-for="(stepName, index) in steps"
-                :key="index"
-                class="step-item"
-                @dragover.prevent
-            >
-              <!-- Truck -->
-              <div
-                  v-if="currentIndex === index"
-                  class="truck-container"
-                  draggable="true"
-              >
-                <i class="pi pi-truck truck-icon"></i>
-              </div>
-
-              <!-- Punto del paso -->
-              <div
-                  class="step-point"
-                  :class="{
-                'completed': currentIndex > index,
-                'active': currentIndex === index,
-                'pending': currentIndex < index
-              }"
-              >
-                <i v-if="currentIndex > index" class="pi pi-check check-icon"></i>
-              </div>
-
-              <!-- Etiqueta del paso -->
-              <span
-                  class="step-label"
-                  :class="{ 'active': currentIndex === index }"
-              >
-              {{ stepName }}
-            </span>
-            </div>
-          </div>
+      <div class="total-price">
+        <strong class="block text-sm font-medium text-gray-700 mb-1" >Total Price: {{ order.totalPrice }}</strong>
       </div>
 
+    <div class="state-dragger"  v-if="!hideState">
+
+      <p class="section-title">State</p>
+
+      <!-- Contenedor del stepper -->
+      <div class="stepper-container">
+
+        <!-- Línea de progreso principal -->
+        <div class="progress-line">
+          <div
+              class="progress-fill"
+              :style="{ width: `${(computedCurrentIndex / (steps.length - 1)) * 100}%` }"
+          ></div>
+        </div>
+
+        <!-- For of stepper -->
+        <div class="steps-wrapper">
+          <div
+              v-for="(stepName, index) in steps"
+              :key="index"
+              class="step-item"
+              @dragover.prevent
+          >
+            <!-- Truck -->
+            <div
+                v-if="computedCurrentIndex === index"
+                class="truck-container"
+                draggable="true"
+            >
+              <i class="pi pi-truck truck-icon"></i>
+            </div>
+
+            <!-- Punto del paso -->
+            <div
+                class="step-point"
+                :class="{
+                'completed': computedCurrentIndex > index,
+                'active': computedCurrentIndex === index,
+                'pending': computedCurrentIndex < index
+              }"
+            >
+              <i v-if="computedCurrentIndex > index" class="pi pi-check check-icon"></i>
+            </div>
+
+            <!-- Etiqueta del paso -->
+            <span
+                class="step-label"
+                :class="{ 'active': computedCurrentIndex === index }"
+            >
+                      {{ stepName }}
+                  </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="situation" v-if="hideState">
+      <p class="block text-sm font-bold text-gray-700 mb-1">
+        Situation
+        <pv-chip class=" text-sm ml-1 mt-1 mb-1">{{ orderSituation?.name || 'Unknown' }}</pv-chip>
+      </p>
+    </div>
 
     </div>
 
-    <!-- Paso 2: Vista de resumen -->
-          <div v-if="step === 2">
+    <!-- Step 2: Summary view -->
+    <div v-if="step === 2">
 
-            <div class="situation">
-              <label class="block text-sm font-bold text-gray-700 mb-1">
-                Situation
-                <pv-chip class=" text-sm ml-1 mt-1 mb-1">Approved</pv-chip>
-              </label>
-            </div>
+      <div class="restaurant-section">
+        <p class="block text-sm font-bold text-gray-700 mb-2">Restaurant Name: </p>
+        <p class="mb-3">{{ restaurantBusinessName(order) }}</p>
+      </div>
 
-            <p class="block text-sm font-medium text-gray-700 mb-1">Order Description: </p>
-            <p>{{ order.description }}</p>
-
-
-            <p class="block text-sm font-medium text-gray-700 mb-1">Estimated Ship Date: </p>
-            <p>{{ order.estimatedShipDate }}</p>
+      <div class="date-section">
+        <p class="block text-sm font-bold text-gray-700 mb-2">Estimated Ship Date and Time: </p>
+        <p class="mb-3"> {{ formatDate(order.estimatedShipDate) }},  {{ formatTime(order.estimatedShipTime) }}</p>
+      </div>
 
 
-            <p class="block text-sm font-medium text-gray-700 mb-1">Estimated Ship Time: </p>
-            <p>{{ order.estimatedShipTime }}</p>
-          </div>
+      <div class="description-section">
+        <p class="block text-sm font-bold text-gray-700 mb-2">Order Description</p>
+        <p class="mb-3">{{ order.description }}</p>
+      </div>
 
+    </div>
 
   </div>
 
   <template #footer>
-    <button
-        v-if="step === 2"
-        class="p-button p-component p-button-secondary"
-        @click="prevStep"
-    >
-      Back
-    </button>
 
-    <button
-        v-if="step === 1"
-        class="p-button p-component p-button-primary"
-        @click="nextStep"
-    >
-      Next
-    </button>
+    <div class="modal-footer">
+      <div class="footer-left">
+        <button
+            v-if="step === 2"
+            class="btn btn-back"
+            @click="prevStep"
+        >
+          Back
+        </button>
 
 
-    <button class="p-button p-component p-button-text" @click="$emit('close')">Close</button>
+        <button class="btn btn-close" @click="close">Close</button>
+      </div>
+
+      <div class="footer-right">
+        <button
+            v-if="step === 1"
+            class="btn btn-next"
+            @click="nextStep"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+
   </template>
   </base-modal>
 </template>
@@ -355,6 +406,98 @@ export default {
   font-weight: 600;
 }
 
+.modal-content {
+  padding: 1rem;
+  color: #333;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.4;
+}
+
+.section-description {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.table-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.supplies-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.total-price {
+  background-color: #f8f9fa;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.footer-left {
+  display: flex;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.footer-right {
+  display: flex;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.btn {
+  padding: 8px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-close {
+  background-color: #D9534F;
+  color: white;
+}
+
+.btn-close:hover {
+  background-color: #c82333;
+}
+
+.btn-next,
+.btn-back{
+  background-color: #F28C38;
+  color: white;
+}
+
+.btn-next:hover,
+.btn-back:hover {
+  background-color: #e68900;
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .stepper-container {
@@ -369,9 +512,5 @@ export default {
     font-size: 1.25rem;
   }
 
-  .controls-section {
-    flex-direction: column;
-    align-items: center;
-  }
 }
 </style>
