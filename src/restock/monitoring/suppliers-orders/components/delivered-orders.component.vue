@@ -31,7 +31,7 @@ export default {
       showDetailsModal: false,
       // Filters
       searchQuery: '',
-      selectedDateRange: null,
+      selectedDateRange: '',
       sortField: 'date',
       sortOrder: 1, // 1 para ascendente, -1 para descendente
     }
@@ -53,7 +53,7 @@ export default {
       }
 
       // Filtro por rango de fecha
-      if (this.selectedDateRange) {
+      if (this.selectedDateRange && this.selectedDateRange !== '') {
         const now = new Date();
         let dateLimit;
 
@@ -83,9 +83,18 @@ export default {
         const dateB = new Date(b.date);
         return this.sortOrder === 1 ? dateA - dateB : dateB - dateA;
       });
-
       return filteredOrders;
     },
+    formatDate(dateStr) {
+      if (!dateStr) return 'Not set';
+      const date = new Date(dateStr);
+      return date.toLocaleString('es-PE', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+      });
+    },
+
     requestedSuppliesCount(order) {
       if(order.partiallyAccepted)
       {
@@ -159,8 +168,10 @@ export default {
   <!-- Sección de filtros superior -->
   <filters-section
       title="Orders"
-      v-model:search-query="searchQuery"
-      v-model:selected-date-range="selectedDateRange"
+      @update:searchQuery="searchQuery = $event"
+      @update:selectedDateRange="selectedDateRange = $event"
+      :search-query="searchQuery"
+      :selected-date-range="selectedDateRange"
       :search-placeholder="'Search orders by restaurant...'"
       :sort-order="sortOrder"
       sort-label="Order Date"
@@ -182,7 +193,7 @@ export default {
 
   <!-- Empty -->
   <empty-section v-if="filteredOrders().length === 0">
-    You currently have no orders approved.
+    You currently have no orders delivered.
     <template #icon>
       <i class="pi pi-truck" style="font-size: 3rem; color: #bcbcbc;"></i>
     </template>
@@ -199,13 +210,13 @@ export default {
   >
     <pv-column field="date" header="Order date">
       <template #body="{ data }">
-        {{ data.date }}
+        {{ formatDate(data.date) }}
       </template>
     </pv-column>
 
     <pv-column header="Ship date">
       <template #body="{ data }">
-        {{ data.estimatedShipDate ? data.estimatedShipDate : 'Not set' }}
+        {{ data.estimatedShipDate ? formatDate(data.estimatedShipDate) : 'Not set' }}
       </template>
     </pv-column>
 
@@ -259,5 +270,14 @@ export default {
   padding: 0.5rem 1rem;
   font-weight: 600;
   font-size: 0.875rem;
+  background-color: #4F8A5B !important;
+  color: white;
+  border: none !important;
 }
+
+.download-button:hover {
+  background-color: #2c4e33 !important;
+  border: none !important;
+}
+
 </style>
