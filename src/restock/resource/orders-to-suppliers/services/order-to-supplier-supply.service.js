@@ -11,4 +11,6 @@ export class OrderToSupplierSupplyService extends BaseService {
     getBySupplyId(supplyId) {
         return this.getByQuery("supply_id", supplyId);
     }
+
+
 }

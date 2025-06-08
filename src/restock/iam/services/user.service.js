@@ -23,6 +23,10 @@ export class UserService extends BaseService {
         return user;
     }
 
+    getByRoleId(roleId) {
+        return this.getByQuery("roleId", roleId);
+    }
+
     getRoleName(roleId) {
         const role = this.roles.find(role => role.id === roleId);
         return role ? role.name : 'unknown';

@@ -17,4 +17,6 @@ export class SupplyService extends BaseService {
   getByDescription(description) {
     return httpInstance.get(`${this.resourceEndpoint}?description=${encodeURIComponent(description)}`);
   }
+
+
 }
