@@ -237,7 +237,7 @@ export default {
 
         <!-- Description -->
         <div class="section-description">
-          <p for="description" class="block text-sm font-medium text-gray-700 mb-2">Order Description</p>
+          <p class="block text-sm font-medium text-gray-700 mb-2">Order Description</p>
           <pv-input-text id="description" v-model="localOrder.description" placeholder="Description"
                          class="description-input"/>
         </div>
@@ -247,7 +247,7 @@ export default {
       <div v-else-if="step === 2">
 
         <div class="date-section">
-          <p for="expiry" class="date-label">Estimated Shipping Date</p>
+          <p class="date-label">Estimated Shipping Date</p>
           <pv-date-picker
               id="expiry"
               v-model="localOrder.estimatedShipDate"
@@ -258,7 +258,7 @@ export default {
         </div>
 
         <div class="time-section">
-          <p for="shipTime" class="date-label">
+          <p class="date-label">
             Estimated Shipping Time
           </p>
           <pv-date-picker

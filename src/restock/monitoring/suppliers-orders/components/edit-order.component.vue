@@ -236,7 +236,7 @@ export default {
 
       <!-- Description -->
       <div class="section-description">
-        <p for="description" class="block text-sm font-medium text-gray-700 mt-3 mb-2">Order Description</p>
+        <p class="block text-sm font-medium text-gray-700 mt-3 mb-2">Order Description</p>
         <pv-input-text id="description" v-model="localOrder.description" placeholder="Description" class="description-input"  />
       </div>
 
