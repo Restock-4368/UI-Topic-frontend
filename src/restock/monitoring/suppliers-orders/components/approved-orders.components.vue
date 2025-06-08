@@ -18,20 +18,12 @@ export default {
       type: Array,
       required: true,
     },
-    ordersSupplies: {
-      type: Array,
-      required: true,
-    },
     adminRestaurantsProfiles: {
-      type: Array,
-      required: true,
-    },
-    detailedSuppliesPerOrder: {
       type: Array,
       required: true,
     }
   },
-  emits: ['open-edit-modal', 'open-details-modal'],
+  emits: ['open-edit-modal', 'open-details-modal', 'delete-order'],
   data() {
     return {
       selectedOrder: null,
@@ -53,6 +45,10 @@ export default {
     }
   },
   methods: {
+    resetFilters() {
+      this.searchQuery = '';
+      this.selectedDateRange = null;
+    },
     filteredOrders() {
       let filtered = (this.orders || []).filter(order => {
         const situation = this.orderSituations.find(situation => Number(situation.id) === Number(order.situationId));
@@ -107,21 +103,16 @@ export default {
         }
       }
 
+      filtered.sort((a, b) => {
+        const fieldA = new Date(a[this.sortField]);
+        const fieldB = new Date(b[this.sortField]);
+        return (fieldA - fieldB) * this.sortOrder;
+      });
+
       return filtered;
     },
     getOrderState(order) {
       return this.orderStates.find(state => Number(state.id) === Number(order.stateId)) || { name: 'Without State' };
-    },
-    requestedSuppliesCount(order) {
-      if(order.partiallyAccepted)
-      {
-        const rejectedSuppliesCount = this.ordersSupplies.filter(supply => Number(supply.orderId) === Number(order.id) && supply.accepted === false).length;
-        return order.requestedProductsCount - rejectedSuppliesCount;
-      }
-      else
-      {
-        return order.requestedProductsCount;
-      }
     },
     rowClass(order) {
       const state = this.getOrderState(order);
@@ -141,6 +132,15 @@ export default {
           return '';
       }
     },
+    formatDate(dateStr) {
+      if (!dateStr) return 'Not set';
+      const date = new Date(dateStr);
+      return date.toLocaleString('es-PE', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+      });
+    },
     openEditModal(order) {
       this.selectedOrder = order;
       this.showEditModal = true;
@@ -151,29 +151,29 @@ export default {
       this.showDetailsModal = true;
       this.$emit('open-details-modal', order);
     },
-    declineOrder(order) {
-      // Implementa la lógica para rechazar la orden
-      // Aquí podrías hacer una llamada a la API para actualizar el estado de la orden
+    deleteOrder(order) {
+      this.$emit('delete-order', order);
     },
-    confirmDecline(order) {
+    confirmDelete(order) {
       this.$confirm.require({
-        message: 'Are you sure you want to delete and cancel this order?',
-        header: 'Confirm action',
-        icon: 'pi pi-exclamation-triangle',
-        acceptLabel: 'Yes, decline',
+        message: 'Are you sure you want to delete this order?',
+        header: 'Delete Order',
+        acceptLabel: 'Yes, delete',
         rejectLabel: 'Cancel',
-        acceptClass: 'p-button-danger',
+        rejectClass: 'btn-cancel',
+        acceptClass: 'btn-decline',
         accept: () => {
-          this.declineOrder(order); // asegúrate de tener esta función implementada
+          this.deleteOrder(order);
         },
         reject: () => {
-          // Opcional: acción al cancelar
+          close();
         }
       });
     },
     toggleSort() {
       this.sortOrder = this.sortOrder === 1 ? -1 : 1;
-    }
+    },
+
   },
   computed: {
     restaurantBusinessNamesPerOrder() {
@@ -187,7 +187,16 @@ export default {
 
       return nameMap;
     }
-  }
+  },
+  watch: {
+    orders: {
+      handler() {
+
+      },
+      immediate: true,
+      deep: true,
+    }
+  },
 }
 </script>
 
@@ -196,6 +205,7 @@ export default {
     <!-- Sección de filtros superior -->
   <filters-section
       title="Orders"
+      @clear-filters="resetFilters"
       v-model:search-query="searchQuery"
       v-model:selected-date-range="selectedDateRange"
       :search-placeholder="'Search orders by restaurant...'"
@@ -213,6 +223,7 @@ export default {
           option-value="value"
           placeholder="Status"
           class="filter-dropdown"
+          :show-clear="true"
       />
     </template>
   </filters-section>
@@ -236,7 +247,7 @@ export default {
   >
     <pv-column field="date" header="Order date">
       <template #body="{ data }">
-        {{ data.date }}
+        {{ formatDate(data.date) }}
       </template>
     </pv-column>
 
@@ -248,7 +259,7 @@ export default {
 
     <pv-column header="Ship date">
       <template #body="{ data }">
-        {{ data.estimatedShipDate ? data.estimatedShipDate : 'Not set' }}
+        {{ data.estimatedShipDate ? formatDate(data.estimatedShipDate) : 'Not set' }}
       </template>
     </pv-column>
 
@@ -260,7 +271,7 @@ export default {
 
     <pv-column header="N° Requested products">
       <template #body="{ data }">
-        {{ requestedSuppliesCount(data) }}
+        {{ data.requestedProductsCount }}
       </template>
     </pv-column>
 
@@ -270,7 +281,7 @@ export default {
       </template>
     </pv-column>
 
-    <pv-column>
+    <pv-column header="Actions">
       <template #body="{ data }">
         <pv-button
             class="p-button-icon-style"
@@ -289,7 +300,7 @@ export default {
         <pv-button
             class="p-button-icon-style"
             icon="pi pi-trash text-base"
-            @click="confirmDecline(data)"
+            @click="confirmDelete(data)"
             text
         />
 
@@ -299,7 +310,6 @@ export default {
 
   </pv-data-table>
 
-  <pv-confirm-dialog></pv-confirm-dialog>
 </template>
 
 <style>
