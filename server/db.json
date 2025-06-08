@@ -774,7 +774,7 @@
       "order_to_supplier_id": 6,
       "supply_id": 8,
       "quantity": 2,
-      "accepted": true
+      "accepted": false
     },
     {
       "id": 13,
@@ -795,7 +795,7 @@
       "order_to_supplier_id": 7,
       "supply_id": 4,
       "quantity": 2,
-      "accepted": true
+      "accepted": false
     },
     {
       "id": 16,
@@ -816,7 +816,7 @@
       "order_to_supplier_id": 8,
       "supply_id": 1,
       "quantity": 4,
-      "accepted": true
+      "accepted": false
     },
     {
       "id": 19,
