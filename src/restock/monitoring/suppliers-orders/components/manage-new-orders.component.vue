@@ -29,22 +29,73 @@ export default {
   },
   data() {
     return {
-      checkedSupplies: [],
-      selectAll: false,
       step: 1,
-      localOrder: {
+      selectAll: false,
+      checkedSupplies: [],
+      localOrder: this.defaultOrder(),
+    };
+  },
+  computed: {
+    allSelected() {
+      return this.checkedSupplies.length === this.suppliesPerOrder.length && this.suppliesPerOrder.length > 0;
+    },
+  },
+  watch: {
+    modelValue(val) {
+      if (val) {
+        this.step = 1;
+        this.localOrder = this.defaultOrder();
+      } else {
+        this.resetForm();
+      }
+    },
+    checkedSupplies: {
+      handler() {
+        this.$nextTick(() => {
+          this.selectAll = this.allSelected;
+        });
+      },
+      deep: true
+    },
+    order: {
+      handler() {
+        this.localOrder = this.defaultOrder();
+      },
+      immediate: true,
+      deep: true
+    },
+    suppliesPerOrder: {
+      handler() {
+        this.checkedSupplies = this.checkedSupplies.filter(id =>
+            this.suppliesPerOrder.some(s => s.supplyId === id)
+        );
+      },
+      deep: true
+    }
+  },
+  methods: {
+    defaultOrder() {
+      return {
         description: '',
         estimatedShipDate: null,
         estimatedShipTime: null
-      }
-    };
-  },
-  methods: {
+      };
+    },
     nextStep() {
       this.step++;
     },
     prevStep() {
       this.step--;
+    },
+    close() {
+      this.$emit('update:modelValue', false);
+      this.$emit('close');
+    },
+    resetForm() {
+      this.checkedSupplies = [];
+      this.selectAll = false;
+      this.step = 1;
+      this.localOrder = this.defaultOrder();
     },
     productName(supplyId) {
       const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(supplyId));
@@ -55,9 +106,6 @@ export default {
       const unitMeasurement = this.unitsMeasurement.find(u => Number(u.id) === Number(supply.unit_measurement_id));
       return unitMeasurement ? unitMeasurement.name : 'Unknown unit';
     },
-    onSupplySelectionChange() {
-      this.selectAll = this.isAllSelected;
-    },
     toggleSelectAll() {
       if (this.selectAll) {
         this.checkedSupplies = this.suppliesPerOrder.map(item => item.supplyId);
@@ -65,31 +113,22 @@ export default {
         this.checkedSupplies = [];
       }
     },
-    close() {
-      this.$emit('update:modelValue', false); // esto cierra el modal desde el padre
-      this.$emit('close');
+    calculateNewTotalPrice() {
+      return this.checkedSupplies.reduce((total, supplyId) => {
+        const supplyInOrder = this.suppliesPerOrder.find(s =>
+            Number(s.supplyId) === Number(supplyId)
+        );
+        const supplyDetails = this.detailedSuppliesPerOrder.find(s =>
+            Number(s.id) === Number(supplyId)
+        );
+
+        if (supplyInOrder && supplyDetails) {
+          return total + (supplyDetails.price * supplyInOrder.quantity);
+        }
+        return total;
+      }, 0);
     },
-    // onUpdateRequest() {
-    //   this.$emit('update:modelValue', this.order);
-    //   this.resetForm();
-    // },
-    resetForm() {
-      this.checkedSupplies = [];
-      this.selectAll = false;
-      this.step = 1;
-      this.localOrder = {
-        description: '',
-        estimatedShipDate: null,
-        estimatedShipTime: null
-      };
-    },
-    initializeLocalOrder() {
-      this.localOrder = {
-        description: '',
-        estimatedShipDate: null,
-        estimatedShipTime: null
-      };
-    },
+
     async submitOrder() {
       if (this.checkedSupplies.length === 0) {
         this.$toast.add({
@@ -122,83 +161,9 @@ export default {
       this.$emit('submit-order', updateData);
       this.resetForm();
       this.close();
-    },
-
-    calculateNewTotalPrice() {
-      return this.checkedSupplies.reduce((total, supplyId) => {
-        const supplyInOrder = this.suppliesPerOrder.find(s =>
-            Number(s.supplyId) === Number(supplyId)
-        );
-        const supplyDetails = this.detailedSuppliesPerOrder.find(s =>
-            Number(s.id) === Number(supplyId)
-        );
-
-        if (supplyInOrder && supplyDetails) {
-          return total + (supplyDetails.price * supplyInOrder.quantity);
-        }
-        return total;
-      }, 0);
-    },
-
-    isValidSelection() {
-      return this.checkedSupplies.length > 0 &&
-          this.order.estimatedShipDate &&
-          this.order.estimatedShipTime;
-    },
-
-    selectionSummary() {
-      return {
-        totalSelected: this.checkedSupplies.length,
-        totalAvailable: this.suppliesPerOrder.length,
-        isPartial: this.checkedSupplies.length < this.suppliesPerOrder.length,
-        newPrice: this.calculateNewTotalPrice()
-      };
     }
   },
-  watch: {
-    modelValue(newVal) {
-      if (newVal) {
-        this.step = 1;
-        this.initializeLocalOrder();
-      } else {
-        // Resetear cuando se cierra el modal
-        this.resetForm();
-      }
-    },
-    // Watcher mejorado para checkedSupplies
-    checkedSupplies: {
-      handler(newVal) {
-        // Actualizar selectAll sin disparar el watcher recursivamente
-        this.$nextTick(() => {
-          this.selectAll = this.isAllSelected;
-        });
-      },
-      deep: true
-    },
-    order: {
-      handler(newOrder) {
-        this.initializeLocalOrder();
-      },
-      immediate: true,
-      deep: true
-    },
-    // Agregar watcher para suppliesPerOrder por si cambian dinámicamente
-    suppliesPerOrder: {
-      handler() {
-        // Si las supplies cambian, resetear la selección para evitar inconsistencias
-        this.checkedSupplies = this.checkedSupplies.filter(id =>
-            this.suppliesPerOrder.some(supply => supply.supplyId === id)
-        );
-      },
-      deep: true
-    }
-  },
-  emits: ['close', 'submit-order', 'update:modelValue'],
-  computed: {
-    isAllSelected() {
-      return this.checkedSupplies.length === this.suppliesPerOrder.length && this.suppliesPerOrder.length > 0;
-    }
-  },
+  emits: ['close', 'submit-order', 'update:modelValue']
 }
 </script>
 
