@@ -31,13 +31,12 @@ export default {
   data() {
     return {
       dateRangeOptions: [
-        { label: 'All Dates', value: null },
         { label: 'Last 7 days', value: '7days' },
         { label: 'Last 30 days', value: '30days' },
         { label: 'Last 3 months', value: '3months' }
       ]
     };
-  },
+  }
 }
 </script>
 
@@ -68,8 +67,9 @@ export default {
             :options="dateRangeOptions"
             option-label="label"
             option-value="value"
-            placeholder="Date range"
+            placeholder="Order Date range"
             class="filter-dropdown"
+            :show-clear="true"
         />
       </div>
 
@@ -81,6 +81,7 @@ export default {
         {{ sortLabel }}
         <i :class="['pi', sortOrder === 1 ? 'pi-sort-up' : 'pi-sort-down']"></i>
       </button>
+
     </div>
 
     <!-- Slot para botones del lado derecho -->
@@ -88,9 +89,13 @@ export default {
       <slot name="actions"></slot>
     </div>
   </div>
+
+
+
 </template>
 
 <style scoped>
+
 .filters-section {
   display: flex;
   justify-content: space-between;
@@ -100,6 +105,7 @@ export default {
   background-color: #f8f9fa;
   border-radius: 8px;
   flex-wrap: wrap;
+  font-size: 0.875rem;
   gap: 1rem;
 }
 
@@ -139,7 +145,8 @@ export default {
 
 .search-input {
   padding-left: 2.5rem !important;
-  min-width: 250px;
+  min-width: 260px;
+  font-size: 0.875rem;
 }
 
 .search-input:focus {
@@ -148,7 +155,6 @@ export default {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Botón de ordenamiento */
 .sort-button {
   display: flex;
   align-items: center;
