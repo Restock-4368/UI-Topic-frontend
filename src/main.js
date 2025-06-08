@@ -27,7 +27,7 @@ import {
     Tabs,
     TabPanel, TabList, Tab, TabPanels,
     Checkbox,
-    ConfirmDialog, useConfirm, ConfirmationService, Chip,
+    ConfirmDialog, useConfirm, ConfirmationService, Chip, DatePicker, Toast, ToastService,
 } from "primevue";
 import router from "./router/index.js";
 
@@ -38,6 +38,7 @@ app
     .use(index)
     .use(PrimeVue, {ripple: true, theme: {preset: Aura }})
     .use(ConfirmationService)
+    .use(ToastService)
     .component('pv-button', Button)
     .component('pv-dropdown', Dropdown)
     .component('pv-card', Card)
@@ -65,5 +66,7 @@ app
     .component('pv-confirm-dialog', ConfirmDialog)
     .component('useConfirm', useConfirm)
     .component('pv-chip', Chip)
+    .component('pv-date-picker', DatePicker)
+    .component('pv-toast', Toast)
 
 .mount('#app');
