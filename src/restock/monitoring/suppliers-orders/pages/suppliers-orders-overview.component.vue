@@ -1,40 +1,34 @@
 <script>
 import NewOrders from "../components/new-orders.component.vue";
-import {OrderToSupplierService} from "../../../resource/orders-to-suppliers/services/order-to-supplier.service.js";
-import {
-  OrderToSupplierSupplyService
-} from "../../../resource/orders-to-suppliers/services/order-to-supplier-supply.service.js";
-import {UserService} from "../../../iam/services/user.service.js";
-import {ProfileService} from "../../../profiles/services/profile.service.js";
-import {SupplyService} from "../../../resource/inventory/services/supply.service.js";
 import EmptySection from "../../../../shared/components/empty-section.component.vue";
 import ManageNewOrders from "../components/manage-new-orders.component.vue";
-import {UnitMeasurementService} from "../../../resource/inventory/services/unit-measurement.service.js";
-import {
-  OrderToSupplierSituationService
-} from "../../../resource/orders-to-suppliers/services/order-to-supplier-situation.service.js";
-import {
-  OrderToSupplierStateService
-} from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.service.js";
 import OrderDetails from "../components/order-details.component.vue";
 import EditOrder from "../components/edit-order.component.vue";
 import ApprovedOrders from "../components/approved-orders.components.vue";
 import DeliveredOrders from "../components/delivered-orders.component.vue";
-import {OrderToSupplierAssembler} from "../../../resource/orders-to-suppliers/services/order-to-supplier.assembler.js";
-import {
-  OrderToSupplierStateAssembler
-} from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.assembler.js";
-import {
-  OrderToSupplierSituationAssembler
-} from "../../../resource/orders-to-suppliers/services/order-to-supplier-situation.assembler.js";
-import {
-  OrderToSupplierSupplyAssembler
-} from "../../../resource/orders-to-suppliers/services/order-to-supplier-supply.assembler.js";
-import {SupplyAssembler} from "../../../resource/inventory/services/supply.assembler.js";
-import {UserAssembler} from "../../../iam/services/user.assembler.js";
-import {ProfileAssembler} from "../../../profiles/services/profile.assembler.js";
-import {UnitMeasurementAssembler} from "../../../resource/inventory/services/unit-measurement.assembler.js";
 import DeleteConfirmation from "../../../../shared/components/delete.component.vue";
+
+// Services
+import { OrderToSupplierService } from "../../../resource/orders-to-suppliers/services/order-to-supplier.service.js";
+import { OrderToSupplierSupplyService } from "../../../resource/orders-to-suppliers/services/order-to-supplier-supply.service.js";
+import { OrderToSupplierSituationService } from "../../../resource/orders-to-suppliers/services/order-to-supplier-situation.service.js";
+import { OrderToSupplierStateService } from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.service.js";
+import { UserService } from "../../../iam/services/user.service.js";
+import { ProfileService } from "../../../profiles/services/profile.service.js";
+import { SupplyService } from "../../../resource/inventory/services/supply.service.js";
+import { UnitMeasurementService } from "../../../resource/inventory/services/unit-measurement.service.js";
+
+// Assemblers
+import { OrderToSupplierAssembler } from "../../../resource/orders-to-suppliers/services/order-to-supplier.assembler.js";
+import { OrderToSupplierStateAssembler } from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.assembler.js";
+import { OrderToSupplierSituationAssembler } from "../../../resource/orders-to-suppliers/services/order-to-supplier-situation.assembler.js";
+import { OrderToSupplierSupplyAssembler } from "../../../resource/orders-to-suppliers/services/order-to-supplier-supply.assembler.js";
+import { SupplyAssembler } from "../../../resource/inventory/services/supply.assembler.js";
+import { UserAssembler } from "../../../iam/services/user.assembler.js";
+import { ProfileAssembler } from "../../../profiles/services/profile.assembler.js";
+import { UnitMeasurementAssembler } from "../../../resource/inventory/services/unit-measurement.assembler.js";
+
+const RESTAURANT_ADMIN_ROLE_ID = 2;
 
 export default {
   name: "suppliers-orders-overview",
@@ -44,15 +38,22 @@ export default {
   },
   data() {
     return {
-      showManageNewOrderModal: false,
-      showNewOrderDetailsModal: false,
-      showEditModal: false,
-      showAcceptedOrderDetailsModal: false,
+      // Modal states
+      modals: {
+        manageNewOrder: false,
+        newOrderDetails: false,
+        edit: false,
+        acceptedOrderDetails: false
+      },
+
+      // Selected data
       selectedOrder: null,
       selectedOrderState: null,
       selectedOrderSituation: null,
       selectedOrderSupplies: [],
       selectedOrderDetailedSupplies: [],
+
+      // Main data
       orders: [],
       orderSituations: [],
       orderStates: [],
@@ -63,36 +64,67 @@ export default {
       suppliesGroupedByOrder: [],
       detailedSuppliesGroupedByOrder: [],
       unitsMeasurement: [],
+
+      // UI state
       activeTab: 0,
+      loading: false,
+
+      // Configuration
       tabs: [
-        {title: 'New Orders', value: 0},
-        {title: 'Orders In Progress', value: 1},
-        {title: 'Orders Historial', value: 2}
+        { title: 'New Orders', value: 0 },
+        { title: 'Orders In Progress', value: 1 },
+        { title: 'Orders Record', value: 2 }
       ]
     };
   },
   async created() {
-    this.initServices();
+    await this.initializeComponent();
+  },
+  computed: {
+    deliveredOrders() {
+      return this.orders.filter(order => {
+        const state = this.findOrderState(order.stateId);
+        return state && Number(state.id) === 4; // Delivered state
+      });
+    },
 
-    try {
-      await Promise.all([
-        this.loadOrderSituations(),
-        this.loadOrderStates(),
-        this.loadOrders(),
-        this.loadSupplies(),
-        this.loadRequestedSupplies(),
-        this.loadUsersAndProfiles(),
-        this.loadUnitsMeasurement(),
-      ]);
+    // Computed properties for modal states to avoid v-model warnings
+    showManageNewOrderModal: {
+      get() { return this.modals.manageNewOrder; },
+      set(value) { this.modals.manageNewOrder = value; }
+    },
 
-      this.groupSuppliesByOrder();
-      this.groupSuppliesByOrderWithDetails();
+    showEditModal: {
+      get() { return this.modals.edit; },
+      set(value) { this.modals.edit = value; }
+    },
 
-    } catch (error) {
-      console.error("Error loading initial data:", error);
+    showNewOrderDetailsModal: {
+      get() { return this.modals.newOrderDetails; },
+      set(value) { this.modals.newOrderDetails = value; }
+    },
+
+    showAcceptedOrderDetailsModal: {
+      get() { return this.modals.acceptedOrderDetails; },
+      set(value) { this.modals.acceptedOrderDetails = value; }
     }
   },
   methods: {
+
+    //Initialization methods
+    async initializeComponent() {
+      this.loading = true;
+
+      try {
+        this.initServices();
+        await this.loadAllData();
+        this.processData();
+      } catch (error) {
+        this.handleError("Failed to initialize component", error);
+      } finally {
+        this.loading = false;
+      }
+    },
     initServices() {
       this.orderSituationsService = new OrderToSupplierSituationService();
       this.orderStatesService = new OrderToSupplierStateService();
@@ -104,311 +136,285 @@ export default {
       this.unitsMeasurementService = new UnitMeasurementService();
     },
 
+    async loadAllData() {
+      await Promise.all([
+        this.loadOrderSituations(),
+        this.loadOrderStates(),
+        this.loadOrders(),
+        this.loadSupplies(),
+        this.loadRequestedSupplies(),
+        this.loadUsersAndProfiles(),
+        this.loadUnitsMeasurement(),
+      ]);
+    },
+
+    processData() {
+      this.groupSuppliesByOrder();
+      this.groupSuppliesByOrderWithDetails();
+    },
+
+    // Data loading methods
     async loadOrderSituations() {
       const response = await this.orderSituationsService.getAll();
       this.orderSituations = OrderToSupplierSituationAssembler.toEntitiesFromResponse(response);
-      console.log("Order Situations:", this.orderSituations);
     },
 
     async loadOrderStates() {
       const response = await this.orderStatesService.getAll();
       this.orderStates = OrderToSupplierStateAssembler.toEntitiesFromResponse(response);
-      console.log("Order States:", this.orderStates);
     },
 
     async loadOrders() {
       const response = await this.ordersService.getAll();
       this.orders = OrderToSupplierAssembler.toEntitiesFromResponse(response);
-      console.log("Orders:", this.orders);
     },
 
     async loadSupplies() {
       const response = await this.suppliesService.getAll();
       this.supplies = SupplyAssembler.toEntitiesFromResponse(response);
-      console.log("Supplies:", this.supplies);
     },
 
     async loadRequestedSupplies() {
       const response = await this.requestedSuppliesInOrdersService.getAll();
       this.requestedSuppliesInOrders = OrderToSupplierSupplyAssembler.toEntitiesFromResponse(response);
-      console.log("Requested Supplies:", this.requestedSuppliesInOrders);
     },
 
     async loadUsersAndProfiles() {
       const [usersResponse, profilesResponse] = await Promise.all([
-        this.usersService.getByRoleId(2), // 2 is the role ID for restaurant admins
+        this.usersService.getByRoleId(RESTAURANT_ADMIN_ROLE_ID),
         this.profilesService.getAll()
       ]);
 
       this.users = UserAssembler.toEntitiesFromResponse(usersResponse);
       const allProfiles = ProfileAssembler.toEntitiesFromResponse(profilesResponse);
 
-      this.adminRestaurantsProfiles = allProfiles.filter(profile => {
-        return this.users.find(u => Number(u.id) === Number(profile.userId));
-
-      });
-
-      console.log("Filtered Restaurant Profiles:", this.adminRestaurantsProfiles);
+      this.adminRestaurantsProfiles = allProfiles.filter(profile =>
+          this.users.some(user => Number(user.id) === Number(profile.userId))
+      );
     },
 
     async loadUnitsMeasurement() {
       const response = await this.unitsMeasurementService.getAll();
       this.unitsMeasurement = UnitMeasurementAssembler.toEntitiesFromResponse(response);
-      console.log("Units measurement:", this.unitsMeasurement);
     },
 
+// Data processing methods
     groupSuppliesByOrder() {
-      const grouped = {};
-
-      this.requestedSuppliesInOrders.forEach(orderSupply => {
+      const grouped = this.requestedSuppliesInOrders.reduce((acc, orderSupply) => {
         const orderId = orderSupply.orderId;
-        if (!grouped[orderId]) {
-          grouped[orderId] = [];
+        if (!acc[orderId]) {
+          acc[orderId] = [];
         }
-        grouped[orderId].push(orderSupply);
-      });
+        acc[orderId].push(orderSupply);
+        return acc;
+      }, {});
 
       this.suppliesGroupedByOrder = Object.entries(grouped).map(([orderId, supplies]) => ({
         orderId,
         supplies
       }));
-
-      console.log("Supplies grouped by order:", this.suppliesGroupedByOrder);
-
     },
 
     groupSuppliesByOrderWithDetails() {
-      const grouped = {};
+      const grouped = this.requestedSuppliesInOrders.reduce((acc, orderSupply) => {
+        const { orderId, supplyId } = orderSupply;
 
-      this.requestedSuppliesInOrders.forEach(orderSupply => {
-        const {orderId, supplyId} = orderSupply;
-
-        if (!grouped[orderId]) {
-          grouped[orderId] = new Set(); //Set para evitar duplicados
+        if (!acc[orderId]) {
+          acc[orderId] = new Set();
         }
-        grouped[orderId].add(supplyId);
-      });
+        acc[orderId].add(supplyId);
+        return acc;
+      }, {});
 
-      // Convertimos el resultado a array de objetos con supplies completos
       this.detailedSuppliesGroupedByOrder = Object.entries(grouped).map(([orderId, supplyIdsSet]) => {
-        const supplies = [...supplyIdsSet].map(supplyId =>
-            this.supplies.find(supply => Number(supply.id) === Number(supplyId))
-        ).filter(Boolean); // Filtramos null por si hay supplyId sin match
+        const supplies = [...supplyIdsSet]
+            .map(supplyId => this.supplies.find(supply => Number(supply.id) === Number(supplyId)))
+            .filter(Boolean);
 
-        return {
-          orderId,
-          supplies
-        };
+        return { orderId, supplies };
       });
-
-      console.log("Grouped supplies with full details by order:", this.detailedSuppliesGroupedByOrder);
     },
+
+    // Modal methods
     openEditModal(order) {
       this.selectedOrder = order;
-      this.selectedOrderState = this.orderStates.find(s => Number(s.id) === Number(order.stateId)) || {name: 'Without State'};
-      this.selectedOrderSituation = this.orderSituations.find(s => Number(s.id) === Number(order.situationId)) || {name: 'Without Situation'};
-
-      this.showEditModal = true;
+      this.selectedOrderState = this.findOrderState(order.stateId);
+      this.selectedOrderSituation = this.findOrderSituation(order.situationId);
+      this.modals.edit = true;
     },
+
     openNewOrderDetailsModal(order) {
       this.selectedOrder = order;
-      this.selectedOrderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+      this.selectedOrderSituation = this.findOrderSituation(order.situationId);
 
-      this.selectedOrderSituation = this.orderSituations.find(s => Number(s.id) === Number(order.situationId)) || {name: 'Without Situation'};
-
-      const orderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+      const orderSupplies = this.getOrderSupplies(order.id);
       this.selectedOrderSupplies = orderSupplies.filter(supply => !supply.accepted);
+      this.selectedOrderDetailedSupplies = this.getDetailedOrderSupplies(order.id);
 
-      this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
-      this.showNewOrderDetailsModal = true;
+      this.modals.newOrderDetails = true;
     },
+
     openOrderAcceptedDetailsModal(order) {
       this.selectedOrder = order;
-      this.selectedOrderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+      this.selectedOrderState = this.findOrderState(order.stateId);
+      this.selectedOrderSituation = this.findOrderSituation(order.situationId);
 
-      this.selectedOrderState = this.orderStates.find(s => Number(s.id) === Number(order.stateId)) || {name: 'Without State'};
-      this.selectedOrderSituation = this.orderSituations.find(s => Number(s.id) === Number(order.situationId)) || {name: 'Without Situation'};
-
-      const orderSupplies = this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
+      const orderSupplies = this.getOrderSupplies(order.id);
       this.selectedOrderSupplies = orderSupplies.filter(supply => supply.accepted);
+      this.selectedOrderDetailedSupplies = this.getDetailedOrderSupplies(order.id);
 
-      this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
-      this.showAcceptedOrderDetailsModal = true;
+      this.modals.acceptedOrderDetails = true;
     },
+
     openManageNewModal(order) {
-      this.selectedOrder = {...order};
-      this.selectedOrderSupplies = [
-        ...(this.suppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [])
-      ];
-
-      this.selectedOrderDetailedSupplies = this.detailedSuppliesGroupedByOrder.find(s => Number(s.orderId) === Number(order.id))?.supplies || [];
-      this.showManageNewOrderModal = true;
+      this.selectedOrder = { ...order };
+      this.selectedOrderSupplies = [...this.getOrderSupplies(order.id)];
+      this.selectedOrderDetailedSupplies = this.getDetailedOrderSupplies(order.id);
+      this.modals.manageNewOrder = true;
     },
+
+    closeAllModals() {
+      Object.keys(this.modals).forEach(key => {
+        this.modals[key] = false;
+      });
+      this.clearSelectedData();
+    },
+
+    clearSelectedData() {
+      this.selectedOrder = null;
+      this.selectedOrderState = null;
+      this.selectedOrderSituation = null;
+      this.selectedOrderSupplies = [];
+      this.selectedOrderDetailedSupplies = [];
+    },
+
+  // Helper Methods
+    findOrderState(stateId) {
+      return this.orderStates.find(state => Number(state.id) === Number(stateId));
+    },
+
+    findOrderSituation(situationId) {
+      return this.orderSituations.find(situation => Number(situation.id) === Number(situationId));
+    },
+
+    getOrderSupplies(orderId) {
+      const orderGroup = this.suppliesGroupedByOrder.find(group =>
+          Number(group.orderId) === Number(orderId)
+      );
+      return orderGroup ? orderGroup.supplies : [];
+    },
+
+    getDetailedOrderSupplies(orderId) {
+      const orderGroup = this.detailedSuppliesGroupedByOrder.find(group =>
+          Number(group.orderId) === Number(orderId)
+      );
+      return orderGroup ? orderGroup.supplies : [];
+    },
+
+    // Order handling methods
     async handleOrderUpdate(updateData) {
+      if (this.processingOrder) return;
+
+      this.processingOrder = true;
+
       try {
         await this.updateAcceptedOrder(updateData);
-
-        //Reload data
-        await Promise.all([
-          this.loadOrders()
-        ]);
-
-        // Close modal
-        this.showEditModal = false;
-        this.selectedOrder = null;
-        this.selectedOrderState = null;
-        this.selectedOrderSituation = null;
-
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Order updated successfully',
-          life: 3000
-        });
-
-      } catch (error) {
-        console.error('Error updating order:', error);
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update order',
-          life: 3000
-        });
-      }
-    },
-    async handleDeclineOrder(order) {
-      try {
-        order.situationId = 3;
-
-        const orderUpdatePayload = {
-          id: order.id,
-          date: order.date,
-          estimated_ship_date: order.estimatedShipDate,
-          estimated_ship_time: order.estimatedShipTime,
-          description: order.description,
-          admin_restaurant_id: order.adminRestaurantId,
-          supplier_id: order.supplierId,
-          order_to_supplier_state_id: order.stateId,
-          order_to_supplier_situation_id: 3,
-          requested_products_count: order.requestedProductsCount,
-          total_price: order.totalPrice,
-          partially_accepted: order.partiallyAccepted,
-        };
-
-        await this.ordersService.update(order.id, orderUpdatePayload);
-
-        await this.loadOrders();
-
-      } catch (error) {
-        console.error("Error declining order:", error);
-      }
-    },
-    async handleOrderSubmission(updateData) {
-
-      try {
-        console.log('Processing order submission:', updateData);
-
-        await this.updateOrderDetails(updateData);
-
-        await this.updateSuppliesAcceptance(updateData);
-
         await this.reloadOrderData();
 
-        // Cerrar el modal
-        this.showManageNewOrderModal = false;
-        this.selectedOrder = null;
-        this.selectedOrderSupplies = [];
-        this.selectedOrderDetailedSupplies = [];
-
-        this.$toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Order updated successfully',
-          life: 3000
-        });
-
+        this.closeAllModals();
+        this.showSuccessMessage('Order updated successfully');
       } catch (error) {
-        console.error('Error updating order:', error);
-        this.$toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update order',
-          life: 3000
-        });
+        this.handleError('Failed to update order', error);
+      } finally {
+        this.processingOrder = false;
       }
     },
+
+    async handleDeclineOrder(order) {
+      if (this.processingOrder) return;
+
+      this.processingOrder = true;
+
+      try {
+        const declinedSituationId = 3; // Decline situation
+        await this.updateOrderSituation(order, declinedSituationId);
+        await this.reloadOrderData();
+
+        this.showSuccessMessage('Order declined successfully');
+      } catch (error) {
+        this.handleError('Failed to decline order', error);
+      } finally {
+        this.processingOrder = false;
+      }
+    },
+
+    async handleOrderSubmission(updateData) {
+      if (this.processingOrder) return;
+
+      this.processingOrder = true;
+
+      try {
+        await this.updateOrderDetails(updateData);
+        await this.updateSuppliesAcceptance(updateData);
+        await this.reloadOrderData();
+
+        this.closeAllModals();
+        this.showSuccessMessage('Order processed successfully');
+      } catch (error) {
+        this.handleError('Failed to process order', error);
+      } finally {
+        this.processingOrder = false;
+      }
+    },
+    // Order update methods
+    async updateOrderSituation(order, situationId) {
+      const orderUpdatePayload = this.createOrderUpdatePayload(order, { situationId });
+      await this.ordersService.update(order.id, orderUpdatePayload);
+      this.updateLocalOrderData(order.id, orderUpdatePayload);
+    },
+
     async updateAcceptedOrder(updateData) {
-      const orderUpdatePayload = {
-        id: updateData.order.id,
-        date: updateData.order.date,
-        estimated_ship_date: updateData.newEstimatedShipDate,
-        estimated_ship_time: updateData.newEstimatedShipTime,
+      const orderUpdatePayload = this.createOrderUpdatePayload(updateData.order, {
+        estimatedShipDate: updateData.newEstimatedShipDate,
+        estimatedShipTime: updateData.newEstimatedShipTime,
         description: updateData.newDescription,
-        admin_restaurant_id: updateData.order.adminRestaurantId,
-        supplier_id: updateData.order.supplierId,
-        order_to_supplier_state_id: updateData.newState,
-        order_to_supplier_situation_id: updateData.order.situationId,
-        requested_products_count: updateData.order.requestedProductsCount,
-        total_price: updateData.order.totalPrice,
-        partially_accepted: updateData.order.partiallyAccepted,
-      };
+        stateId: updateData.newState
+      });
 
       await this.ordersService.update(updateData.order.id, orderUpdatePayload);
-
-      const orderIndex = this.orders.findIndex(o => Number(o.id) === Number(updateData.orderId));
-      if (orderIndex !== -1) {
-        this.orders[orderIndex] = {...this.orders[orderIndex], ...orderUpdatePayload};
-      }
+      this.updateLocalOrderData(updateData.order.id, orderUpdatePayload);
     },
+
     async updateOrderDetails(updateData) {
-      const orderUpdatePayload = {
-        id: updateData.order.id,
-        date: updateData.order.date,
-        estimated_ship_date: updateData.newEstimatedShipDate,
-        estimated_ship_time: updateData.newEstimatedShipTime,
+      const onHoldStateId = 1;
+      const acceptedSituationId = 2;
+
+      const orderUpdatePayload = this.createOrderUpdatePayload(updateData.order, {
+        estimatedShipDate: updateData.newEstimatedShipDate,
+        estimatedShipTime: updateData.newEstimatedShipTime,
         description: updateData.newDescription,
-        admin_restaurant_id: updateData.order.adminRestaurantId,
-        supplier_id: updateData.order.supplierId,
-        order_to_supplier_state_id: 1, //On Hold
-        order_to_supplier_situation_id: 2, //Accepted
-        requested_products_count: updateData.newRequestedProductsCount,
-        total_price: updateData.newTotalPrice,
-        partially_accepted: updateData.partiallyAccepted,
-      };
+        stateId: onHoldStateId,
+        situationId: acceptedSituationId,
+        requestedProductsCount: updateData.newRequestedProductsCount,
+        totalPrice: updateData.newTotalPrice,
+        partiallyAccepted: updateData.partiallyAccepted
+      });
 
       await this.ordersService.update(updateData.order.id, orderUpdatePayload);
-
-      const orderIndex = this.orders.findIndex(o => Number(o.id) === Number(updateData.orderId));
-      if (orderIndex !== -1) {
-        this.orders[orderIndex] = {...this.orders[orderIndex], ...orderUpdatePayload};
-      }
+      this.updateLocalOrderData(updateData.order.id, orderUpdatePayload);
     },
 
     async updateSuppliesAcceptance(updateData) {
-      console.log('=== DEBUG updateSuppliesAcceptance ===');
-      console.log('updateData:', updateData);
-      console.log('suppliesGroupedByOrder:', this.suppliesGroupedByOrder);
+      const orderSuppliesGroup = this.suppliesGroupedByOrder.find(group =>
+          Number(group.orderId) === Number(updateData.order.id)
+      );
 
-      const orderSupplies = this.suppliesGroupedByOrder.find(rso => Number(rso.orderId) === Number(updateData.order.id)).supplies || [];
-
-      console.log('orderSupplies found:', orderSupplies);
-
-      if (orderSupplies.length === 0) {
-        console.error('No supplies found for order:', updateData.order.id);
+      if (!orderSuppliesGroup || !orderSuppliesGroup.supplies.length) {
         throw new Error(`No supplies found for order ${updateData.order.id}`);
       }
 
-      const updatePromises = orderSupplies.map(async (supplyOrder) => {
-        console.log('Processing supply order:', supplyOrder);
-
+      const updatePromises = orderSuppliesGroup.supplies.map(async (supplyOrder) => {
         const isAccepted = updateData.selectedSupplies.includes(Number(supplyOrder.supplyId));
-
-        console.log(`Supply ${supplyOrder.id} is accepted: ${isAccepted}`);
-
-        if (!supplyOrder.id) {
-          console.error('Supply order missing ID:', supplyOrder);
-          throw new Error(`Supply order missing ID for supply ${supplyOrder.id}`);
-        }
 
         const updatePayload = {
           id: supplyOrder.id,
@@ -418,58 +424,82 @@ export default {
           accepted: isAccepted
         };
 
-        console.log('Updating supply with payload:', updatePayload);
+        const response = await this.requestedSuppliesInOrdersService.update(supplyOrder.id, updatePayload);
+        this.updateLocalSupplyData(supplyOrder.id, { accepted: isAccepted });
 
-        try {
-          const response = await this.requestedSuppliesInOrdersService.update(supplyOrder.id, updatePayload);
-          console.log('Update response:', response);
-
-          const localIndex = this.requestedSuppliesInOrders.findIndex(rso =>
-              Number(rso.id) === Number(supplyOrder.id)
-          );
-
-          if (localIndex !== -1) {
-            this.requestedSuppliesInOrders[localIndex] = {
-              ...this.requestedSuppliesInOrders[localIndex],
-              accepted: isAccepted
-            };
-            console.log('Updated local data at index:', localIndex);
-          }
-
-          return response;
-        } catch (error) {
-          console.error(`Error updating supply ${supplyOrder.id}:`, error);
-          throw error;
-        }
+        return response;
       });
 
       await Promise.all(updatePromises);
-      console.log('All supplies updated successfully');
+    },
+
+    // Utility methods
+    createOrderUpdatePayload(order, updates = {}) {
+      return {
+        id: order.id,
+        date: order.date,
+        estimated_ship_date: updates.estimatedShipDate || order.estimatedShipDate,
+        estimated_ship_time: updates.estimatedShipTime || order.estimatedShipTime,
+        description: updates.description || order.description,
+        admin_restaurant_id: order.adminRestaurantId,
+        supplier_id: order.supplierId,
+        order_to_supplier_state_id: updates.stateId || order.stateId,
+        order_to_supplier_situation_id: updates.situationId || order.situationId,
+        requested_products_count: updates.requestedProductsCount || order.requestedProductsCount,
+        total_price: updates.totalPrice || order.totalPrice,
+        partially_accepted: updates.partiallyAccepted !== undefined ? updates.partiallyAccepted : order.partiallyAccepted,
+      };
+    },
+
+    updateLocalOrderData(orderId, updates) {
+      const orderIndex = this.orders.findIndex(order => Number(order.id) === Number(orderId));
+      if (orderIndex !== -1) {
+        this.orders[orderIndex] = { ...this.orders[orderIndex], ...updates };
+      }
+    },
+
+    updateLocalSupplyData(supplyId, updates) {
+      const supplyIndex = this.requestedSuppliesInOrders.findIndex(supply =>
+          Number(supply.id) === Number(supplyId)
+      );
+      if (supplyIndex !== -1) {
+        this.requestedSuppliesInOrders[supplyIndex] = {
+          ...this.requestedSuppliesInOrders[supplyIndex],
+          ...updates
+        };
+      }
     },
 
     async reloadOrderData() {
-
       await Promise.all([
         this.loadOrders(),
         this.loadRequestedSupplies()
       ]);
+      this.processData();
+    },
 
-      // Re-agrupar supplies
-      this.groupSuppliesByOrder();
-      this.groupSuppliesByOrderWithDetails();
-    }
-  },
-  computed: {
-    deliveredOrders() {
-      let deliveredOrders = [];
-      deliveredOrders = this.orders.filter(order => {
-        const state = this.orderStates.find(s => Number(s.id) === Number(order.stateId));
+    //Error handling and notifications
+    handleError(message, error) {
+      console.error(message, error);
+      this.showErrorMessage(message);
+    },
 
-        return state && Number(state.id) === 4; // Filtra solo los 'Delivered'
+    showSuccessMessage(message) {
+      this.$toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: message,
+        life: 3000
       });
+    },
 
-      console.log("Delivered orders:", deliveredOrders);
-      return deliveredOrders;
+    showErrorMessage(message) {
+      this.$toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: message,
+        life: 3000
+      });
     }
   }
 };
@@ -486,46 +516,46 @@ export default {
     <pv-tab-panels>
       <pv-tab-panel :value="0">
         <new-orders
-            @open-modal="openManageNewModal"
-            @open-details-modal="openNewOrderDetailsModal"
-            @decline-order="handleDeclineOrder($event)"
             :order-situations="orderSituations"
             :admin-restaurants-profiles="adminRestaurantsProfiles"
             :orders-supplies="suppliesGroupedByOrder"
             :orders="orders"
             :supplies="supplies"
+            @open-modal="openManageNewModal"
+            @open-details-modal="openNewOrderDetailsModal"
+            @decline-order="handleDeclineOrder"
         ></new-orders>
       </pv-tab-panel>
       <pv-tab-panel :value="1">
         <approved-orders
-            @open-edit-modal="openEditModal"
-            @open-details-modal="openOrderAcceptedDetailsModal"
-            @delete-order="handleDeclineOrder($event)"
             :admin-restaurants-profiles="adminRestaurantsProfiles"
             :orders="orders"
             :order-states="orderStates"
-            :order-situations="orderSituations">
+            :order-situations="orderSituations"
+            @open-edit-modal="openEditModal"
+            @open-details-modal="openOrderAcceptedDetailsModal"
+            @delete-order="handleDeclineOrder">
         </approved-orders>
       </pv-tab-panel>
       <pv-tab-panel :value="2">
         <delivered-orders
-            @open-details-modal="openOrderAcceptedDetailsModal"
             :detailed-supplies-per-order="detailedSuppliesGroupedByOrder"
             :admin-restaurants-profiles="adminRestaurantsProfiles"
             :orders-supplies="suppliesGroupedByOrder"
-            :orders="deliveredOrders">
+            :orders="deliveredOrders"
+            @open-details-modal="openOrderAcceptedDetailsModal">
         </delivered-orders>
       </pv-tab-panel>
     </pv-tab-panels>
   </pv-tabs>
 
+  <!-- Modals -->
   <manage-new-orders
       v-model="showManageNewOrderModal"
       :order="selectedOrder"
       :detailed-supplies-per-order="selectedOrderDetailedSupplies"
       :supplies-per-order="selectedOrderSupplies"
       :units-measurement="unitsMeasurement"
-      @update:modelValue="showManageNewOrderModal = $event"
       @submit-order="handleOrderSubmission($event)"
   />
 
@@ -534,7 +564,6 @@ export default {
       :order="selectedOrder"
       :situation="selectedOrderSituation"
       :state="selectedOrderState"
-      @update:modelValue="showEditModal = $event"
       @submit-order="handleOrderUpdate($event)"
   />
 
@@ -548,7 +577,6 @@ export default {
       :order-state="selectedOrderState"
       :admin-restaurants-profiles="adminRestaurantsProfiles"
       :hide-state="false"
-      @update:modelValue="showAcceptedOrderDetailsModal = $event"
   />
 
   <order-details
@@ -560,7 +588,6 @@ export default {
       :order-situation="selectedOrderSituation"
       :admin-restaurants-profiles="adminRestaurantsProfiles"
       :hide-state="true"
-      @update:modelValue="showNewOrderDetailsModal = $event"
   />
 
   <pv-confirm-dialog :closable="false"/>
