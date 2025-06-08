@@ -20,7 +20,7 @@ export default {
       :visible="modelValue"
       :modal="true"
       :header="title"
-      :closable="closable"
+      :closable="false"
       :style="{ width: width }"
       @update:visible="$emit('update:modelValue', $event)"
       @hide="$emit('close')"

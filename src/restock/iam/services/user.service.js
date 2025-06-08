@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { User } from '../model/user.entity.js';
 import {BaseService} from "../../../shared/services/base.service.js";
 
@@ -11,10 +10,10 @@ export class UserService extends BaseService {
         ]; // Aquí puedes cargar los roles dinámicamente si es necesario
     }
 
-    async getAll() {
-        const response = await super.getAll();
-        return response.data.map(User.fromPersistence);
-    }
+    // async getAll() {
+    //     const response = await super.getAll();
+    //     return response.data.map(User.fromPersistence);
+    // }
 
     async getById(id) {
         const response = await super.getById(id);
@@ -22,6 +21,10 @@ export class UserService extends BaseService {
         // Ahora asignamos el nombre del rol según el role_id
         user.role = this.getRoleName(user.roleId);
         return user;
+    }
+
+    getByRoleId(roleId) {
+        return this.getByQuery("roleId", roleId);
     }
 
     getRoleName(roleId) {

@@ -2,7 +2,7 @@
 import inventorySupplyCreateAndEdit from '../components/inventory-supply-create-and-edit.component.vue';
 import inventorySupplyAddAndEdit from '../components/inventory-supply-add-and-edit.component.vue';
 import InventorySupplyCard from '../components/inventory-supply-card.component.vue';
-import { SupplyCategoryService } from '../services/category.service';
+import { SupplyCategoryService } from '../services/supply-category.service.js';
 import { SupplyCategory } from '../model/supply-category.entity';
 import { UnitMeasurement } from '../model/unit-measurement.entity';
 import { UnitMeasurementService } from '../services/unit-measurement.service';

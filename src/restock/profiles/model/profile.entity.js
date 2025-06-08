@@ -1,7 +1,7 @@
 
 export class Profile {
     constructor({
-                    id = null,
+                    id = 0,
                     name = '',
                     last_name = '',
                     username = '',
@@ -12,7 +12,7 @@ export class Profile {
                     description = '',
                     business_name = '',
                     business_address = '',
-                    user_id = null
+                    user_id = 0
                 } = {}) {
         this.id = id;
         this.name = name;

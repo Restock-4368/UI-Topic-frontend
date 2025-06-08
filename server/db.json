@@ -4,31 +4,37 @@
       "id": 1,
       "email": "pepe@gmail.com",
       "password": "password123",
-      "role_id": 1,
       "subscription_id": 1,
       "start_date": "2023-01-01",
       "subscription_payment_details_id": 1,
-      "avatar": {
-        "url": "https://i.pravatar.cc/150?img=1"
-      }
+      "role_id": 1
     },
     {
       "id": 2,
       "email": "maria@example.com",
       "password": "maria456",
-      "role_id": 2,
       "subscription_id": 2,
-      "start_date": "2023-02-15",
-      "subscription_payment_details_id": 2
+      "start_date": "2023-02-01",
+      "subscription_payment_details_id": 2,
+      "role_id": 2
     },
     {
       "id": 3,
       "email": "juanito@gmail.com",
       "password": "juan123",
-      "role_id": 1,
       "subscription_id": 1,
-      "start_date": "2023-03-10",
-      "subscription_payment_details_id": 3
+      "start_date": "2023-03-01",
+      "subscription_payment_details_id": 1,
+      "role_id": 1
+    },
+    {
+      "id": 4,
+      "email": "elhuarique@gmail.com",
+      "password": "restaurante2024",
+      "subscription_id": 2,
+      "start_date": "2024-03-01",
+      "subscription_payment_details_id": 2,
+      "role_id": 2
     }
   ],
   "roles": [
@@ -290,28 +296,31 @@
   ],
   "supplies": [
     {
+      "id": 1,
       "name": "Potatoes",
       "description": "Fresh organic potatoes used for various side dishes and stews.",
       "perishable": true,
+      "min_stock": 5,
+      "max_stock": 50,
       "category_id": 1,
       "unit_measurement_id": 1,
-      "min_stock": 1,
-      "max_stock": 100,
       "price": 2.5,
-      "id": 1
+      "user_id": 1
     },
     {
+      "id": 2,
       "name": "Beef Tenderloine",
       "description": "High-quality beef tenderloin, ideal for premium meat dishes.",
       "perishable": true,
+      "min_stock": 2,
+      "max_stock": 20,
       "category_id": 2,
       "unit_measurement_id": 2,
-      "min_stock": 3,
-      "max_stock": 30,
       "price": 12,
-      "id": 2
+      "user_id": 1
     },
     {
+      "id": 3,
       "name": "Red Onione",
       "description": "Crisp red onions used to add flavor and color to meals.",
       "perishable": true,
@@ -320,9 +329,10 @@
       "min_stock": 3,
       "max_stock": 30,
       "price": 1,
-      "id": 3
+      "user_id": 1
     },
     {
+      "id": 4,
       "name": "Chicken Breaste",
       "description": "Boneless, skinless chicken breast, perfect for grilling and baking.",
       "perishable": true,
@@ -331,9 +341,10 @@
       "category_id": 2,
       "unit_measurement_id": 2,
       "price": 10,
-      "id": 4
+      "user_id": 1
     },
     {
+      "id": 5,
       "name": "Yellow Chili Pepper",
       "description": "Spicy yellow chili peppers used to enhance sauces and marinades.",
       "perishable": true,
@@ -342,7 +353,7 @@
       "category_id": 3,
       "unit_measurement_id": 1,
       "price": 1.5,
-      "id": 5
+      "user_id": 1
     },
     {
       "id": 6,
@@ -429,6 +440,7 @@
       "user_id": 1
     },
     {
+      "id": 13,
       "name": "Sillao",
       "description": "Spicy yellow chili peppers used to enhance sauces and marinades.",
       "perishable": true,
@@ -437,20 +449,22 @@
       "min_stock": 0,
       "max_stock": 0,
       "price": 12,
-      "id": 13
+      "user_id": 1
     },
     {
+      "id": 14,
       "name": "Gaseosa",
-      "description": "Una gasela bien heladita q riko",
+      "description": "Una gacela",
       "perishable": true,
       "category_id": 3,
       "unit_measurement_id": 2,
       "min_stock": null,
       "max_stock": null,
       "price": 5,
-      "id": 14
+      "user_id": 2
     },
     {
+      "id": 15,
       "name": "Papitas",
       "description": "Papitas q rico",
       "perishable": false,
@@ -459,9 +473,11 @@
       "min_stock": 0,
       "max_stock": 0,
       "price": 20,
-      "id": 15
+      "user_id": 16
+
     },
     {
+      "id": 16,
       "name": "Coquita",
       "description": "current user",
       "perishable": false,
@@ -470,7 +486,10 @@
       "min_stock": 10,
       "max_stock": 101,
       "price": null,
-      "id": 16
+      "user_id": 16
+    },
+    {
+
     }
   ],
   "sales": [
@@ -509,13 +528,115 @@
   "orders_to_supplier": [
     {
       "id": 1,
-      "date": "2025-05-28",
+      "date": "2025-05-28T05:00:00.000Z",
+      "description": "Order for fresh supplies",
+      "estimated_ship_date": "2025-06-01T05:00:00.000Z",
+      "estimated_ship_time": "2025-06-01T05:11:40.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 3,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 1,
+      "requested_products_count": 2,
+      "total_price": 30.55,
+      "partially_accepted": false
+    },
+    {
+      "id": 2,
+      "date": "2025-01-01T05:00:00.000Z",
+      "description": null,
+      "estimated_ship_date": "2025-01-06T05:00:00.000Z",
+      "estimated_ship_time": "2025-01-06T07:50:00.000Z",
       "admin_restaurant_id": 2,
       "supplier_id": 1,
       "order_to_supplier_state_id": 1,
       "order_to_supplier_situation_id": 1,
+      "requested_products_count": 2,
       "total_price": 30.55,
       "partially_accepted": false
+    },
+    {
+      "id": 3,
+      "date": "2025-02-14T06:30:00.000Z",
+      "description": "Order for vegetables supplies",
+      "estimated_ship_date": "2025-03-01T07:40:00.000Z",
+      "estimated_ship_time": "2025-03-01T07:40:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 3,
+      "order_to_supplier_situation_id": 2,
+      "requested_products_count": 2,
+      "total_price": 75.55,
+      "partially_accepted": false
+    },
+    {
+      "id": 4,
+      "date": "2025-03-17T06:30:00.000Z",
+      "description": "Order for fruits supplies",
+      "estimated_ship_date": "2025-03-22T06:30:00.000Z",
+      "estimated_ship_time": "2025-03-22T06:30:00.000Z",
+      "admin_restaurant_id": 2,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 2,
+      "order_to_supplier_situation_id": 2,
+      "requested_products_count": 4,
+      "total_price": 23.55,
+      "partially_accepted": true
+    },
+    {
+      "id": 5,
+      "date": "2025-03-12T05:00:00.000Z",
+      "description": "Order for meals supplies",
+      "estimated_ship_date": "2025-03-20T05:00:00.000Z",
+      "estimated_ship_time": "2025-03-20T08:50:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 4,
+      "order_to_supplier_situation_id": 2,
+      "requested_products_count": 5,
+      "total_price": 34.55,
+      "partially_accepted": true
+    },
+    {
+      "id": 6,
+      "date": "2025-05-12T05:00:00.000Z",
+      "description": "Order for nutritive supplies",
+      "estimated_ship_date": "2025-05-20T05:00:00.000Z",
+      "estimated_ship_time": "2025-05-20T08:50:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 1,
+      "requested_products_count": 5,
+      "total_price": 65.55,
+      "partially_accepted": true
+    },
+    {
+      "id": 7,
+      "date": "2025-04-12T05:00:00.000Z",
+      "description": null,
+      "estimated_ship_date": "2025-04-20T05:00:00.000Z",
+      "estimated_ship_time": "2025-04-20T08:50:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 1,
+      "requested_products_count": 5,
+      "total_price": 70.55,
+      "partially_accepted": true
+    },
+    {
+      "id": 8,
+      "date": "2025-06-12T05:00:00.000Z",
+      "description": "Order for meals supplies",
+      "estimated_ship_date": "2025-06-20T05:00:00.000Z",
+      "estimated_ship_time": "2025-06-20T08:50:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 1,
+      "requested_products_count": 5,
+      "total_price": 64.55,
+      "partially_accepted": true
     }
   ],
   "orders_to_supplier_states": [
@@ -552,9 +673,143 @@
   ],
   "orders_to_supplier_supplies": [
     {
+      "id": 1,
       "order_to_supplier_id": 1,
       "supply_id": 1,
       "quantity": 10,
+      "accepted": false
+    },
+    {
+      "id": 2,
+      "order_to_supplier_id": 1,
+      "supply_id": 2,
+      "quantity": 4,
+      "accepted": false
+    },
+    {
+      "id": 3,
+      "order_to_supplier_id": 2,
+      "supply_id": 3,
+      "quantity": 5,
+      "accepted": false
+    },
+    {
+      "id": 4,
+      "order_to_supplier_id": 3,
+      "supply_id": 5,
+      "quantity": 5,
+      "accepted": true
+    },
+    {
+      "id": 5,
+      "order_to_supplier_id": 3,
+      "supply_id": 4,
+      "quantity": 2,
+      "accepted": true
+    },
+    {
+      "id": 6,
+      "order_to_supplier_id": 4,
+      "supply_id": 6,
+      "quantity": 2,
+      "accepted": true
+    },
+    {
+      "id": 7,
+      "order_to_supplier_id": 4,
+      "supply_id": 7,
+      "quantity": 3,
+      "accepted": true
+    },
+    {
+      "id": 8,
+      "order_to_supplier_id": 4,
+      "supply_id": 8,
+      "quantity": 2,
+      "accepted": false
+    },
+    {
+      "id": 9,
+      "order_to_supplier_id": 5,
+      "supply_id": 6,
+      "quantity": 2,
+      "accepted": true
+    },
+    {
+      "id": 10,
+      "order_to_supplier_id": 5,
+      "supply_id": 5,
+      "quantity": 3,
+      "accepted": false
+    },
+    {
+      "id": 11,
+      "order_to_supplier_id": 2,
+      "supply_id": 4,
+      "quantity": 1,
+      "accepted": false
+    },
+    {
+      "id": 12,
+      "order_to_supplier_id": 6,
+      "supply_id": 8,
+      "quantity": 2,
+      "accepted": false
+    },
+    {
+      "id": 13,
+      "order_to_supplier_id": 6,
+      "supply_id": 2,
+      "quantity": 3,
+      "accepted": false
+    },
+    {
+      "id": 14,
+      "order_to_supplier_id": 6,
+      "supply_id": 3,
+      "quantity": 5,
+      "accepted": false
+    },
+    {
+      "id": 15,
+      "order_to_supplier_id": 7,
+      "supply_id": 4,
+      "quantity": 2,
+      "accepted": false
+    },
+    {
+      "id": 16,
+      "order_to_supplier_id": 7,
+      "supply_id": 5,
+      "quantity": 3,
+      "accepted": false
+    },
+    {
+      "id": 17,
+      "order_to_supplier_id": 7,
+      "supply_id": 1,
+      "quantity": 3,
+      "accepted": false
+    },
+    {
+      "id": 18,
+      "order_to_supplier_id": 8,
+      "supply_id": 1,
+      "quantity": 4,
+      "accepted": false
+    },
+    {
+      "id": 19,
+      "order_to_supplier_id": 8,
+      "supply_id": 2,
+      "quantity": 2,
+      "accepted": false
+    },
+    {
+      "id": 20,
+      "order_to_supplier_id": 8,
+      "supply_id": 3,
+      "quantity": 4,
       "accepted": false
     }
   ],
@@ -610,59 +865,33 @@
       "expiration_date": "2025-06-03"
     },
     {
-      "supply_id": 7,
-      "stock": 83,
-      "expiration_date": null,
-      "provider": null,
-      "id": 5
-    },
-    {
-      "supply_id": 2,
-      "stock": 10,
-      "expiration_date": "2025-06-27",
-      "provider": null,
-      "id": 6
-    },
-    {
-      "supply_id": 8,
-      "stock": 35,
-      "expiration_date": "2025-06-26",
-      "provider": null,
-      "id": 7
-    },
-    {
+      "id": 4,
       "supply_id": 1,
       "stock": 10,
-      "expiration_date": "2025-06-27",
-      "provider": null,
-      "id": 8
+      "expiration_date": "2025-06-27"
     },
     {
       "supply_id": 2,
       "stock": 5,
       "expiration_date": "2025-06-18",
-      "provider": null,
       "id": 9
     },
     {
       "supply_id": 7,
       "stock": 5,
-      "expiration_date": null,
-      "provider": null,
+      "expiration_date": "2025-06-18",
       "id": 10
     },
     {
       "supply_id": 15,
       "stock": 45,
-      "expiration_date": null,
-      "provider": null,
+      "expiration_date": "2025-06-18",
       "id": 11
     },
     {
       "supply_id": 16,
       "stock": 100,
-      "expiration_date": null,
-      "provider": null,
+      "expiration_date": "2025-06-18",
       "id": 12
     }
   ],
@@ -811,6 +1040,70 @@
       "card_type": "Visa",
       "payment_method": "Paypal",
       "paid_at": "2023-01-01"
+    }
+  ],
+  "features": [
+    {
+      "id": 1,
+      "name": "Automated inventory management"
+    },
+    {
+      "id": 2,
+      "name": "Ordering and purchasing control"
+    },
+    {
+      "id": 3,
+      "name": "Reporting and analytics"
+    },
+    {
+      "id": 4,
+      "name": "Critical stock notifications"
+    },
+    {
+      "id": 5,
+      "name": "Integration with suppliers"
+    }
+  ],
+  "subscription_features": [
+    {
+      "subscription_id": 1,
+      "feature_id": 1
+    },
+    {
+      "subscription_id": 1,
+      "feature_id": 2
+    },
+    {
+      "subscription_id": 1,
+      "feature_id": 3
+    },
+    {
+      "subscription_id": 1,
+      "feature_id": 4
+    },
+    {
+      "subscription_id": 1,
+      "feature_id": 5
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 1
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 2
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 3
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 4
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 5
     }
   ]
 }

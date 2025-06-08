@@ -1,8 +1,16 @@
 <script>
+import EmptySection from "../../../../shared/components/empty-section.component.vue";
+import ManageNewOrders from "./manage-new-orders.component.vue";
+import FiltersSection from "./filters-section.vue";
 
 export default {
   name: "new-orders",
+  components: {FiltersSection, ManageNewOrders, EmptySection},
   props: {
+    orderSituations: {
+      type: Array,
+      required: true,
+    },
     orders: {
       type: Array,
       required: true,
@@ -20,86 +28,210 @@ export default {
       required: true,
     }
   },
-  // data() {
-  //   return {
-  //     orders: [
-  //       { id: 1, date: "2024-07-01", adminRestaurantId: 101 },
-  //       { id: 2, date: "2024-07-02", adminRestaurantId: 102 },
-  //     ],
-  //     ordersSupplies: [
-  //       { orderId: 1, supply_id: 201, quantity: 3 },
-  //       { orderId: 1, supply_id: 202, quantity: 2 },
-  //       { orderId: 2, supply_id: 201, quantity: 1 },
-  //     ],
-  //     supplies: [
-  //       { id: 201, name: "Tomatoes", price: 2.5 },
-  //       { id: 202, name: "Lettuce", price: 1.0 },
-  //     ],
-  //     adminRestaurantsProfiles: [
-  //       { user_id: 101, business_name: "El Buen Sabor" },
-  //       { user_id: 102, business_name: "La Picantería Feliz" },
-  //     ],
-  //   };
-  // },
+  emits: ['open-modal', 'decline-order', 'open-details-modal'],
+  data() {
+    return {
+      finalPricePerOrder: {},
+      suppliesPerOrderCount: {},
+      selectedOrder: null,
+      showManageModal: false,
+      showDetailsModal: false,
+      confirm: null,
+
+      // Filters
+      searchQuery: '',
+      selectedDateRange: null,
+      sortField: 'date',
+      sortOrder: 1, // 1 to increase, -1 to descendent
+    }
+  },
   computed: {
-    suppliesPerOrder() {
-      const result = {};
-      this.orders.forEach(order => {
-        result[order.id] = this.ordersSupplies.filter(os => os.orderId === order.id);
-      });
-      return result;
-    },
-    suppliesPerOrderCount() {
-      const countMap = {};
-
-      this.orders.forEach(order => {
-        const supplies = this.suppliesPerOrder[order.id] || [];
-        countMap[order.id] = supplies.length;
-      });
-
-      return countMap;
-    },
     restaurantBusinessNamesPerOrder() {
       const nameMap = {};
 
       this.orders.forEach(order => {
-        const profile = this.adminRestaurantsProfiles.find(p => p.user_id === order.adminRestaurantId);
-        nameMap[order.id] = profile ? profile.business_name : 'Unknown Restaurant';
+        const profile = this.adminRestaurantsProfiles.find(p => p.userId === order.adminRestaurantId);
+
+        nameMap[order.id] = profile ? profile.businessName : 'Unknown Restaurant';
       });
 
       return nameMap;
     },
-    finalPricePerOrder() {
-      const pricePerOrder = {};
+    filteredOrders() {
+      let filtered = this.orders.filter(order => {
+        const situation = this.orderSituations.find(s => Number(s.id) === Number(order.situationId));
+        return situation && Number(situation.id) === 1;
+      });
+
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        filtered = filtered.filter(order => {
+          const restaurantName = this.restaurantBusinessNamesPerOrder[order.id]?.toLowerCase() || '';
+          const orderDate = order.date?.toLowerCase() || '';
+          return restaurantName.includes(query) || orderDate.includes(query);
+        });
+      }
+
+      if (this.selectedDateRange) {
+        const now = new Date();
+        let dateLimit;
+        switch (this.selectedDateRange) {
+          case '7days':
+            dateLimit = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case '30days':
+            dateLimit = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+          case '3months':
+            dateLimit = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+            break;
+        }
+
+        if (dateLimit) {
+          filtered = filtered.filter(order => new Date(order.date) >= dateLimit);
+        }
+      }
+
+      filtered.sort((a, b) => {
+        const fieldA = new Date(a[this.sortField]);
+        const fieldB = new Date(b[this.sortField]);
+        return (fieldA - fieldB) * this.sortOrder;
+      });
+
+      return filtered;
+    }
+  },
+  watch: {
+    ordersSupplies: {
+      handler() {
+        this.calculatePricesAndCounts();
+      },
+      immediate: true,
+      deep: true,
+    },
+    orders: {
+      handler() {
+        this.calculatePricesAndCounts();
+      },
+      immediate: true,
+      deep: true,
+    }
+  },
+  methods: {
+    resetFilters() {
+      this.searchQuery = '';
+      this.selectedDateRange = null;
+    },
+    toggleSort() {
+      this.sortOrder = this.sortOrder === 1 ? -1 : 1;
+    },
+    formatDate(dateStr) {
+      if (!dateStr) return 'Not set';
+      const date = new Date(dateStr);
+      return date.toLocaleString('es-PE', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit'
+      });
+    },
+    calculatePricesAndCounts() {
+      if (!this.orders.length || !this.ordersSupplies.length) return;
+
+      const priceMap = {};
+      const countMap = {};
 
       this.orders.forEach(order => {
-        const suppliesForOrder = this.suppliesPerOrder[order.id] || [];
+        const orderId = Number(order.id);
+        const orderSupplies = this.ordersSupplies.find(os => Number(os.orderId) === orderId);
 
-        pricePerOrder[order.id] = suppliesForOrder.reduce((sum, os) => {
-          const supply = this.supplies.find(s => s.id === os.supply_id);
+        if (!orderSupplies) {
+          priceMap[orderId] = 0;
+          countMap[orderId] = 0;
+          return;
+        }
+
+        countMap[orderId] = orderSupplies.supplies?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
+        priceMap[orderId] = orderSupplies.supplies.reduce((sum, supplyItem) => {
+          const supply = this.supplies.find(s => Number(s.id) === Number(supplyItem.supplyId)); //CORRIGE °
           const price = supply?.price || 0;
-          return sum + price * os.quantity;
+
+          return sum + price * supplyItem.quantity;
         }, 0);
       });
 
-      return pricePerOrder;
+      this.finalPricePerOrder = priceMap;
+      this.suppliesPerOrderCount = countMap;
     },
+    openNewOrderDetailsModal(order) {
+      this.selectedOrder = order;
+      this.showDetailsModal = true;
+      this.$emit('open-details-modal', order);
+    },
+    manageNewOrder(order) {
+      this.selectedOrder = order;
+      this.showManageModal = true;
+      this.$emit('open-modal', order);
+    },
+    declineOrder(order) {
+      this.$emit('decline-order', order);
+    },
+    confirmDecline(order) {
+      this.$confirm.require({
+        message: 'This action is irreversible. Are you sure you want to decline the entire selected order?',
+        header: 'Decline Order',
+        acceptLabel: 'Yes, decline',
+        rejectClass: 'btn-cancel',
+        rejectLabel: 'Cancel',
+        acceptClass: 'btn-decline',
+        accept: () => {
+          this.declineOrder(order);
+        },
+        reject: () => {
+          close();
+        }
+      });
+    },
+
   }
 }
 
 </script>
 
 <template>
+
+  <filters-section
+      v-model:search-query="searchQuery"
+      v-model:selected-date-range="selectedDateRange"
+      :search-placeholder="'Search orders by restaurant...'"
+      :sort-order="sortOrder"
+      sort-label="Order Date"
+      title="Orders"
+      @clear-filters="resetFilters"
+      @toggle-sort="toggleSort"
+  >
+
+  </filters-section>
+
+  <!-- Empty -->
+  <empty-section v-if="filteredOrders.length === 0">
+    You currently have no orders received.
+    <template #icon>
+      <i class="pi pi-truck" style="font-size: 3rem; color: #bcbcbc;"></i>
+    </template>
+  </empty-section>
+
   <pv-data-table
-      :value="orders"
-      paginator
+      v-if="filteredOrders.length > 0"
       :rows="5"
       :rows-per-page-options="[4, 6, 8, 10]"
+      :value="filteredOrders"
+      paginator
       responsive-layout="scroll"
   >
     <pv-column field="date" header="Order date">
       <template #body="{ data }">
-        {{ data.date }}
+        {{ formatDate(data.date) }}
       </template>
     </pv-column>
 
@@ -117,20 +249,37 @@ export default {
 
     <pv-column header="Final Price">
       <template #body="{ data }">
-        S/ {{ finalPricePerOrder[data.id].toFixed(2) }}
+        S/ {{ finalPricePerOrder[data.id] }}
       </template>
     </pv-column>
 
-    <pv-column header="Details">
+    <pv-column header="Actions">
       <template #body="{ data }">
         <pv-button
             class="p-button-icon-style"
             icon="pi pi-book text-base"
-            @click="getDetails(data)"
             text
+            @click="openNewOrderDetailsModal(data)"
         />
+
+        <pv-button
+            class="p-button-icon-style"
+            icon="pi pi-check text-base"
+            text
+            @click="manageNewOrder(data)"
+        />
+
+        <pv-button
+            class="p-button-icon-style"
+            icon="pi pi-times text-base"
+            text
+            @click="confirmDecline(data)"
+        />
+
+
       </template>
     </pv-column>
+
   </pv-data-table>
 
 </template>
@@ -144,6 +293,7 @@ export default {
   color: #131313 !important;
   background-color: rgba(128, 128, 128, 0.2) !important;
 }
+
 .p-button-icon-style {
   border: none !important;
   color: #131313 !important;
@@ -151,11 +301,35 @@ export default {
 
 .p-button-icon-style:hover,
 .p-button-icon-style:focus,
-.p-button-icon-style:active{
+.p-button-icon-style:active {
   color: #186728 !important;
   background-color: rgba(128, 128, 128, 0.2) !important; /* gris medio con transparencia */
   outline: none !important;
   box-shadow: none !important;
   border: none !important;
 }
+
+.btn-cancel {
+  background-color: #f8f6f6 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+  border-radius: 5px !important;
+}
+
+.btn-cancel:hover {
+  background-color: #c8c7c7 !important;
+}
+
+.btn-decline {
+  background-color: #D9534F !important;
+  color: white !important;
+  border: none !important;
+}
+
+.btn-decline:hover {
+  background-color: #bc3737 !important;
+  border: none !important;
+}
+
+
 </style>

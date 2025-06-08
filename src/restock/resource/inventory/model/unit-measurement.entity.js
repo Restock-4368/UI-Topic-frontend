@@ -9,7 +9,7 @@ export class UnitMeasurement {
    * @param {string|number} [params.id=''] - Unique identifier for the unit of measurement
    * @param {string} [params.name=''] - Name of the unit (e.g., kg, liter)
    */
-  constructor({ id = '', name = '' } = {}) {
+  constructor({ id = 0, name = '' } = {}) {
     /**
      * @type {string|number}
      * @description Unique identifier for the unit of measurement

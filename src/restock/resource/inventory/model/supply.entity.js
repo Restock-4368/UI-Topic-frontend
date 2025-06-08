@@ -18,16 +18,16 @@ export class Supply {
    * @param {number|string} [params.user_id=''] - ID of the user who created or manages this supply
    */
   constructor({
-    id = '',
+    id = 0,
     name = '',
     description = '',
     perishable = false,
     min_stock = 0,
     max_stock = 0,
-    category_id = '',
+    category_id = 0,
     unit_measurement_id = '',
     price = 0,
-    user_id = '',
+    user_id = 0,
   } = {}) {
     /** @type {number|string} */
     this.id = id;
@@ -56,8 +56,7 @@ export class Supply {
     /** @type {number} */
     this.price = price;
 
-    /** @type {number|string} */
+    /** @type {number|int} */
     this.user_id = user_id;
   }
 }
-
