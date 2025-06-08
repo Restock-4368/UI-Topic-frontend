@@ -1,9 +1,7 @@
 <script>
-
 import EmptySection from "../../../../shared/components/empty-section.component.vue";
 import ManageNewOrders from "./manage-new-orders.component.vue";
 import FiltersSection from "./filters-section.vue";
-
 
 export default {
   name: "new-orders",
@@ -39,11 +37,68 @@ export default {
       showManageModal: false,
       showDetailsModal: false,
       confirm: null,
+
       // Filters
       searchQuery: '',
       selectedDateRange: null,
       sortField: 'date',
-      sortOrder: 1, // 1 para ascendente, -1 para descendente
+      sortOrder: 1, // 1 to increase, -1 to descendent
+    }
+  },
+  computed: {
+    restaurantBusinessNamesPerOrder() {
+      const nameMap = {};
+
+      this.orders.forEach(order => {
+        const profile = this.adminRestaurantsProfiles.find(p => p.userId === order.adminRestaurantId);
+
+        nameMap[order.id] = profile ? profile.businessName : 'Unknown Restaurant';
+      });
+
+      return nameMap;
+    },
+    filteredOrders() {
+      let filtered = this.orders.filter(order => {
+        const situation = this.orderSituations.find(s => Number(s.id) === Number(order.situationId));
+        return situation && Number(situation.id) === 1;
+      });
+
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        filtered = filtered.filter(order => {
+          const restaurantName = this.restaurantBusinessNamesPerOrder[order.id]?.toLowerCase() || '';
+          const orderDate = order.date?.toLowerCase() || '';
+          return restaurantName.includes(query) || orderDate.includes(query);
+        });
+      }
+
+      if (this.selectedDateRange) {
+        const now = new Date();
+        let dateLimit;
+        switch (this.selectedDateRange) {
+          case '7days':
+            dateLimit = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case '30days':
+            dateLimit = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+          case '3months':
+            dateLimit = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+            break;
+        }
+
+        if (dateLimit) {
+          filtered = filtered.filter(order => new Date(order.date) >= dateLimit);
+        }
+      }
+
+      filtered.sort((a, b) => {
+        const fieldA = new Date(a[this.sortField]);
+        const fieldB = new Date(b[this.sortField]);
+        return (fieldA - fieldB) * this.sortOrder;
+      });
+
+      return filtered;
     }
   },
   watch: {
@@ -67,6 +122,9 @@ export default {
       this.searchQuery = '';
       this.selectedDateRange = null;
     },
+    toggleSort() {
+      this.sortOrder = this.sortOrder === 1 ? -1 : 1;
+    },
     formatDate(dateStr) {
       if (!dateStr) return 'Not set';
       const date = new Date(dateStr);
@@ -75,11 +133,6 @@ export default {
         month: 'short',
         day: '2-digit'
       });
-    },
-    openNewOrderDetailsModal(order) {
-      this.selectedOrder = order;
-      this.showDetailsModal = true;
-      this.$emit('open-details-modal', order);
     },
     calculatePricesAndCounts() {
       if (!this.orders.length || !this.ordersSupplies.length) return;
@@ -113,59 +166,10 @@ export default {
       this.finalPricePerOrder = priceMap;
       this.suppliesPerOrderCount = countMap;
     },
-    filteredOrders() {
-      let filtered = (this.orders || []).filter(order => {
-        const situation = this.orderSituations.find(situation => Number(situation.id) === Number(order.situationId));
-        return situation && Number(situation.id) === 1; // Filtra solo los 'Pending'
-      });
-
-      // Filtro por búsqueda
-      if (this.searchQuery) {
-        const query = this.searchQuery.toLowerCase();
-        filtered = filtered.filter(order => {
-          const restaurantName = this.restaurantBusinessNamesPerOrder[order.id]?.toLowerCase() || '';
-          const orderDate = order.date?.toLowerCase() || '';
-
-          return restaurantName.includes(query) ||
-              orderDate.includes(query)
-        });
-      }
-
-      if (this.selectedDateRange) {
-        const now = new Date();
-        let dateLimit;
-
-        switch (this.selectedDateRange) {
-          case '7days':
-            dateLimit = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            break;
-          case '30days':
-            dateLimit = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-            break;
-          case '3months':
-            dateLimit = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-            break;
-        }
-
-        if (dateLimit) {
-          filtered = filtered.filter(order => {
-            const orderDate = new Date(order.date);
-            return orderDate >= dateLimit;
-          });
-        }
-      }
-
-      filtered.sort((a, b) => {
-        const fieldA = new Date(a[this.sortField]);
-        const fieldB = new Date(b[this.sortField]);
-        return (fieldA - fieldB) * this.sortOrder;
-      });
-
-      return filtered;
-    },
-
-    toggleSort() {
-      this.sortOrder = this.sortOrder === 1 ? -1 : 1;
+    openNewOrderDetailsModal(order) {
+      this.selectedOrder = order;
+      this.showDetailsModal = true;
+      this.$emit('open-details-modal', order);
     },
     manageNewOrder(order) {
       this.selectedOrder = order;
@@ -192,19 +196,6 @@ export default {
       });
     },
 
-  },
-  computed: {
-    restaurantBusinessNamesPerOrder() {
-      const nameMap = {};
-
-      this.orders.forEach(order => {
-        const profile = this.adminRestaurantsProfiles.find(p => p.userId === order.adminRestaurantId);
-
-        nameMap[order.id] = profile ? profile.businessName : 'Unknown Restaurant';
-      });
-
-      return nameMap;
-    }
   }
 }
 
@@ -212,8 +203,6 @@ export default {
 
 <template>
 
-
-  <!-- Sección de filtros superior -->
   <filters-section
       v-model:search-query="searchQuery"
       v-model:selected-date-range="selectedDateRange"
@@ -228,7 +217,7 @@ export default {
   </filters-section>
 
   <!-- Empty -->
-  <empty-section v-if="filteredOrders().length === 0">
+  <empty-section v-if="filteredOrders.length === 0">
     You currently have no orders received.
     <template #icon>
       <i class="pi pi-truck" style="font-size: 3rem; color: #bcbcbc;"></i>
@@ -236,10 +225,10 @@ export default {
   </empty-section>
 
   <pv-data-table
-      v-if="filteredOrders().length > 0"
+      v-if="filteredOrders.length > 0"
       :rows="5"
       :rows-per-page-options="[4, 6, 8, 10]"
-      :value="filteredOrders()"
+      :value="filteredOrders"
       paginator
       responsive-layout="scroll"
   >
