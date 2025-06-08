@@ -51,17 +51,23 @@ export default {
         2: 1,  //  -> "Preparing"
         3: 2,  // -> "On the way"
         4: 3,  //  -> "Delivered"
-      },
-      currentIndex: 1, // Default: "On hold"
-      draggingIndex: null
+      }
     };
   },
+  computed: {
+    computedCurrentIndex() {
+      return this.orderState?.id !== undefined
+          ? this.statusToStepIndex[this.orderState.id] ?? 0
+          : 1;
+    }
+  },
+
   methods: {
     nextStep() {
-      this.step++;
+      if (this.step < 2) this.step++;
     },
     prevStep() {
-      this.step--;
+      if (this.step > 1) this.step--;
     },
     productName(supplyId) {
       const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(supplyId));
@@ -89,15 +95,6 @@ export default {
         minute: '2-digit'
       });
     },
-    getSituationChipClass() {
-      const situationClasses = {
-        1: 'situation-pending',   // Pending
-        2: 'situation-approved',   // Approved
-        3: 'situation-declined',    // Declined
-      };
-
-      return situationClasses[this.order?.situationId] || 'situation-default';
-    },
     restaurantBusinessName(order) {
         const profile = this.adminRestaurantsProfiles.find(p => p.userId === order.adminRestaurantId);
         return profile ? profile.businessName : 'Unknown Restaurant';
@@ -114,22 +111,7 @@ export default {
       }
     }
   },
-  computed: {
-    computedCurrentIndex() {
-      if (!this.orderState) {
-        return 1;
-      }
 
-      const stepIndex = this.statusToStepIndex[this.orderState.id];
-      return stepIndex !== undefined ? stepIndex : 0;
-    },
-    currentStateName() {
-      if (!this.orderState) {
-        return 'Unknown';
-      }
-      return this.orderState ? this.orderState.name : 'Unknown';
-    },
-  },
   emits: ['update:modelValue', 'close'],
 }
 </script>
