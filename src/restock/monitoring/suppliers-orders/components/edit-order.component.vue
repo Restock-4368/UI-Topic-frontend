@@ -224,7 +224,7 @@ export default {
             v-model="localOrder.estimatedShipDate"
             showIcon
             class="date-picker"
-            placeholder="Seleccionar fecha"
+            placeholder="Select date"
         />
       </div>
 
@@ -238,7 +238,7 @@ export default {
             timeOnly
             hourFormat="24"
             showIcon
-            placeholder="Seleccionar hora"
+            placeholder="Select time"
             class="date-picker"
         />
 

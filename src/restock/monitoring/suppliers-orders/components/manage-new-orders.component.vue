@@ -84,13 +84,11 @@ export default {
       };
     },
     initializeLocalOrder() {
-      if (this.order) {
-        this.localOrder = {
-          ...this.order,
-          estimatedShipDate: this.order.estimatedShipDate || null,
-          estimatedShipTime: this.order.estimatedShipTime || null
-        };
-      }
+      this.localOrder = {
+        description: '',
+        estimatedShipDate: null,
+        estimatedShipTime: null
+      };
     },
     async submitOrder() {
       if (this.checkedSupplies.length === 0) {
@@ -290,7 +288,7 @@ export default {
               v-model="localOrder.estimatedShipDate"
               showIcon
               class="date-picker"
-              placeholder="Seleccionar fecha"
+              placeholder="Select date"
           />
         </div>
 
@@ -304,7 +302,7 @@ export default {
               timeOnly
               hourFormat="24"
               showIcon
-              placeholder="Seleccionar hora"
+              placeholder="Select hour"
               class="date-picker"
           />
 
