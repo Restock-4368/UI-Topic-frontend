@@ -12,5 +12,4 @@ export class OrderToSupplierSupplyService extends BaseService {
         return this.getByQuery("supply_id", supplyId);
     }
 
-
 }
