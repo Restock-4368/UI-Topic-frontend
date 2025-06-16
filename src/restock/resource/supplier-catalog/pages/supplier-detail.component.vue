@@ -64,8 +64,12 @@ watch(() => route.params.id, (newId) => {
     <div v-else class="supplier-detail-wrapper">
       <pv-button class="supplier-back-btn-overlay" icon="pi pi-arrow-left" text rounded @click="goBack"/>
       <supplier-summary :supplier="supplier"/>
-      <!-- Mostrar tabla solo si supplier.id está disponible -->
-      <supplier-inventory-table v-if="supplier && supplier.id" :supplier-id="supplier.id"/>
+    </div>
+    <div class="catalog-section">
+      <div class="catalog-title-bar">
+        <h3 class="catalog-title">Product catalog</h3>
+      </div>
+      <supplier-inventory-table v-if="supplier && supplier.id" :supplier-id="supplier.id" />
     </div>
   </div>
 </template>
@@ -110,6 +114,19 @@ watch(() => route.params.id, (newId) => {
 .catalog-title {
   font-size: 20px;
   margin-bottom: 1rem;
+}
+.catalog-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.catalog-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
 }
 
 /* Ocultar en mobile */
