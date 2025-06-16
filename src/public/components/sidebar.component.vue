@@ -64,7 +64,7 @@ export default {
     }
   },
   created() {
-    this.userService.getById(1).then(user => {
+    this.userService.getById(2).then(user => {
       this.user = user;
       const role = this.user.role;  // Accede al nombre del rol directamente
 

@@ -1,6 +1,8 @@
-<script setup> import {useRoute, useRouter} from 'vue-router'
-import {ref, computed, onMounted} from 'vue'
+<script setup>
+import { useRoute, useRouter } from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
 import SupplierSummary from '../components/supplier-summary.component.vue'
+import SupplierInventoryTable from '../components/supplier-inventory-table.component.vue' // importar tu tabla
 import {SupplierAssembler} from '../services/supplier.assembler.js'
 
 const API_URL = import.meta.env.VITE_API_BASE_URL
@@ -16,8 +18,8 @@ const notFound = computed(() => supplier.value === null)
 const goBack = () => {
   router.push('/dashboard/restaurant/suppliers')
 }
-onMounted(async () => {
-  const id = parseInt(route.params.id)
+
+async function loadSupplier(id) {
   try {
     const [userRes, rolesRes, profilesRes, pbcRes, categoriesRes] = await Promise.all([fetch(`${API_URL}${USERS_PATH}/${id}`), fetch(`${API_URL}${ROLES_PATH}`), fetch(`${API_URL}${PROFILES_PATH}`), fetch(`${API_URL}${PROFILES_CATEGORIES_PATH}`), fetch(`${API_URL}${CATEGORIES_PATH}`)])
     if (!userRes.ok) throw new Error('User not found')
@@ -41,6 +43,17 @@ onMounted(async () => {
     console.error('Error loading supplier:', err)
     supplier.value = null
   }
+}
+
+onMounted(() => {
+  const id = parseInt(route.params.id)
+  if (!isNaN(id)) {
+    loadSupplier(id)
+  }
+})
+watch(() => route.params.id, (newId) => {
+  const id = parseInt(newId)
+  if (!isNaN(id)) loadSupplier(id)
 })
 </script>
 <template>
@@ -52,10 +65,16 @@ onMounted(async () => {
       <pv-button class="supplier-back-btn-overlay" icon="pi pi-arrow-left" text rounded @click="goBack"/>
       <supplier-summary :supplier="supplier"/>
     </div>
+    <div class="catalog-section">
+      <div class="catalog-title-bar">
+        <h3 class="catalog-title">Product catalog</h3>
+      </div>
+      <supplier-inventory-table v-if="supplier && supplier.id" :supplier-id="supplier.id" />
+    </div>
   </div>
 </template>
 
-<style scoped>
+<style>
 .content {
   width: 100%;
   padding: 0 3rem;
@@ -86,6 +105,28 @@ onMounted(async () => {
   border-radius: 50px;
   padding: 0.5rem;
   z-index: 10;
+}
+
+.catalog-section {
+  margin-top: 3rem;
+}
+
+.catalog-title {
+  font-size: 20px;
+  margin-bottom: 1rem;
+}
+.catalog-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.catalog-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
 }
 
 /* Ocultar en mobile */
