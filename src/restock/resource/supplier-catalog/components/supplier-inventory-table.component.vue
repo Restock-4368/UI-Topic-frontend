@@ -83,7 +83,7 @@ async function loadBatchesWithSupply(supplierId) {
           unit: supply.unit
         })
       } catch (err) {
-        console.error(`❌ Error enriching batch ${batch.id}`, err)
+        console.error(`Error enriching batch ${batch.id}`, err)
         enrichedBatches.push(batch)
       }
     }
@@ -91,7 +91,7 @@ async function loadBatchesWithSupply(supplierId) {
     allBatches.value = enrichedBatches
     console.log('[loadBatchesWithSupply] allBatches final:', allBatches.value)
   } catch (err) {
-    console.error('❌ Error loading batches:', err)
+    console.error('Error loading batches:', err)
   }
 }
 
