@@ -474,7 +474,6 @@
       "max_stock": 0,
       "price": 20,
       "user_id": 16
-
     },
     {
       "id": 16,
@@ -487,9 +486,6 @@
       "max_stock": 101,
       "price": null,
       "user_id": 16
-    },
-    {
-
     }
   ],
   "sales": [

@@ -87,7 +87,8 @@ export default {
         const formattedPayload = {
           supply_id: updatedItem.supply_id,
           stock: updatedItem.stock,
-          expiration_date: updatedItem.expiration_date
+          expiration_date: updatedItem.expiration_date,
+          user_id: 2, // Assuming user_id is required, replace with actual user ID logic
         };
 
         await this.supplyBatchService.update(id, formattedPayload);
@@ -118,7 +119,9 @@ export default {
           unit_measurement_id: newItem.unit_measurement_id,
           min_stock: newItem.min_stock ?? null,
           max_stock: newItem.max_stock ?? null,
-          price: newItem.price
+          price: newItem.price,
+          // Assuming user_id is required, replace with actual user ID logic
+          user_id: 2
         };
 
         await this.supplyService.create(payload);
@@ -142,7 +145,8 @@ export default {
           unit_measurement_id: updatedItem.unit_measurement_id,
           min_stock: updatedItem.min_stock ?? null,
           max_stock: updatedItem.max_stock ?? null,
-          price: updatedItem.price
+          price: updatedItem.price,
+          user_id: 2 // Assuming user_id is required, replace with actual user ID logic
         };
 
         await this.supplyService.update(id, formattedPayload);
@@ -160,7 +164,7 @@ export default {
           supply_id: batchData.supply_id,
           stock: batchData.stock,
           expiration_date: batchData.expiration_date !== undefined ? batchData.expiration_date : null,
-          provider: batchData.provider || null
+          user_id: 2 // Assuming user_id is required, replace with actual user ID logic
         };
         await this.supplyBatchService.create(payload);
         await this.loadBatchesWithSupply();
