@@ -25,5 +25,69 @@
     "instructions": "Instrucciones",
     "save-recipe": "Guardar Receta",
     "cancel": "Cancelar"
+  },
+  "inventory": {
+    "supplies-catalog-title": "Catálogo de Insumos",
+    "create-button": "CREAR",
+    "edit-button": "EDITAR",
+    "add-button": "AÑADIR",
+    "cancel-button": "CANCELAR",
+    "save-button": "GUARDAR",
+    "supplies-inventory-title": "Inventario de Insumos",
+    "supplies-inventory-placeholder": "Buscar insumos...",
+    "table": {
+      "supply": "Insumo",
+      "category": "Categoría",
+      "unit": "Unidad de Medida",
+      "expiration-date": "Fecha de Caducidad",
+      "stock": "Stock",
+      "minimum-stock": "Stock Mínimo",
+      "maximum-stock": "Stock Máximo",
+      "pereshible": "Perecible",
+      "price": "Precio",
+      "actions": "Acciones"
+    },
+    "supplies-catalog-create-and-edit-modal": {
+      "not-supplies": "No hay insumos disponibles, crea uno para continuar.",
+      "create-title": "Crear Insumo",
+      "create-subtitle": "Agrega un nuevo insumo al catálogo",
+      "edit-title": "Editar Insumo",
+      "edit-subtitle": "Edita los detalles del insumo en el catálogo",
+      "supply-name": "Nombre del Insumo",
+      "supply-name-placeholder": "Ingresa el nombre del insumo",
+      "supply-category": "Categoría del Insumo",
+      "supply-category-placeholder": "Selecciona la categoría del insumo",
+      "unit-of-measure": "Unidad de Medida",
+      "unit-of-measure-placeholder": "Selecciona la unidad de medida",
+      "description": "Descripción",
+      "description-placeholder": "Ingresa la descripción del insumo",
+      "pereshible": "Perecible",
+      "is-not-perishable": "No, no es perecible",
+      "is-perishable": "Sí, es perecible",
+      "minimum-stock": "Stock Mínimo",
+      "minimum-stock-placeholder": "Ingresa el stock mínimo",
+      "maximum-stock": "Stock Máximo",
+      "maximum-stock-placeholder": "Ingresa el stock máximo",
+      "price": "Precio",
+      "price-placeholder": "Ingresa el precio del insumo"
+    },
+    "supplies-inventory-add-and-edit-modal": {
+      "add-title": "Agregar Insumo al Inventario",
+      "add-subtitle": "Agrega un nuevo insumo al inventario",
+      "edit-title": "Editar Insumo en el Inventario",
+      "edit-subtitle": "Edita los detalles del insumo en el inventario",
+      "supply-name": "Nombre del Insumo",
+      "supply-name-placeholder": "Selecciona el nombre del insumo",
+      "supply-quantity": "Cantidad de Insumo",
+      "supply-quantity-placeholder": "Ingresa la cantidad del insumo",
+      "supply-expiration-date": "Fecha de Expiración del Insumo",
+      "supply-expiration-date-placeholder": "Selecciona la fecha de expiración"
+    },
+    "supplies-inventory-delete-modal": {
+      "title": "Eliminar Insumo del Inventario",
+      "delete-message": "Estás a punto de eliminar permanentemente el insumo “{name}” con {quantity} del inventario.\nEsta acción es irreversible y no se puede deshacer.",
+      "confirm-button": "CONFIRMAR",
+      "cancel-button": "CANCELAR"
+    }
   }
 }

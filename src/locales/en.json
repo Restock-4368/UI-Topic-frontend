@@ -25,5 +25,69 @@
     "instructions": "Instructions",
     "save-recipe": "Save Recipe",
     "cancel": "Cancel"
+  },
+  "inventory": {
+    "supplies-catalog-title": "Supplies Catalog",
+    "create-button": "CREATE",
+    "edit-button": "EDIT",
+    "add-button": "ADD",
+    "cancel-button": "CANCEL",
+    "save-button": "SAVE",
+    "supplies-inventory-title": "Supplies Inventory",
+    "supplies-inventory-placeholder": "Search for supplies...",
+    "table": {
+      "supply": "Supply",
+      "category": "Category",
+      "unit": "Unit of Measure",
+      "expiration-date": "Expiration Date",
+      "stock": "Stock",
+      "minimum-stock": "Minimum Stock",
+      "maximum-stock": "Maximum Stock",
+      "pereshible": "Perishable",
+      "price": "Price",
+      "actions": "Actions"
+    },
+    "supplies-catalog-create-and-edit-modal": {
+      "not-supplies": "No supplies available, create one to continue.",
+      "create-title": "Create Supply",
+      "create-subtitle": "Add a new supply to the catalog",
+      "edit-title": "Edit Supply",
+      "edit-subtitle": "Edit supply details in the catalog",
+      "supply-name": "Supply Name",
+      "supply-name-placeholder": "Enter supply name",
+      "supply-category": "Supply Category",
+      "supply-category-placeholder": "Select supply category",
+      "unit-of-measure": "Unit of Measure",
+      "unit-of-measure-placeholder": "Select unit of measure",
+      "description": "Description",
+      "description-placeholder": "Enter supply description",
+      "pereshible": "Perishable",
+      "is-not-perishable": "No, it is not perishable",
+      "is-perishable": "Yes, it is perishable",
+      "minimum-stock": "Minimum Stock",
+      "minimum-stock-placeholder": "Enter minimum stock",
+      "maximum-stock": "Maximum Stock",
+      "maximum-stock-placeholder": "Enter maximum stock",
+      "price": "Price",
+      "price-placeholder": "Enter supply price"
+    },
+    "supplies-inventory-add-and-edit-modal": {
+      "add-title": "Add Supply to Inventory",
+      "add-subtitle": "Add a new supply to the inventory",
+      "edit-title": "Edit Supply in Inventory",
+      "edit-subtitle": "Edit supply details in the inventory",
+      "supply-name": "Supply Name",
+      "supply-name-placeholder": "Select supply name",
+      "supply-quantity": "Supply Quantity",
+      "supply-quantity-placeholder": "Enter supply quantity",
+      "supply-expiration-date": "Supply Expiration Date",
+      "supply-expiration-date-placeholder": "Select supply expiration date"
+    },
+    "supplies-inventory-delete-modal": {
+      "title": "Delete Supply of Inventory",
+      "delete-message": "You are about to permanently delete the supply “{name}” with {quantity} in the inventory.\nThis action is irreversible and cannot be undone.",
+      "confirm-button": "CONFIRM",
+      "cancel-button": "CANCEL"
+    }
   }
 }

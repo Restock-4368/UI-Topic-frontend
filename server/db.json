@@ -474,7 +474,6 @@
       "max_stock": 0,
       "price": 20,
       "user_id": 16
-
     },
     {
       "id": 16,
@@ -489,7 +488,16 @@
       "user_id": 16
     },
     {
-
+      "name": "Viator",
+      "description": "Spicy yellow chili peppers used to enhance sauces and marinades.",
+      "perishable": true,
+      "category_id": 4,
+      "unit_measurement_id": 3,
+      "min_stock": 10,
+      "max_stock": 30,
+      "price": null,
+      "user_id": 2,
+      "id": 17
     }
   ],
   "sales": [
