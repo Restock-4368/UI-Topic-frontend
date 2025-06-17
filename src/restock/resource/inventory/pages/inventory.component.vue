@@ -24,6 +24,9 @@ export default {
     InventorySupplyCard
   },
   computed: {
+    isMobileView() {
+      return this.windowWidth <= 640;
+    },
     filteredInventory() {
       if (!this.search.trim()) return this.batches;
       const term = this.search.toLowerCase();
@@ -71,16 +74,25 @@ export default {
       providers: ['Proveedor A', 'Proveedor B', 'Proveedor C'],
       currentPage: 1,
       itemsPerPage: 5,
+      windowWidth: window.innerWidth
     }
 
   },
   mounted() {
+    window.addEventListener('resize', this.handleResize);
     this.loadCategories();
     this.loadUnits();
     this.loadSupplies();
     this.loadBatchesWithSupply();
+
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
     async updateBatch(updatedItem) {
       try {
         const id = this.selectedInventoryItem.id;
@@ -302,23 +314,29 @@ export default {
     <div class="flex flex-column gap-4">
 
       <div class="surface-card shadow-4 p-4 border-round-3xl">
-        <div class="px-3 py-1 rounded font-semibold text-white w-max"
-          :class="role === 'admin' ? 'bg-green-600' : 'bg-blue-600'">
-          {{ role }}
-        </div>
-        <div class="flex justify-content-between align-items-center mb-4">
-          <h1>Supplies Catalog</h1>
-          <pv-button label="CREAR" icon="pi pi-plus-circle" @click="openCreateModal" class="green-button" />
+        <div class="flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+          <h1 class="m-0 w-full sm:w-auto text-lg font-semibold">
+            {{ $t('inventory.supplies-catalog-title') }}
+          </h1>
 
-        </div>
-
-        <div v-if="supplies.length === 0" class="text-center">
-          <p>Aún no has agregado insumos. Añádelos para comenzar a gestionar tu inventario.</p>
-          <pv-button label="CREAR INSUMO" icon="pi pi-plus-circle" class="mt-2" @click="openCreateModal" />
+          <pv-button :label="$t('inventory.create-button')" icon="pi pi-plus-circle" @click="openCreateModal"
+            class="green-button w-full sm:w-auto" />
         </div>
 
+        <div v-if="supplies.length === 0"
+          class="flex flex-column align-items-center justify-content-center text-center gap-2 p-3">
+          <p class="text-sm sm:text-base font-light m-0">
+            {{ $t('inventory.supplies-catalog-create-and-edit-modal.not-supplies') }}
+          </p>
+          <pv-button :label="$t('inventory.create-button')" icon="pi pi-plus-circle"
+            class="green-button w-full sm:w-auto" @click="openCreateModal" />
+        </div>
         <div v-else>
-          <pv-carousel :value="supplies" :numVisible="3" :numScroll="1" :showIndicators="false">
+          <pv-carousel :value="supplies" :numVisible="3" :numScroll="1" :showIndicators="isMobileView"
+            :showNavigators="!isMobileView" :responsiveOptions="[
+              { breakpoint: '960px', numVisible: 2, numScroll: 1 },
+              { breakpoint: '640px', numVisible: 1, numScroll: 1 }
+            ]">
             <template #item="slotProps">
               <inventory-supply-card :supply="slotProps.data" @edit="openEditModal" />
             </template>
@@ -327,58 +345,75 @@ export default {
       </div>
 
       <div class="surface-card p-4 border-round-3xl">
-        <div class="flex justify-content-around align-items-center mb-4">
-          <h1 class="m-0">Inventory of Supplies</h1>
+        <div class="flex flex-wrap gap-3 justify-between align-items-center mb-4">
 
-          <pv-input-text v-model="search" placeholder="Buscar insumo" style="width: 400px" class="font-light" />
-          <pv-button label="AÑADIR" icon="pi pi-plus-circle" @click="openAddModal" class="green-button" />
-          <div class="flex align-items-center gap-2">
-            <span>{{ paginationStart }}-{{ paginationEnd }} de {{ filteredInventory.length }}</span>
+          <h1 class="m-0 w-full lg:w-auto text-lg font-semibold">
+            {{ $t('inventory.supplies-inventory-title') }}
+          </h1>
+
+          <pv-input-text v-model="search" :placeholder="$t('inventory.supplies-inventory-placeholder')"
+            class="font-light w-full sm:w-10 md:w-8 lg:w-5" />
+
+          <pv-button :label="$t('inventory.add-button')" icon="pi pi-plus-circle" @click="openAddModal"
+            class="green-button w-full sm:w-auto" />
+
+          <div class="flex align-items-center gap-2 w-full sm:w-auto justify-content-center sm:justify-content-end">
+            <span class="text-sm">{{ paginationStart }}-{{ paginationEnd }} de {{ filteredInventory.length }}</span>
             <pv-button icon="pi pi-angle-left" text :disabled="currentPage === 1" @click="currentPage--" />
             <pv-button icon="pi pi-angle-right" text :disabled="currentPage >= totalPages" @click="currentPage++" />
           </div>
         </div>
-        <div style="max-height: 300px; overflow-y: auto;">
-          <pv-data-table :value="paginatedInventory" responsiveLayout="scroll"
-            :rowClass="(data) => getExpirationRowClass(data)" class="overflow-x-auto">
-            <pv-column field="name" header="Insumos" />
-            <pv-column field="category" header="Categoría" />
-            <pv-column field="unit" header="Unidad de medida" />
-            <pv-column field="expiration_date" header="Fecha de caducidad" />
-            <pv-column field="stock" header="Stock" />
-            <pv-column v-if="role === 'admin'" field="min_stock" header="Stock Mínimo" />
-            <pv-column v-if="role === 'admin'" field="max_stock" header="Stock Máximo" />
-            <pv-column field="perishable" header="Perecible" />
-            <pv-column header="Acciones">
+        <div style="overflow-x: auto; background: white; border-radius: 8px; padding: 16px; max-height: 400px;">
+          <pv-data-table :value="paginatedInventory" :rowClass="(data) => getExpirationRowClass(data)" scrollable
+            scrollHeight="300px" responsiveLayout="scroll" style="min-width: 900px; font-size: 14px;">
+
+            <pv-column field="name" :header="$t('inventory.table.supply')" />
+            <pv-column field="category" :header="$t('inventory.table.category')" />
+            <pv-column field="unit" :header="$t('inventory.table.unit')" />
+            <pv-column field="expiration_date" :header="$t('inventory.table.expiration-date')" />
+            <pv-column field="stock" :header="$t('inventory.table.stock')" />
+
+            <pv-column v-if="role === 'admin'" field="min_stock" :header="$t('inventory.table.minimum-stock')" />
+            <pv-column v-if="role === 'admin'" field="max_stock" :header="$t('inventory.table.maximum-stock')" />
+
+            <pv-column field="perishable" :header="$t('inventory.table.pereshible')" />
+            <pv-column :header="$t('inventory.table.actions')" style="min-width: 120px;">
               <template #body="slotProps">
-                <pv-button icon="pi pi-trash" text severity="danger" @click="() => confirmDelete(slotProps.data)" />
-                <pv-button icon="pi pi-pen-to-square" text @click="() => { openInventoryEditModal(slotProps.data) }" />
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                  <pv-button icon="pi pi-pen-to-square" text style="color: #16a34a;"
+                    @click="() => openInventoryEditModal(slotProps.data)" />
+                  <pv-button icon="pi pi-trash" text severity="danger" style="color: #dc2626;"
+                    @click="() => confirmDelete(slotProps.data)" />
+                </div>
               </template>
             </pv-column>
+
           </pv-data-table>
         </div>
 
       </div>
     </div>
 
-    <pv-dialog :visible="showDeleteModal" modal header="Eliminar insumo del inventario" style="width: 450px"
-      @update:visible="showDeleteModal = $event">
+    <pv-dialog :visible="showDeleteModal" modal :header="$t('inventory.supplies-inventory-delete-modal.title')"
+      style="width: 450px" @update:visible="showDeleteModal = $event">
       <div class="p-1">
-        <p class="font-light">
-          Está a punto de eliminar el insumo
-          <strong>“{{ itemToDelete?.name }}”</strong> con
-          <strong>{{ itemToDelete?.stock }} {{ itemToDelete?.unit }}</strong>
-          en el inventario de forma permanente. <br />
-          Esta acción es irreversible y no podrá recuperarse luego.
+        <p class="font-light" style="white-space: pre-line;">
+          {{ $t('inventory.supplies-inventory-delete-modal.delete-message', {
+            name: itemToDelete?.name,
+            quantity: `${itemToDelete?.stock} ${itemToDelete?.unit}`
+          }) }}
         </p>
       </div>
       <template #footer>
         <div class="flex justify-content-end gap-2">
-          <pv-button label="CANCELAR" severity="danger" @click="showDeleteModal = false" class="red-button" />
-          <pv-button label="CONFIRMAR" severity="success" @click="deleteBatch" class="green-button" />
+          <pv-button :label="$t('inventory.supplies-inventory-delete-modal.cancel-button')" severity="danger"
+            @click="showDeleteModal = false" class="red-button" />
+          <pv-button :label="$t('inventory.supplies-inventory-delete-modal.confirm-button')" severity="success"
+            @click="deleteBatch" class="green-button" />
         </div>
       </template>
     </pv-dialog>
+
 
     <inventory-supply-create-and-edit :role="role" :visible="showSupplyModal" :isEdit="isEditing"
       :supplyToEdit="supplyToEdit" :categories="categories" :units="units" @create="createSupply" @update="updateSupply"
