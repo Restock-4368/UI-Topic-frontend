@@ -6,7 +6,6 @@ export class OrderToSupplierBatch {
                     accepted = false
                     }) {
         this.id = id;
-        this.orderToSupplierId = order_to_supplier_id;
         this.orderId = order_to_supplier_id;
         this.batchId = batch_id;
         this.quantity = quantity;
