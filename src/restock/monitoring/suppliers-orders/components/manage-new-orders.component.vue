@@ -10,7 +10,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    suppliesPerOrder: {
+    requestedBatchesPerOrder: {
+      type: Array,
+      required: true,
+    },
+    detailedBatchesPerOrder: {
       type: Array,
       required: true,
     },
@@ -31,13 +35,13 @@ export default {
     return {
       step: 1,
       selectAll: false,
-      checkedSupplies: [],
+      checkedBatches: [],
       localOrder: this.defaultOrder(),
     };
   },
   computed: {
     allSelected() {
-      return this.checkedSupplies.length === this.suppliesPerOrder.length && this.suppliesPerOrder.length > 0;
+      return this.checkedBatches.length === this.requestedBatchesPerOrder.length && this.requestedBatchesPerOrder.length > 0;
     },
   },
   watch: {
@@ -49,7 +53,7 @@ export default {
         this.resetForm();
       }
     },
-    checkedSupplies: {
+    checkedBatches: {
       handler() {
         this.$nextTick(() => {
           this.selectAll = this.allSelected;
@@ -64,10 +68,10 @@ export default {
       immediate: true,
       deep: true
     },
-    suppliesPerOrder: {
+    requestedBatchesPerOrder: {
       handler() {
-        this.checkedSupplies = this.checkedSupplies.filter(id =>
-            this.suppliesPerOrder.some(s => s.supplyId === id)
+        this.checkedBatches = this.checkedBatches.filter(id =>
+            this.requestedBatchesPerOrder.some(s => s.batchId === id)
         );
       },
       deep: true
@@ -92,45 +96,50 @@ export default {
       this.$emit('close');
     },
     resetForm() {
-      this.checkedSupplies = [];
+      this.checkedBatches = [];
       this.selectAll = false;
       this.step = 1;
       this.localOrder = this.defaultOrder();
     },
-    productName(supplyId) {
-      const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(supplyId));
+    productName(batchId) {
+      const batch = this.detailedBatchesPerOrder.find(b => Number(b.id) === Number(batchId));
+      const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(batch.supply_id));
       return supply ? supply.name : 'Unknown Product';
     },
-    productUnitMeasurement(supplyId) {
-      const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(supplyId));
+    productUnitMeasurement(batchId) {
+      const batch = this.detailedBatchesPerOrder.find(b => Number(b.id) === Number(batchId));
+      const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(batch.supply_id));
       const unitMeasurement = this.unitsMeasurement.find(u => Number(u.id) === Number(supply.unit_measurement_id));
       return unitMeasurement ? unitMeasurement.name : 'Unknown unit';
     },
     toggleSelectAll() {
       if (this.selectAll) {
-        this.checkedSupplies = this.suppliesPerOrder.map(item => item.supplyId);
+        this.checkedBatches = this.requestedBatchesPerOrder.map(item => item.batchId);
       } else {
-        this.checkedSupplies = [];
+        this.checkedBatches = [];
       }
     },
     calculateNewTotalPrice() {
-      return this.checkedSupplies.reduce((total, supplyId) => {
-        const supplyInOrder = this.suppliesPerOrder.find(s =>
-            Number(s.supplyId) === Number(supplyId)
+      return this.checkedBatches.reduce((total, batchId) => {
+        const requestedBatchInOrder = this.requestedBatchesPerOrder.find(s =>
+            Number(s.batchId) === Number(batchId)
         );
-        const supplyDetails = this.detailedSuppliesPerOrder.find(s =>
-            Number(s.id) === Number(supplyId)
-        );
+        const batchDetails = this.detailedBatchesPerOrder.find(b =>
+            Number(b.id) === Number(batchId));
 
-        if (supplyInOrder && supplyDetails) {
-          return total + (supplyDetails.price * supplyInOrder.quantity);
+        const supplyDetails = this.detailedSuppliesPerOrder.find(s =>
+        Number(s.id) === Number(batchDetails.supply_id));
+
+        if (requestedBatchInOrder && supplyDetails) {
+          return total + (supplyDetails.price * requestedBatchInOrder.quantity);
         }
         return total;
       }, 0);
     },
 
     async submitOrder() {
-      if (this.checkedSupplies.length === 0) {
+      console.log('Submitting order with data:',  this.checkedBatches.length  );
+      if (this.checkedBatches.length === 0) {
         this.$toast.add({
           severity: 'warn',
           summary: 'Warning',
@@ -140,22 +149,17 @@ export default {
         return;
       }
 
-      const newProductsCount = this.checkedSupplies.reduce((sum, supplyId) => {
-        const supplyInOrder = this.suppliesPerOrder.find(s =>
-            Number(s.supplyId) === Number(supplyId)
-        );
-        return sum + (supplyInOrder ? supplyInOrder.quantity : 0);
-      }, 0);
+      const newProductsCount = this.checkedBatches.length;
 
       const updateData = {
         order: this.order,
-        partiallyAccepted: this.checkedSupplies.length < this.suppliesPerOrder.length,
+        partiallyAccepted: this.checkedBatches.length < this.requestedBatchesPerOrder.length,
         newEstimatedShipDate: this.localOrder.estimatedShipDate,
         newEstimatedShipTime: this.localOrder.estimatedShipTime,
         newTotalPrice: this.calculateNewTotalPrice(),
         newDescription: this.localOrder.description,
         newRequestedProductsCount: newProductsCount,
-        selectedSupplies: this.checkedSupplies,
+        selectedBatches: this.checkedBatches,
       };
 
       this.$emit('submit-order', updateData);
@@ -194,7 +198,7 @@ export default {
         <div class="table-container">
           <pv-data-table
               class="supplies-table"
-              :value="suppliesPerOrder"
+              :value="requestedBatchesPerOrder"
               paginator
               :rows="4"
               :rows-per-page-options="[2, 3, 4]"
@@ -202,7 +206,7 @@ export default {
           >
             <pv-column field="date" header="Product name">
               <template #body="{ data }">
-                {{ productName(data.supplyId) }}
+                {{ productName(data.batchId) }}
               </template>
             </pv-column>
 
@@ -214,15 +218,15 @@ export default {
 
             <pv-column header="Unit Measure">
               <template #body="{ data }">
-                {{ productUnitMeasurement(data.supplyId) }}
+                {{ productUnitMeasurement(data.batchId) }}
               </template>
             </pv-column>
 
             <pv-column>
               <template #body="{ data }">
                 <pv-check-box
-                    :value="data.supplyId"
-                    v-model="checkedSupplies"
+                    :value="data.batchId"
+                    v-model="checkedBatches"
                     :binary="false"
                 />
               </template>
@@ -273,7 +277,7 @@ export default {
 
           <h3 class="summary-title">Order Summary</h3>
           <ul class="summary-list">
-            <li class="summary-item" v-for="id in checkedSupplies" :key="id">
+            <li class="summary-item" v-for="id in checkedBatches" :key="id">
               {{ productName(id) }} ({{ productUnitMeasurement(id) }})
             </li>
           </ul>

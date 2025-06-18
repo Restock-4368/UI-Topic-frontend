@@ -18,10 +18,6 @@ export default {
     adminRestaurantsProfiles: {
       type: Array,
       required: true,
-    },
-    detailedSuppliesPerOrder: {
-      type: Array,
-      required: true,
     }
   },
   emits: ['open-details-modal'],
@@ -128,8 +124,8 @@ export default {
       const orders = this.filteredOrders();
 
       const data = orders.map(order => ({
-        'Order Date': order.date,
-        'Ship Date': order.estimatedShipDate || 'Not set',
+        'Order Date': order.date ? this.formatDate(order.date) : 'Not set',
+        'Ship Date': order.estimatedShipDate ? this.formatDate(order.estimatedShipDate) : 'Not set',
         'Restaurant Name': this.restaurantBusinessNamesPerOrder[order.id] || 'Unknown',
         'Requested Products': this.requestedSuppliesCount(order),
         'Final Price': `S/ ${order.totalPrice}`
