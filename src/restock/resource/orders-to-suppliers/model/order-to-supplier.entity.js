@@ -2,8 +2,8 @@ export class OrderToSupplier {
     constructor({
                     id = 0,
                     date = new Date(),
-                    estimated_ship_date = new Date(),
-                    estimated_ship_time = new Date(),
+                    estimated_ship_date = null,
+                    estimated_ship_time = null,
                     description = '',
                     admin_restaurant_id = 0,
                     supplier_id = 0,
