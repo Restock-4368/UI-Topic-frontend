@@ -10,7 +10,7 @@ import DeleteConfirmation from "../../../../shared/components/delete.component.v
 
 // Services
 import { OrderToSupplierService } from "../../../resource/orders-to-suppliers/services/order-to-supplier.service.js";
-import { OrderToSupplierSupplyService } from "../../../resource/orders-to-suppliers/services/order-to-supplier-supply.service.js";
+import { OrderToSupplierBatchService } from "../../../resource/orders-to-suppliers/services/order-to-supplier-batch.service.js";
 import { OrderToSupplierSituationService } from "../../../resource/orders-to-suppliers/services/order-to-supplier-situation.service.js";
 import { OrderToSupplierStateService } from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.service.js";
 import { UserService } from "../../../iam/services/user.service.js";
@@ -22,11 +22,13 @@ import { UnitMeasurementService } from "../../../resource/inventory/services/uni
 import { OrderToSupplierAssembler } from "../../../resource/orders-to-suppliers/services/order-to-supplier.assembler.js";
 import { OrderToSupplierStateAssembler } from "../../../resource/orders-to-suppliers/services/order-to-supplier-state.assembler.js";
 import { OrderToSupplierSituationAssembler } from "../../../resource/orders-to-suppliers/services/order-to-supplier-situation.assembler.js";
-import { OrderToSupplierSupplyAssembler } from "../../../resource/orders-to-suppliers/services/order-to-supplier-supply.assembler.js";
+import { OrderToSupplierBatchAssembler } from "../../../resource/orders-to-suppliers/services/order-to-supplier-batch.assembler.js";
 import { SupplyAssembler } from "../../../resource/inventory/services/supply.assembler.js";
 import { UserAssembler } from "../../../iam/services/user.assembler.js";
 import { ProfileAssembler } from "../../../profiles/services/profile.assembler.js";
 import { UnitMeasurementAssembler } from "../../../resource/inventory/services/unit-measurement.assembler.js";
+import {SupplyBatchService} from "../../../resource/inventory/services/supply-batch.service.js";
+import {SupplyBatchAssembler} from "../../../resource/inventory/services/supply-batch.assembler.js";
 
 const RESTAURANT_ADMIN_ROLE_ID = 2;
 
@@ -50,19 +52,22 @@ export default {
       selectedOrder: null,
       selectedOrderState: null,
       selectedOrderSituation: null,
+      selectedRequestedBatches: [], 
+      selectedOrderDetailedBatches: [],
       selectedOrderSupplies: [],
-      selectedOrderDetailedSupplies: [],
-
+      
       // Main data
       orders: [],
       orderSituations: [],
       orderStates: [],
-      requestedSuppliesInOrders: [],
+      requestedBatchesInOrders: [],
       users: [],
       supplies: [],
+      batches: [],
       adminRestaurantsProfiles: [],
-      suppliesGroupedByOrder: [],
-      detailedSuppliesGroupedByOrder: [],
+      requestedBatchesGroupedByOrder: [],
+      batchesGroupedByOrder: [],
+      suppliesGroupByOrder: [],
       unitsMeasurement: [],
 
       // UI state
@@ -129,9 +134,10 @@ export default {
       this.orderSituationsService = new OrderToSupplierSituationService();
       this.orderStatesService = new OrderToSupplierStateService();
       this.ordersService = new OrderToSupplierService();
-      this.requestedSuppliesInOrdersService = new OrderToSupplierSupplyService();
+      this.requestedBatchesInOrdersService = new OrderToSupplierBatchService();
       this.usersService = new UserService();
       this.profilesService = new ProfileService();
+      this.batchesServices = new SupplyBatchService();
       this.suppliesService = new SupplyService();
       this.unitsMeasurementService = new UnitMeasurementService();
     },
@@ -141,16 +147,18 @@ export default {
         this.loadOrderSituations(),
         this.loadOrderStates(),
         this.loadOrders(),
+        this.loadBatches(),
         this.loadSupplies(),
-        this.loadRequestedSupplies(),
+        this.loadRequestedBatches(),
         this.loadUsersAndProfiles(),
         this.loadUnitsMeasurement(),
       ]);
     },
 
     processData() {
-      this.groupSuppliesByOrder();
-      this.groupSuppliesByOrderWithDetails();
+      this.groupRequestedBatchesByOrder();
+      this.groupBatchesDetailsByOrder();
+      this.groupSuppliesDetailsByOrder();
     },
 
     // Data loading methods
@@ -174,9 +182,15 @@ export default {
       this.supplies = SupplyAssembler.toEntitiesFromResponse(response);
     },
 
-    async loadRequestedSupplies() {
-      const response = await this.requestedSuppliesInOrdersService.getAll();
-      this.requestedSuppliesInOrders = OrderToSupplierSupplyAssembler.toEntitiesFromResponse(response);
+    async loadBatches() {
+      const response = await this.batchesServices.getAll();
+      this.batches = SupplyBatchAssembler.toEntitiesFromResponse(response);
+      console.log("Batches loaded:", this.batches);
+    },
+
+    async loadRequestedBatches() {
+      const response = await this.requestedBatchesInOrdersService.getAll();
+      this.requestedBatchesInOrders = OrderToSupplierBatchAssembler.toEntitiesFromResponse(response);
     },
 
     async loadUsersAndProfiles() {
@@ -199,39 +213,68 @@ export default {
     },
 
 // Data processing methods
-    groupSuppliesByOrder() {
-      const grouped = this.requestedSuppliesInOrders.reduce((acc, orderSupply) => {
-        const orderId = orderSupply.orderId;
+    groupRequestedBatchesByOrder() {
+      const grouped = this.requestedBatchesInOrders.reduce((acc, requestedBatches) => {
+        const orderId = requestedBatches.orderId;
         if (!acc[orderId]) {
           acc[orderId] = [];
         }
-        acc[orderId].push(orderSupply);
+        acc[orderId].push(requestedBatches);
         return acc;
       }, {});
 
-      this.suppliesGroupedByOrder = Object.entries(grouped).map(([orderId, supplies]) => ({
+      this.requestedBatchesGroupedByOrder = Object.entries(grouped).map(([orderId, requestedBatches]) => ({
         orderId,
-        supplies
+        requestedBatches
       }));
     },
 
-    groupSuppliesByOrderWithDetails() {
-      const grouped = this.requestedSuppliesInOrders.reduce((acc, orderSupply) => {
-        const { orderId, supplyId } = orderSupply;
+    groupSuppliesDetailsByOrder() {
+      //Necesito q me devuelva los supplies agrupados por orderId igual q batchesGroupedByOrder. La relacion es la siguiente: OrderToSupplierBatch tiene un batchId y su propio Id,
+      //a raiz del batch id tengo q obtener el batch y ese batch tiene el supply id y de ahi recien puedo agarrar el supply entero.
+
+      const grouped = this.requestedBatchesInOrders.reduce((acc, requestedBatch) => {
+        const { orderId, batchId } = requestedBatch;
 
         if (!acc[orderId]) {
           acc[orderId] = new Set();
         }
-        acc[orderId].add(supplyId);
+        acc[orderId].add(batchId);
         return acc;
       }, {});
 
-      this.detailedSuppliesGroupedByOrder = Object.entries(grouped).map(([orderId, supplyIdsSet]) => {
-        const supplies = [...supplyIdsSet]
-            .map(supplyId => this.supplies.find(supply => Number(supply.id) === Number(supplyId)))
+      this.batchesGroupedByOrder = Object.entries(grouped).map(([orderId, batchIdSet]) => {
+        const batches = [...batchIdSet]
+            .map(batchId => this.batches.find(batch => Number(batch.id) === Number(batchId)))
             .filter(Boolean);
 
+        const supplies = batches.map(batch => {
+          const supply = this.supplies.find(supply => Number(supply.id) === Number(batch.supplyId));
+          return supply ? { ...supply, batchId: batch.id } : null;
+        }).filter(Boolean);
+
         return { orderId, supplies };
+      });
+
+    },
+
+    groupBatchesDetailsByOrder() {
+      const grouped = this.requestedBatchesInOrders.reduce((acc, requestedBatch) => {
+        const { orderId, batchId } = requestedBatch;
+
+        if (!acc[orderId]) {
+          acc[orderId] = new Set();
+        }
+        acc[orderId].add(batchId);
+        return acc;
+      }, {});
+
+      this.batchesGroupedByOrder = Object.entries(grouped).map(([orderId, batchIdSet]) => {
+        const batches = [...batchIdSet]
+            .map(batchId => this.batches.find(batch => Number(batch.id) === Number(batchId)))
+            .filter(Boolean);
+
+        return { orderId, batches };
       });
     },
 
@@ -247,10 +290,10 @@ export default {
       this.selectedOrder = order;
       this.selectedOrderSituation = this.findOrderSituation(order.situationId);
 
-      const orderSupplies = this.getOrderSupplies(order.id);
-      this.selectedOrderSupplies = orderSupplies.filter(supply => !supply.accepted);
+      const orderRequestedBatches = this.getRequestedOrderBatches(order.id);
+      this.selectedRequestedBatches = orderRequestedBatches.filter(supply => !supply.accepted);
       this.selectedOrderDetailedSupplies = this.getDetailedOrderSupplies(order.id);
-
+    //HASTA ACA Y LOS METODOS DE GET DE ABAJO Q SON 3
       this.modals.newOrderDetails = true;
     },
 
@@ -259,8 +302,8 @@ export default {
       this.selectedOrderState = this.findOrderState(order.stateId);
       this.selectedOrderSituation = this.findOrderSituation(order.situationId);
 
-      const orderSupplies = this.getOrderSupplies(order.id);
-      this.selectedOrderSupplies = orderSupplies.filter(supply => supply.accepted);
+      const orderRequestedBatches = this.getRequestedOrderBatches(order.id);
+      this.selectedRequestedBatches = orderSupplies.filter(supply => supply.accepted);
       this.selectedOrderDetailedSupplies = this.getDetailedOrderSupplies(order.id);
 
       this.modals.acceptedOrderDetails = true;
@@ -268,8 +311,8 @@ export default {
 
     openManageNewModal(order) {
       this.selectedOrder = { ...order };
-      this.selectedOrderSupplies = [...this.getOrderSupplies(order.id)];
-      this.selectedOrderDetailedSupplies = this.getDetailedOrderSupplies(order.id);
+      this.selectedRequestedBatches = [...this.getOrderSupplies(order.id)];
+      this.selectedOrderDetailedBatches = this.getDetailedOrderSupplies(order.id);
       this.modals.manageNewOrder = true;
     },
 
@@ -284,7 +327,7 @@ export default {
       this.selectedOrder = null;
       this.selectedOrderState = null;
       this.selectedOrderSituation = null;
-      this.selectedOrderSupplies = [];
+      this.selectedRequestedBatches = [];
       this.selectedOrderDetailedSupplies = [];
     },
 
@@ -297,18 +340,25 @@ export default {
       return this.orderSituations.find(situation => Number(situation.id) === Number(situationId));
     },
 
-    getOrderSupplies(orderId) {
-      const orderGroup = this.suppliesGroupedByOrder.find(group =>
+    getRequestedOrderBatches(orderId) {
+      const orderGroup = this.requestedBatchesGroupedByOrder.find(group =>
           Number(group.orderId) === Number(orderId)
       );
-      return orderGroup ? orderGroup.supplies : [];
+      return orderGroup ? orderGroup.requestedBatches : [];
+    },
+
+    getDetailedOrderBatches(orderId) {
+      return this.getRequestedOrderBatches(orderId).map(requestedBatch => {
+        const batch = this.batches.find(batch => Number(batch.id) === Number(requestedBatch.batchId));
+        return batch ? { ...batch, supply_id: batch.supply_id } : null;
+      }).filter(Boolean);
     },
 
     getDetailedOrderSupplies(orderId) {
-      const orderGroup = this.detailedSuppliesGroupedByOrder.find(group =>
-          Number(group.orderId) === Number(orderId)
-      );
-      return orderGroup ? orderGroup.supplies : [];
+      return this.getDetailedOrderBatches(orderId).map(batch => {
+        const supply = this.supplies.find(supply => Number(supply.id) === Number(batch.supply_id));
+        return supply ? { ...supply, batchId: batch.id } : null;
+      }).filter(Boolean);
     },
 
     // Order handling methods
@@ -405,7 +455,7 @@ export default {
     },
 
     async updateSuppliesAcceptance(updateData) {
-      const orderSuppliesGroup = this.suppliesGroupedByOrder.find(group =>
+      const orderSuppliesGroup = this.requestedBatchesGroupedByOrder.find(group =>
           Number(group.orderId) === Number(updateData.order.id)
       );
 
@@ -424,7 +474,7 @@ export default {
           accepted: isAccepted
         };
 
-        const response = await this.requestedSuppliesInOrdersService.update(supplyOrder.id, updatePayload);
+        const response = await this.requestedBatchesInOrdersService.update(supplyOrder.id, updatePayload);
         this.updateLocalSupplyData(supplyOrder.id, { accepted: isAccepted });
 
         return response;
@@ -459,12 +509,12 @@ export default {
     },
 
     updateLocalSupplyData(supplyId, updates) {
-      const supplyIndex = this.requestedSuppliesInOrders.findIndex(supply =>
+      const supplyIndex = this.requestedBatchesInOrders.findIndex(supply =>
           Number(supply.id) === Number(supplyId)
       );
       if (supplyIndex !== -1) {
-        this.requestedSuppliesInOrders[supplyIndex] = {
-          ...this.requestedSuppliesInOrders[supplyIndex],
+        this.requestedBatchesInOrders[supplyIndex] = {
+          ...this.requestedBatchesInOrders[supplyIndex],
           ...updates
         };
       }
@@ -473,7 +523,7 @@ export default {
     async reloadOrderData() {
       await Promise.all([
         this.loadOrders(),
-        this.loadRequestedSupplies()
+        this.loadRequestedBatches()
       ]);
       this.processData();
     },
@@ -518,7 +568,7 @@ export default {
         <new-orders
             :order-situations="orderSituations"
             :admin-restaurants-profiles="adminRestaurantsProfiles"
-            :orders-supplies="suppliesGroupedByOrder"
+            :orders-supplies="requestedBatchesGroupedByOrder"
             :orders="orders"
             :supplies="supplies"
             @open-modal="openManageNewModal"
@@ -539,9 +589,9 @@ export default {
       </pv-tab-panel>
       <pv-tab-panel :value="2">
         <delivered-orders
-            :detailed-supplies-per-order="detailedSuppliesGroupedByOrder"
+            :detailed-supplies-per-order="suppliesGroupByOrder"
             :admin-restaurants-profiles="adminRestaurantsProfiles"
-            :orders-supplies="suppliesGroupedByOrder"
+            :orders-supplies="requestedBatchesGroupedByOrder"
             :orders="deliveredOrders"
             @open-details-modal="openOrderAcceptedDetailsModal">
         </delivered-orders>
@@ -554,7 +604,7 @@ export default {
       v-model="showManageNewOrderModal"
       :order="selectedOrder"
       :detailed-supplies-per-order="selectedOrderDetailedSupplies"
-      :supplies-per-order="selectedOrderSupplies"
+      :supplies-per-order="selectedRequestedBatches"
       :units-measurement="unitsMeasurement"
       @submit-order="handleOrderSubmission($event)"
   />
@@ -571,7 +621,7 @@ export default {
       v-model="showAcceptedOrderDetailsModal"
       :order="selectedOrder"
       :detailed-supplies-per-order="selectedOrderDetailedSupplies"
-      :supplies-per-order="selectedOrderSupplies"
+      :supplies-per-order="selectedRequestedBatches"
       :units-measurement="unitsMeasurement"
       :order-situation="selectedOrderSituation"
       :order-state="selectedOrderState"
@@ -583,7 +633,7 @@ export default {
       v-model="showNewOrderDetailsModal"
       :order="selectedOrder"
       :detailed-supplies-per-order="selectedOrderDetailedSupplies"
-      :supplies-per-order="selectedOrderSupplies"
+      :supplies-per-order="selectedRequestedBatches"
       :units-measurement="unitsMeasurement"
       :order-situation="selectedOrderSituation"
       :admin-restaurants-profiles="adminRestaurantsProfiles"
