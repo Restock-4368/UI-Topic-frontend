@@ -23,6 +23,10 @@ export default {
       type: Array,
       required: true,
     },
+    batches: {
+      type: Array,
+      required: true,
+    },
     supplies: {
       type: Array,
       required: true,
@@ -142,21 +146,24 @@ export default {
 
       this.orders.forEach(order => {
         const orderId = Number(order.id);
-        const orderSupplies = this.ordersSupplies.find(os => Number(os.orderId) === orderId);
+        const orderRequestedBatches = this.ordersSupplies.find(os => Number(os.orderId) === orderId);
 
-        if (!orderSupplies) {
+        if (!orderRequestedBatches) {
           priceMap[orderId] = 0;
           countMap[orderId] = 0;
           return;
         }
 
-        countMap[orderId] = orderSupplies.supplies?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+        countMap[orderId] = orderRequestedBatches.requestedBatches?.length;
 
-        priceMap[orderId] = orderSupplies.supplies.reduce((sum, supplyItem) => {
-          const supply = this.supplies.find(s => Number(s.id) === Number(supplyItem.supplyId)); //CORRIGE °
+        priceMap[orderId] = orderRequestedBatches.requestedBatches.reduce((sum, requestedBatchItem) => {
+          const batch = this.batches.find(b => Number(b.id) === Number(requestedBatchItem.batchId));
+
+          const supply = this.supplies.find(s => Number(s.id) === Number(batch.supply_id));
+
           const price = supply?.price || 0;
 
-          return sum + price * supplyItem.quantity;
+          return sum + price * requestedBatchItem.quantity;
         }, 0);
       });
 
