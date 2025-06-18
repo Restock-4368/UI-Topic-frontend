@@ -1,188 +1,128 @@
-<script>
-import BaseModal from "../../../../shared/components/base-modal.component.vue";
-import Select from 'primevue/select';
-import Button from 'primevue/button';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import CheckBox from 'primevue/checkbox';
-
-// Services y Assembler
-import {SupplyService} from "../../inventory/services/supply.service.js";
-import {UnitMeasurementService} from "../../inventory/services/unit-measurement.service.js";
-import {SupplyAssembler} from "../../inventory/services/supply.assembler.js";
-import {UnitMeasurementAssembler} from "../../inventory/services/unit-measurement.assembler.js";
-import {ProfileAssembler} from "../../../profiles/services/profile.assembler.js";
-import {UserAssembler} from "../../../iam/services/user.assembler.js";
-import {OrderToSupplierAssembler} from "../services/order-to-supplier.assembler.js";
-import {OrderToSupplierSupplyAssembler} from "../services/order-to-supplier-supply.assembler.js";
-import {OrderToSupplierService} from "../services/order-to-supplier.service.js";
-import {OrderToSupplierSupplyService} from "../services/order-to-supplier-supply.service.js";
-import {ProfileService} from "../../../profiles/services/profile.service.js";
-import {UserService} from "../../../iam/services/user.service.js";
-import ConfirmOrderToSupplier from "./confirm-order-to-supplier.component.vue";
-
+<script> import BaseModal from "../../../../shared/components/base-modal.component.vue"
+import Select from "primevue/select"
+import Button from "primevue/button"
+import DataTable from "primevue/datatable"
+import Column from "primevue/column"
+import Checkbox from "primevue/checkbox"
+import OrderDetailsModalComponent from "./order-details-modal.component.vue";
+import {SupplyService} from "../../inventory/services/supply.service"
+import {SupplyAssembler} from "../../inventory/services/supply.assembler"
+import {SupplyBatchService} from "../../inventory/services/supply-batch.service.js"
+import {UserService} from "../../../iam/services/user.service"
+import {ProfileService} from "../../../profiles/services/profile.service"
+import {UserAssembler} from "../../../iam/services/user.assembler"
+import {ProfileAssembler} from "../../../profiles/services/profile.assembler"
 
 export default {
   name: "OrderNowModal",
   components: {
-    ConfirmOrderToSupplier,
+    OrderDetailsModalComponent,
     BaseModal,
-    'pv-select': Select,
-    'pv-button': Button,
-    'pv-data-table': DataTable,
-    'pv-column': Column,
-    'pv-checkbox': CheckBox
+    "pv-select": Select,
+    "pv-button": Button,
+    "pv-data-table": DataTable,
+    "pv-column": Column,
+    "pv-checkbox": Checkbox
   },
-  props: {
-    modelValue: Boolean,
-  },
-  emits: ['update:modelValue', 'close'],
+  props: {modelValue: Boolean},
+  emits: ["update:modelValue", "close"],
   data() {
     return {
       step: 1,
       selectedSupply: null,
-      selectedSuppliers: [],
-      supplierOptions: [],
+      allSupplies: [],
+      allBatches: [],
+      filteredBatches: [],
+      selectedBatchIds: [],
+      supplierProfiles: [],
       showConfirmModal: false
-    };
+    }
   },
   computed: {
-    selectedSupplierObjects() {
-      return this.selectedSuppliers.map(id => this.supplierOptions.find(s => s.id === id)).filter(Boolean);
+    selectedBatches() {
+      return this.filteredBatches.filter(b => this.selectedBatchIds.includes(b.id))
     }
   },
   watch: {
     modelValue(val) {
-      if (val) {
-        this.resetModal();
-      }
+      if (val) this.resetModal()
     }
   },
   async mounted() {
-    await this.loadInitialData();
+    await this.loadInitialData()
   },
   methods: {
     async loadInitialData() {
       try {
-        const supplyService = new SupplyService();
-        const unitService = new UnitMeasurementService();
-        const [supplyRes, unitRes] = await Promise.all([
-          supplyService.getAll(),
-          unitService.getAll()
-        ]);
-        const supplies = SupplyAssembler.toEntitiesFromResponse(supplyRes);
-        // this.restaurantSupplies = supplies.filter(s => s.userId === this.currentRestaurantId); SI QUIERO USAR ESTO TENGO QUE CAMBIAR LOS DATOS EN EL DBJSON, por el momento dejar acá
-        this.restaurantSupplies = supplies;
-        this.unitsMeasurement = UnitMeasurementAssembler.toEntitiesFromResponse(unitRes);
-      } catch (err) {
-        console.error("Error loading supplies or units:", err);
+        const [suppliesRes, batchesRes, usersRes, profilesRes] = await Promise.all([new SupplyService().getAll(), new SupplyBatchService().getAll(), new UserService().getAll(), new ProfileService().getAll()])
+        this.allSupplies = SupplyAssembler.toEntitiesFromResponse(suppliesRes)
+        this.allBatches = batchesRes.data
+        const users = UserAssembler.toEntitiesFromResponse(usersRes)
+        const profiles = ProfileAssembler.toEntitiesFromResponse(profilesRes)
+        this.supplierProfiles = users.map(user => {
+          const profile = profiles.find(p => p.userId === user.id)
+          return {id: user.id, name: profile?.name || user.email, company: profile?.companyName || ''}
+        })
+      } catch (error) {
+        console.error("Error al cargar datos iniciales:", error)
       }
-    },
-
-    async onSupplySelect() {
-      try {
-        const supplyId = this.selectedSupply?.id;
-        if (!supplyId) return;
-
-        const orderSupplyService = new OrderToSupplierSupplyService();
-        const orderService = new OrderToSupplierService();
-        const userService = new UserService();
-        const profileService = new ProfileService();
-
-        const rawOrderSupplies = await orderSupplyService.getBySupplyId(supplyId);
-        const orderSupplies = OrderToSupplierSupplyAssembler.toEntitiesFromResponse(rawOrderSupplies);
-        const orderIds = [...new Set(orderSupplies.map(o => o.orderId))];
-
-        if (orderIds.length === 0) {
-          this.supplierOptions = [];
-          return;
-        }
-
-        const rawOrders = await Promise.all(orderIds.map(id => orderService.getById(id)));
-        const orders = rawOrders.map(res => OrderToSupplierAssembler.toEntityFromResource(res.data));
-        const supplierIds = [...new Set(orders.map(o => o.supplierId))];
-
-        const [rawUsers, rawProfiles] = await Promise.all([
-          userService.getAll(),
-          profileService.getAll()
-        ]);
-        const users = UserAssembler.toEntitiesFromResponse(rawUsers);
-        const profiles = ProfileAssembler.toEntitiesFromResponse(rawProfiles);
-
-        this.supplierOptions = supplierIds.map(supplierId => {
-          const user = users.find(u => u.id === supplierId);
-          const profile = profiles.find(p => p.userId === supplierId);
-          const order = orders.find(o => o.supplierId === supplierId);
-          const supplyInOrder = orderSupplies.find(s => s.orderId === order.id);
-
-          return {
-            id: supplierId,
-            name: profile?.name || user?.email || 'Unknown Supplier',
-            price: this.selectedSupply.price,
-            stock: supplyInOrder?.quantity || 0
-          };
-        });
-      } catch (err) {
-        console.error("Error loading supplier options:", err);
+    }, onSupplySelect() {
+      if (!this.selectedSupply?.id) {
+        this.filteredBatches = []
+        return
       }
-    },
-
-    closeModal() {
-      this.$emit("update:modelValue", false);
-      this.$emit("close");
-    },
-
-    resetModal() {
-      this.step = 1;
-      this.selectedSupply = null;
-      this.supplierOptions = [];
-      this.selectedSuppliers = [];
-    },
-
-    nextStep() {
-      if (this.selectedSupplierObjects.length > 0) {
-        this.showConfirmModal = true;
-      } else {
-        this.$toast.add({ severity: 'warn', summary: 'Warning', detail: 'Select at least one supplier', life: 3000 });
+      const {id: supplyId, price, name, userId} = this.selectedSupply
+      this.filteredBatches = this.allBatches.filter(batch => batch.supply_id === supplyId).map(batch => ({
+        ...batch,
+        price: price ?? 0,
+        supplyName: name ?? '',
+        supplierId: batch.user_id ?? userId
+      }))
+    }, getSupplierName(userId) {
+      const profile = this.supplierProfiles.find(p => p.id === userId)
+      return profile?.name || "Proveedor desconocido"
+    }, nextStep() {
+      if (this.selectedBatches.length === 0) {
+        this.$toast.add({severity: "warn", summary: "Advertencia", detail: "Selecciona al menos un batch", life: 3000})
+        return
       }
-    },
-
-    prevStep() {
-      this.step = 1;
-    },
-    confirmOrder() {
-      this.showSummaryModal = true;
-    },
-    handleFinalConfirmation(data) {
-      console.log('Final confirmed order data:', data);
-      // Aquí puedes llamar a tu servicio para guardar la orden en backend
-      this.closeModal();
+      this.showConfirmModal = true
+    }, closeModal() {
+      this.$emit("update:modelValue", false)
+      this.$emit("close")
+    }, resetModal() {
+      this.step = 1
+      this.selectedSupply = null
+      this.filteredBatches = []
+      this.selectedBatchIds = []
+    }, handleFinalConfirmation(data) {
+      console.log("Confirmado:", data)
+      this.closeModal()
     }
   }
-};
+}
 </script>
 
 <template>
   <base-modal :model-value="modelValue" title="Create New Order" @close="closeModal">
     <template #default>
-      <div class="modal-step">
-        <p>Select the supply you need:</p>
-        <pv-select
-            v-model="selectedSupply"
-            :options="restaurantSupplies"
-            optionLabel="name"
-            placeholder="Select a supply"
-            @change="onSupplySelect"
-        />
-        <div v-if="supplierOptions.length">
-          <h4>Available Suppliers</h4>
-          <pv-data-table :value="supplierOptions">
-            <pv-column field="name" header="Supplier" />
-            <pv-column field="price" header="Price" />
-            <pv-column field="stock" header="Stock" />
-            <pv-column header="Select">
+      <div class="modal-step"><label>Selecciona un insumo:</label>
+        <pv-select v-model="selectedSupply" :options="allSupplies" optionLabel="name" placeholder="Select supply"
+                   @change="onSupplySelect"/>
+        <div v-if="filteredBatches.length">
+          <h4>Batches disponibles para: {{ selectedSupply.name }}</h4>
+          <pv-data-table :value="filteredBatches">
+            <pv-column field="id" header="ID"/>
+            <pv-column field="expiration_date" header="Caducidad"/>
+            <pv-column field="stock" header="Stock"/>
+            <pv-column header="Proveedor">
               <template #body="slotProps">
-                <pv-checkbox :value="slotProps.data.id" v-model="selectedSuppliers" />
+                {{ getSupplierName(slotProps.data.supplierId) }}
+              </template>
+            </pv-column>
+            <pv-column header="Seleccionar">
+              <template #body="slotProps">
+                <pv-checkbox :value="slotProps.data.id" v-model="selectedBatchIds"/>
               </template>
             </pv-column>
           </pv-data-table>
@@ -191,42 +131,37 @@ export default {
     </template>
 
     <template #footer>
-      <pv-button label="Close" class="btn-close" @click="closeModal" />
-      <pv-button v-if="selectedSupply && selectedSuppliers.length" label="Next" class="btn-next" @click="nextStep" />
+      <pv-button label="Cancelar" class="btn-cancel" @click="closeModal"/>
+      <pv-button
+          label="Siguiente"
+          class="btn-next"
+          :disabled="!selectedBatchIds.length"
+          @click="nextStep"
+      />
     </template>
   </base-modal>
-
-  <confirm-order-to-supplier
+  <order-details-modal-component
       v-model="showConfirmModal"
       :supply="selectedSupply"
-      :selected-suppliers="selectedSupplierObjects"
-      @submitted="closeModal"
+      :selected-batches="selectedBatches"
+      @submitted="handleFinalConfirmation"
   />
 </template>
 
-<style>
-.modal-step {
+<style scoped> .modal-step {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-.btn-close {
-  background-color: #ccc;
+.btn-cancel {
+  background-color: #d9534f;
+  color: white;
 }
 
 .btn-next {
-  background-color: #F28C38;
-  color: white;
-}
-
-.btn-back {
-  background-color: #F28C38;
-  color: white;
-}
-
-.btn-confirm {
-  background-color: #4F8A5B;
+  background-color: #f28c38;
   color: white;
 }
 </style>
