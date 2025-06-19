@@ -18,10 +18,6 @@ export default {
   methods: {
     handleUpload(event, fieldName) {
       const file = event.files[0];
-      console.log('📁 Upload triggered:', event.files);
-      console.log('🧪 Sending to Cloudinary:');
-      console.log('Upload preset:', 'uitopic');
-      console.log('File:', file.name);
 
       const formData = new FormData();
       formData.append('file', file);
@@ -33,11 +29,11 @@ export default {
       })
           .then(res => res.json())
           .then(data => {
-            console.log('✅ Image uploaded:', data.secure_url);
+            console.log('Image uploaded:', data.secure_url);
             this.form[fieldName] = data.secure_url;
           })
           .catch(err => {
-            console.error('❌ Upload failed:', err);
+            console.error('Upload failed:', err);
           });
     }
   }
