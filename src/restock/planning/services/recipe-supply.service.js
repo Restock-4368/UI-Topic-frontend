@@ -1,23 +1,22 @@
 import {BaseService} from "../../../shared/services/base.service.js";
+import httpInstance from "../../../shared/services/http.instance.js";
 
 export class RecipeSupplyService extends BaseService {
 
-    resourceEndpoint = import.meta.env.VITE_RECIPES_SUPPLIES_ENDPOINT_PATH;
+    resourceEndpoint = import.meta.env.VITE_RECIPES_ENDPOINT_PATH;
 
     getByRecipe(recipeId) {
-        return this.getByQuery('recipe_id', recipeId);
+        return httpInstance.get(`${this.resourceEndpoint}/${recipeId}/supplies`);
     }
 
 
     async bulkCreate(recipeId, supplies) {
-        const requests = supplies.map(s =>
-            this.create({
-                recipe_id: recipeId,
-                supply_id: s.supply_id,
-                quantity: s.quantity,
-            })
-        );
-        return Promise.all(requests);
+        return httpInstance.post(
+            `${this.resourceEndpoint}/${recipeId}/supplies`, supplies);
+    }
+
+    deleteById(recipeId, id) {
+        return httpInstance.delete(`${this.resourceEndpoint}/${recipeId}/supplies/${id}`);
     }
 
     async deleteByRecipe(recipeId) {
@@ -25,5 +24,12 @@ export class RecipeSupplyService extends BaseService {
         const recipeSupplies = response.data;
         const deletions = recipeSupplies.map(rs => this.delete(rs.id));
         return Promise.all(deletions);
+    }
+
+    updateById(recipeId, id, data) {
+        return httpInstance.put(
+            `${this.resourceEndpoint}/${recipeId}/supplies/${id}`,
+            data
+        );
     }
 }
