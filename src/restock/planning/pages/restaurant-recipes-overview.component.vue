@@ -110,10 +110,16 @@ export default {
         const response = await this.recipeService.create(form);
         const created = RecipeAssembler.toEntityFromResponse(response);
         await this.recipeSupplyService.bulkCreate(created.id, form.supplies);
+
+        for (const supply of form.supplies) {
+          await this.recipeSupplyService.create(created.id, supply);
+        }
       } else {
         await this.recipeService.update(form.id, form);
         await this.recipeSupplyService.deleteByRecipe(form.id);
-        await this.recipeSupplyService.bulkCreate(form.id, form.supplies);
+        for (const supply of form.supplies) {
+          await this.recipeSupplyService.create(form.id, supply);
+        }
       }
 
       await this.loadRecipes();
