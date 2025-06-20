@@ -3,29 +3,29 @@ export class Profile {
     constructor({
                     id = 0,
                     name = '',
+                    email = '',
                     last_name = '',
-                    username = '',
                     avatar = '',
                     phone = '',
                     address = '',
                     country = '',
-                    description = '',
-                    business_name = '',
-                    business_address = '',
-                    user_id = 0
+                    business_id = 0,
+                    user_id = 0,
+                    business = null,
+                    user = null,
                 } = {}) {
         this.id = id;
         this.name = name;
+        this.email = email;
         this.last_name = last_name;
-        this.username = username;
         this.avatar = avatar;
         this.phone = phone;
         this.address = address;
         this.country = country;
-        this.description = description;
-        this.businessName = business_name;
-        this.businessAddress = business_address;
-        this.userId = user_id;
+        this.business_id = business_id;
+        this.user_id = user_id;
+        this.business = business;
+        this.user = user;
     }
 }
 
