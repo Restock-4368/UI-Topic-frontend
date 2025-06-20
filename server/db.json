@@ -855,10 +855,11 @@
   ],
   "batches": [
     {
-      "id": 1,
       "supply_id": 1,
-      "stock": 50,
-      "expiration_date": "2025-06-01"
+      "stock": 5,
+      "expiration_date": "2025-07-31",
+      "user_id": 2,
+      "id": 1
     },
     {
       "id": 2,

@@ -27,7 +27,18 @@
     "cancel": "Cancel"
   },
   "notifications": {
-    "title": "Notifications"
+    "title": "Notifications",
+    "tabs": {
+      "all": "All",
+      "inventory": "Inventory",
+      "orders": "Orders"
+    },
+    "messages": {
+      "lowStock": "{supply} batch #{id} below minimum stock ({stock}/{min})",
+      "maxStock": "{supply} batch #{id} reached maximum stock ({stock}/{max})",
+      "orderSituation": "Order #{id} situation updated to {situation}",
+      "orderDelivered": "Order #{id} marked as Delivered"
+    }
   },
   "inventory": {
     "supplies-catalog-title": "Supplies Catalog",
