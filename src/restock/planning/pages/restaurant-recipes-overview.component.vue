@@ -199,14 +199,14 @@ export default {
     </div>
 
     <!-- CREATE / EDIT Modal -->
-    <CreateAndEdit
+    <create-and-edit
         v-model="formVisible"
         :mode="editMode"
         createTitle="Create Recipe"
         editTitle="Edit Recipe"
         @close="closeForm"
     >
-      <AddAndEditForm
+      <add-and-edit-form
           :schema="formSchema"
           :initialData="formModel"
           :mode="editMode"
@@ -216,8 +216,8 @@ export default {
           <h4 class="mt-4 mb-2">Recipe Supplies</h4>
           <SupplySelector v-model="form.supplies" />
         </template>
-      </AddAndEditForm>
-    </CreateAndEdit>
+      </add-and-edit-form>
+    </create-and-edit>
 
     <DeleteConfirmation
         v-model="deleteVisible"
