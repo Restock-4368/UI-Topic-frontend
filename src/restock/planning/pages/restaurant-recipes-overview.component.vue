@@ -5,6 +5,9 @@ import AddAndEditForm from '../../../shared/components/add-and-edit.component.vu
 import DeleteConfirmation from '../../../shared/components/delete.component.vue';
 import SupplySelector from '../components/supply-selector.component.vue';
 import {RecipeService} from "../services/recipe.service.js";
+import {RecipeSupplyService} from "../services/recipe-supply.service.js";
+import {RecipeAssembler} from "../services/recipe.assembler.js";
+import {RecipeSupplyAssembler} from "../services/recipe-supply.assembler.js";
 
 export default {
   name: 'RestaurantRecipesOverview',
@@ -25,13 +28,21 @@ export default {
       selectedRecipe: null,
       deleteVisible: false,
       recipeService: new RecipeService(),
+      sortByPrice: false,
+      recipeSupplyService: new RecipeSupplyService(),
     };
   },
   computed: {
     filteredRecipes() {
-      return this.recipes.filter(r =>
+      let filtered = this.recipes.filter(r =>
           r.name.toLowerCase().includes(this.search.toLowerCase())
       );
+
+      if (this.sortByPrice) {
+        return filtered.sort((a, b) => a.total_price - b.total_price);
+      }
+
+      return filtered;
     },
     formSchema() {
       return [
@@ -51,56 +62,75 @@ export default {
           name: 'total_price',
           label: 'Total Price (S/.)',
           type: 'number',
-          placeholder: 'e.g. 29.90'
+          placeholder: 'e.g. 29.90',
+          format: 'currency',
         },
         {
           name: 'image_url',
           label: 'Dish Image',
+          placeholder: 'Upload an image',
           type: 'file'
         }
       ];
     },
   },
-  async created() {
-    await this.loadRecipes();
+  created() {
+    this.loadRecipes();
   },
   methods: {
     async loadRecipes() {
-      this.recipes = await this.recipeService.getAll();
+      const response = await this.recipeService.getAll();
+      const recipes = RecipeAssembler.toEntitiesFromResponse(response);
+      const enhanced = await Promise.all(
+          recipes.map(async r => {
+            const respSupplies = await this.recipeSupplyService.getByRecipe(r.id)
+            const supplies = RecipeSupplyAssembler.toEntitiesFromResponse(respSupplies);
+            return { ...r, supplies };
+          })
+      );
+      this.recipes = enhanced;
     },
     openCreateDialog() {
       this.editMode = 'create';
       this.formModel = { supplies: [] };
       this.formVisible = true;
     },
-    openEditDialog(recipe) {
+    async openEditDialog(recipe) {
+      const respSupplies = await this.recipeSupplyService.getByRecipe(recipe.id);
+      const supplies = RecipeSupplyAssembler.toEntitiesFromResponse(respSupplies);
+      this.formModel = { ...recipe, supplies };
       this.editMode = 'edit';
-      this.formModel = { ...recipe, supplies: recipe.supplies || [] };
       this.formVisible = true;
     },
     closeForm() {
       this.formVisible = false;
     },
-    async submitForm(data) {
-      if (!data.supplies || data.supplies.length === 0) {
-        alert('You must add at least one supply to the recipe.');
-        return;
-      }
-
+    async submitForm(form) {
       if (this.editMode === 'create') {
-        await this.recipeService.create(data);
+        const response = await this.recipeService.create(form);
+        const created = RecipeAssembler.toEntityFromResponse(response);
+        await this.recipeSupplyService.bulkCreate(created.id, form.supplies);
+
+        for (const supply of form.supplies) {
+          await this.recipeSupplyService.create(created.id, supply);
+        }
       } else {
-        await this.recipeService.update(this.formModel.id, data);
+        await this.recipeService.update(form.id, form);
+        await this.recipeSupplyService.deleteByRecipe(form.id);
+        for (const supply of form.supplies) {
+          await this.recipeSupplyService.create(form.id, supply);
+        }
       }
 
-      this.formVisible = false;
       await this.loadRecipes();
+      this.closeForm();
     },
     openDeleteDialog(recipe) {
       this.selectedRecipe = recipe;
       this.deleteVisible = true;
     },
     async confirmDelete() {
+      await this.recipeSupplyService.deleteByRecipe(this.selectedRecipe.id);
       await this.recipeService.delete(this.selectedRecipe.id);
       this.deleteVisible = false;
       this.selectedRecipe = null;
@@ -111,26 +141,41 @@ export default {
 </script>
 
 <template>
-  <div class="recipes-view">
+  <div class="recipes-view p-4">
     <!-- Header -->
-    <div class="recipes-header">
+    <div class="recipes-header flex flex-column sm:flex-row justify-content-between sm:align-items-center flex-wrap gap-3 sm:gap-4 mb-4">
+
       <div class="recipes-header__top">
-        <h2 class="recipes-header__title">Recipes</h2>
+        <h2 class="text-2xl font-semibold mr-2">{{ $t('recipes.title') }}</h2>
       </div>
-      <div class="recipes-header__controls">
+
+      <div class="recipes-header__middle flex flex-row flex-wrap align-items-center gap-2 sm:gap-5 ">
         <pv-input-text
             v-model="search"
             placeholder="Search recipes..."
-            class="recipes-header__control"
+            class="w-full sm:w-30rem"
         />
+
+        <div class="flex align-items-center gap-2">
+          <label for="sortByPrice" class="text-sm text-color-secondary">Sort by price</label>
+          <pv-input-switch
+              v-model="sortByPrice"
+              inputId="sortByPrice"
+          />
+        </div>
+      </div>
+
+      <div class="recipes-header__actions">
         <pv-button
             label="Create"
-            icon="pi pi-plus"
+            icon="pi pi-plus-circle"
             @click="openCreateDialog"
-            class="recipes-header__control"
+            class="green-button w-full sm:w-auto font-semibold px-3 py-2"
         />
       </div>
     </div>
+
+
 
     <!-- Empty -->
     <EmptySection v-if="filteredRecipes.length === 0">
@@ -164,14 +209,15 @@ export default {
       <AddAndEditForm
           :schema="formSchema"
           :initialData="formModel"
+          :mode="editMode"
           @submit="submitForm"
-      />
-
-      <h4 class="mt-4 mb-2">Recipe Supplies</h4>
-      <SupplySelector v-model="formModel.supplies" />
+      >
+        <template #extension="{ form }">
+          <h4 class="mt-4 mb-2">Recipe Supplies</h4>
+          <SupplySelector v-model="form.supplies" />
+        </template>
+      </AddAndEditForm>
     </CreateAndEdit>
-
-
 
     <DeleteConfirmation
         v-model="deleteVisible"
@@ -186,19 +232,6 @@ export default {
 
 
 <style scoped>
-.recipes-header {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem 0;
-}
-
-.recipes-header__controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-}
 
 .recipes-grid {
   display: grid;

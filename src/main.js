@@ -9,6 +9,7 @@ import 'primeflex/primeflex.css'
 import {
     Button,
     Column,
+    Dropdown,
     DataTable,
     Carousel,
     Select,
@@ -21,10 +22,14 @@ import {
     Toolbar,
     Calendar,
     InputNumber,
-    ToggleSwitch, FileUpload
+    ToggleSwitch,
+    FileUpload,
+    Tabs,
+    TabPanel, TabList, Tab, TabPanels,
+    Checkbox,
+    ConfirmDialog, useConfirm, ConfirmationService, Chip, DatePicker, Toast, ToastService,
 } from "primevue";
 import router from "./router/index.js";
-
 
 const app = createApp(App);
 
@@ -32,7 +37,10 @@ app
     .use(router)
     .use(index)
     .use(PrimeVue, {ripple: true, theme: {preset: Aura }})
+    .use(ConfirmationService)
+    .use(ToastService)
     .component('pv-button', Button)
+    .component('pv-dropdown', Dropdown)
     .component('pv-card', Card)
     .component('pv-select-button', SelectButton)
     .component('pv-menubar', Menubar)
@@ -49,5 +57,16 @@ app
     .component('pv-input-switch', ToggleSwitch)
     .component('ToggleSwitch', ToggleSwitch)
     .component('FileUpload', FileUpload)
+    .component('pv-tabs', Tabs)
+    .component('pv-tab-panel', TabPanel)
+    .component('pv-tab-list', TabList)
+    .component('pv-tab', Tab)
+    .component('pv-tab-panels', TabPanels)
+    .component('pv-check-box', Checkbox)
+    .component('pv-confirm-dialog', ConfirmDialog)
+    .component('useConfirm', useConfirm)
+    .component('pv-chip', Chip)
+    .component('pv-date-picker', DatePicker)
+    .component('pv-toast', Toast)
 
 .mount('#app');

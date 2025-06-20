@@ -1,26 +1,24 @@
-<script setup>
-import {useRouter} from 'vue-router'
+<script setup> import {useRouter} from 'vue-router'
 import {defineProps} from 'vue'
-import {addRestaurantSupplier} from '../services/supplier.service.js'
+import {addRestaurantContact} from '../services/restaurant-contact.service.js'
 
 const router = useRouter()
 const props = defineProps({supplier: {type: Object, required: true}})
-const API_URL = import.meta.env.VITE_API_URL
-const RESTAURANT_ID = 2
+const RESTAURANT_ID = 1
 
 async function addSupplier() {
   try {
-    const checkRes = await fetch(`${API_URL}/restaurant_suppliers?restaurant_id=${RESTAURANT_ID}&supplier_id=${props.supplier.id}`)
-    const existing = await checkRes.json()
-    if (existing.length > 0) {
+    const exists = await checkIfContactExists(RESTAURANT_ID, props.supplier.id)
+    if (exists) {
       console.log('Supplier already added.')
       return
     }
-    await addRestaurantSupplier(props.supplier.id)
-    router.push('/dashboard/restaurant/suppliers?added=true')
+    await addRestaurantContact(props.supplier.id)
+    await router.push('/dashboard/restaurant/suppliers?added=true')
   } catch (error) {
-    console.error('Error checking or adding supplier:', error)
+    console.error('Error adding supplier:', error)
   }
+  console.log('Trying to add supplier ID:', props.supplier.id)
 }
 
 function contactSupplier() {
@@ -28,51 +26,35 @@ function contactSupplier() {
   if (phone) {
     window.open(`https://wa.me/${phone}`, '_blank')
   }
-} </script>
+}
 
+async function checkIfContactExists(restaurantId, supplierId) {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL
+  const contactsPath = import.meta.env.VITE_RESTAURANT_CONTACTS_ENDPOINT_PATH
+  const response = await fetch(`${baseUrl}${contactsPath}?restaurant_id=${restaurantId}&supplier_contact_id=${supplierId}`)
+  const data = await response.json()
+  return data.length > 0
+}
+</script>
 <template><h3 class="mobile-subtitle">Suppliers</h3>
-  <div class="summary-container"> <!-- Columna imagen -->
+  <div class="summary-container">
     <div class="image-column"><h4>{{ supplier.name }}</h4> <img src="/src/assets/images/general_profile_supplier.png"
-                                                                alt="Supplier image"/>
-    </div>
-    <!-- Columna información 1 -->
+                                                                alt="Supplier image"/></div>
     <div class="info-column">
       <p>Name: {{ supplier.name }}</p>
-      <p>RUC: {{ supplier.ruc }}</p>
-      <p>Category: {{ supplier.category }}</p>
-      <p>Status: {{ supplier.status ? 'Active' : 'Inactive' }}</p>
-      <p>Registration Date: {{ supplier.registrationDate }}</p>
-      <p>Last Update: {{ supplier.lastUpdate }}</p>
-    </div>
-
-    <!-- Columna información 2 -->
-    <div class="info-column">
       <p>Email: {{ supplier.email }}</p>
       <p>Phone: {{ supplier.phone }}</p>
       <p>Address: {{ supplier.address }}</p>
-      <p>Contact Person: {{ supplier.contactPerson }}</p>
-      <p>Position: {{ supplier.position }}</p>
+      <p>Business: {{ supplier.business_name }}</p>
     </div>
 
-    <!-- Columna de acciones -->
     <div class="column action-column">
-      <pv-button
-          label="ADD"
-          icon="pi pi-plus-circle"
-          class="summary-btn"
-          @click="addSupplier"
-      />
+      <pv-button label="ADD" icon="pi pi-plus-circle" class="summary-btn" @click="addSupplier"/>
       <br/>
-      <pv-button
-          label="CONTACT"
-          icon="pi pi-phone"
-          class="summary-btn"
-          @click="contactSupplier"
-      />
+      <pv-button label="CONTACT" icon="pi pi-phone" class="summary-btn" @click="contactSupplier"/>
     </div>
   </div>
 </template>
-
 <style scoped> .summary-container {
   display: flex;
   align-items: center;
@@ -111,8 +93,11 @@ function contactSupplier() {
 .summary-btn {
   background-color: #4F8A5B !important;
   color: white !important;
-  border-radius: 2px;
-  margin-top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 .action-column {
@@ -121,7 +106,7 @@ function contactSupplier() {
   align-items: center;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1260px) {
   .summary-container {
     flex-direction: column;
     align-items: center;
@@ -129,6 +114,7 @@ function contactSupplier() {
   }
 
   .mobile-subtitle {
+    margin-top: 3rem;
     display: block;
   }
 
@@ -161,4 +147,5 @@ function contactSupplier() {
   img {
     width: 35%;
   }
-} </style>
+}
+</style>

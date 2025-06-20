@@ -33,12 +33,5 @@ export default {
       @close="$emit('close')"
   >
     <slot />
-
-    <template #footer>
-      <div class="flex justify-content-end gap-2">
-        <pv-button label="Cancel" severity="secondary" @click="$emit('close')" />
-        <pv-button :label="mode === 'create' ? 'Save' : 'Update'" icon="pi pi-check" @click="$emit('save')" />
-      </div>
-    </template>
   </BaseModal>
 </template>

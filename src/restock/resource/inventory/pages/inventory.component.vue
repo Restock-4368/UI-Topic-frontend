@@ -2,8 +2,21 @@
 import inventorySupplyCreateAndEdit from '../components/inventory-supply-create-and-edit.component.vue';
 import inventorySupplyAddAndEdit from '../components/inventory-supply-add-and-edit.component.vue';
 import InventorySupplyCard from '../components/inventory-supply-card.component.vue';
+import { SupplyCategoryService } from '../services/supply-category.service.js';
+import { SupplyCategory } from '../model/supply-category.entity';
+import { UnitMeasurement } from '../model/unit-measurement.entity';
+import { UnitMeasurementService } from '../services/unit-measurement.service';
+import { Supply } from '../model/supply.entity';
+import { SupplyService } from '../services/supply.service';
+import { SupplyBatch } from '../model/supply-batch.entity';
+import { SupplyBatchService } from '../services/supply-batch.service';
+import { SupplyAssembler } from '../services/supply.assembler';
+import { UnitMeasurementAssembler } from '../services/unit-measurement.assembler';
+import { SupplyCategoryAssembler } from '../services/supply-category.assembler';
+import { SupplyBatchAssembler } from '../services/supply-batch.assembler';
 
 export default {
+
   name: 'InventoryComponent',
   components: {
     inventorySupplyCreateAndEdit,
@@ -11,29 +24,35 @@ export default {
     InventorySupplyCard
   },
   computed: {
-    filteredInventory() {
-      const currentInventory = this.role === 'admin' ? this.adminInventory : this.supplierInventory;
-      console.log('Filtered Inventory:', currentInventory);
-      if (!this.search.trim()) return currentInventory;
-      const term = this.search.toLowerCase();
-      return currentInventory.filter(item => item.name.toLowerCase().includes(term));
+    isMobileView() {
+      return this.windowWidth <= 640;
     },
-    currentInventory: {
-      get() {
-        return this.role === 'admin' ? this.adminInventory : this.supplierInventory;
-      },
-      set(newVal) {
-        if (this.role === 'admin') {
-          this.adminInventory = newVal;
-        } else {
-          this.supplierInventory = newVal;
-        }
-      }
-    }
+    filteredInventory() {
+      if (!this.search.trim()) return this.batches;
+      const term = this.search.toLowerCase();
+      return this.batches.filter(item =>
+        item.name.toLowerCase().includes(term) ||
+        (item.category && item.category.toLowerCase().includes(term))
+      );
+    },
+    paginationStart() {
+      return (this.currentPage - 1) * this.itemsPerPage + 1;
+    },
+    paginationEnd() {
+      return Math.min(this.currentPage * this.itemsPerPage, this.filteredInventory.length);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredInventory.length / this.itemsPerPage);
+    },
+    paginatedInventory() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredInventory.slice(start, end);
+    },
   },
   data() {
     return {
-      role: 'supplier',
+      role: 'admin',
       showSupplyModal: false,
       search: '',
       showInventoryModal: false,
@@ -42,334 +61,213 @@ export default {
       supplyToEdit: null,
       itemToDelete: null,
       showDeleteModal: false,
-      newSupply: {
-        name: '',
-        category: null,
-        unit: null,
-        description: ''
-      },
-      categories: ['Verduras', 'Carnes', 'Granos', 'Lácteos', 'Bebidas'],
-      units: ['kg', 'l', 'unidades', 'g', 'ml'],
-      supplies: [
-        {
-          name: 'Tomate',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Tomate fresco, orgánico, ideal para ensaladas y salsas.',
-          min: 15,
-          max: 50,
-          perishable: 'Sí',
-          unitPrice: 20.50
-        },
-        {
-          name: 'Pollo',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Pechuga de pollo sin piel, rica en proteínas, lista para cocinar.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          unitPrice: 12.50
-        },
-        {
-          name: 'Leche',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Leche entera pasteurizada, ideal para consumo diario o recetas.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          unitPrice: 7.50
-        },
-        {
-          name: 'Papa',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Papa blanca andina, firme y versátil para todo tipo de platos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          unitPrice: 7.50
-        },
-        {
-          name: 'Carne molida',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Carne de res molida fresca, perfecta para hamburguesas y guisos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          unitPrice: 10.50
-        },
-        {
-          name: 'Agua mineral',
-          category: 'Bebidas',
-          unit: 'l',
-          description: 'Agua mineral sin gas, purificada, embotellada en origen natural.',
-          min: 10,
-          max: 50,
-          perishable: 'No',
-          unitPrice: 20.50
-        },
-        {
-          name: 'Yogurt',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Yogurt natural sin azúcar, con cultivos vivos, fuente de probióticos.',
-          min: 10,
-          max: 50,
-          perishable: 'No',
-          unitPrice: 15.50
-        },
-        {
-          name: 'Zanahoria',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Zanahoria fresca, crocante y dulce, rica en betacarotenos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          unitPrice: 12.50
-        },
-        {
-          name: 'Lentejas',
-          category: 'Granos',
-          unit: 'kg',
-          description: 'Lentejas secas seleccionadas, ideales para guisos y ensaladas.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          unitPrice: 70.50
-        },
-        {
-          name: 'Cebolla',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Cebolla roja fresca, de sabor intenso, ideal para sofritos y ensaladas.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          unitPrice: 18.50
-        }
-      ],
-      adminInventory: [
-        {
-          name: 'Tomate',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Tomate fresco, orgánico, ideal para ensaladas y salsas.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-06-01',
-          stock: 20
-        },
-        {
-          name: 'Pollo',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Pechuga de pollo sin piel, rica en proteínas, lista para cocinar.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-05-10',
-          stock: 15
-        },
-        {
-          name: 'Leche',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Leche entera pasteurizada, ideal para consumo diario o recetas.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-05-18',
-          stock: 25
-        },
-        {
-          name: 'Papa',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Papa blanca andina, firme y versátil para todo tipo de platos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-06-10',
-          stock: 30
-        },
-        {
-          name: 'Carne molida',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Carne de res molida fresca, perfecta para hamburguesas y guisos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-05-19',
-          stock: 10
-        },
-        {
-          name: 'Agua mineral',
-          category: 'Bebidas',
-          unit: 'l',
-          description: 'Agua mineral sin gas, purificada, embotellada en origen natural.',
-          min: 10,
-          max: 50,
-          perishable: 'No',
-          expiry: null,
-          stock: 50
-        },
-        {
-          name: 'Yogurt',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Yogurt natural sin azúcar, con cultivos vivos, fuente de probióticos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-05-18',
-          stock: 18
-        },
-        {
-          name: 'Zanahoria',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Zanahoria fresca, crocante y dulce, rica en betacarotenos.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-06-12',
-          stock: 22
-        },
-        {
-          name: 'Lentejas',
-          category: 'Granos',
-          unit: 'kg',
-          description: 'Lentejas secas seleccionadas, ideales para guisos y ensaladas.',
-          min: 10,
-          max: 50,
-          perishable: 'No',
-          expiry: null,
-          stock: 40
-        },
-        {
-          name: 'Cebolla',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Cebolla roja fresca, de sabor intenso, ideal para sofritos y ensaladas.',
-          min: 10,
-          max: 50,
-          perishable: 'Sí',
-          expiry: '2025-06-05',
-          stock: 35
-        }
-      ],
-      supplierInventory: [
-        {
-          name: 'Tomate',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Tomate fresco, orgánico, ideal para ensaladas y salsas.',
-          perishable: 'Sí',
-          unitPrice: 2.50,
-          stock: 500,
-          expiry: '2025-06-01'
-        },
-        {
-          name: 'Pollo',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Pechuga de pollo sin piel, rica en proteínas, lista para cocinar.',
-          perishable: 'Sí',
-          unitPrice: 5.75,
-          stock: 300,
-          expiry: '2025-05-10'
-        },
-        {
-          name: 'Leche',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Leche entera pasteurizada, ideal para consumo diario o recetas.',
-          perishable: 'Sí',
-          unitPrice: 1.20,
-          stock: 400,
-          expiry: '2025-05-18'
-        },
-        {
-          name: 'Papa',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Papa blanca andina, firme y versátil para todo tipo de platos.',
-          perishable: 'Sí',
-          unitPrice: 1.10,
-          stock: 450,
-          expiry: '2025-06-10'
-        },
-        {
-          name: 'Carne molida',
-          category: 'Carnes',
-          unit: 'kg',
-          description: 'Carne de res molida fresca, perfecta para hamburguesas y guisos.',
-          perishable: 'Sí',
-          unitPrice: 6.40,
-          stock: 200,
-          expiry: '2025-05-19'
-        },
-        {
-          name: 'Agua mineral',
-          category: 'Bebidas',
-          unit: 'l',
-          description: 'Agua mineral sin gas, purificada, embotellada en origen natural.',
-          perishable: 'No',
-          unitPrice: 0.90,
-          stock: 1000,
-          expiry: null
-        },
-        {
-          name: 'Yogurt',
-          category: 'Lácteos',
-          unit: 'l',
-          description: 'Yogurt natural sin azúcar, con cultivos vivos, fuente de probióticos.',
-          perishable: 'Sí',
-          unitPrice: 1.80,
-          stock: 320,
-          expiry: '2025-05-18'
-        },
-        {
-          name: 'Zanahoria',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Zanahoria fresca, crocante y dulce, rica en betacarotenos.',
-          perishable: 'Sí',
-          unitPrice: 1.30,
-          stock: 380,
-          expiry: '2025-06-12'
-        },
-        {
-          name: 'Lentejas',
-          category: 'Granos',
-          unit: 'kg',
-          description: 'Lentejas secas seleccionadas, ideales para guisos y ensaladas.',
-          perishable: 'No',
-          unitPrice: 2.00,
-          stock: 600,
-          expiry: null
-        },
-        {
-          name: 'Cebolla',
-          category: 'Verduras',
-          unit: 'kg',
-          description: 'Cebolla roja fresca, de sabor intenso, ideal para sofritos y ensaladas.',
-          perishable: 'Sí',
-          unitPrice: 1.60,
-          stock: 420,
-          expiry: '2025-06-05'
-        }
-      ],
+      categories: [],
+      category: new SupplyCategory(),
+      categoryService: new SupplyCategoryService(),
+      units: [],
+      unitMeasurement: new UnitMeasurement(),
+      UnitMeasurementService: new UnitMeasurementService(),
+      supplies: [],
+      supplyBatchService: new SupplyBatchService(),
+      supplyService: new SupplyService(),
+      batches: [],
       providers: ['Proveedor A', 'Proveedor B', 'Proveedor C'],
+      currentPage: 1,
+      itemsPerPage: 5,
+      windowWidth: window.innerWidth
     }
+
+  },
+  mounted() {
+    window.addEventListener('resize', this.handleResize);
+    this.loadCategories();
+    this.loadUnits();
+    this.loadSupplies();
+    this.loadBatchesWithSupply();
+
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
+    async updateBatch(updatedItem) {
+      try {
+        const id = this.selectedInventoryItem.id;
+        const formattedPayload = {
+          supply_id: updatedItem.supply_id,
+          stock: updatedItem.stock,
+          expiration_date: updatedItem.expiration_date,
+          user_id: 2, // Assuming user_id is required, replace with actual user ID logic
+        };
+
+        await this.supplyBatchService.update(id, formattedPayload);
+
+        await this.loadBatchesWithSupply();
+        this.showInventoryModal = false;
+      } catch (error) {
+        console.error('Error al actualizar batch de insumo:', error);
+      }
+    },
+    async deleteBatch() {
+      try {
+        await this.supplyBatchService.delete(this.itemToDelete.id);
+        await this.loadBatchesWithSupply();
+        this.showDeleteModal = false;
+        this.itemToDelete = null;
+      } catch (error) {
+        console.error('Error al eliminar el batch:', error);
+      }
+    },
+    async createSupply(newItem) {
+      try {
+        const payload = {
+          name: newItem.name,
+          description: newItem.description,
+          perishable: newItem.perishable,
+          category_id: newItem.category_id,
+          unit_measurement_id: newItem.unit_measurement_id,
+          min_stock: newItem.min_stock ?? null,
+          max_stock: newItem.max_stock ?? null,
+          price: newItem.price,
+          // Assuming user_id is required, replace with actual user ID logic
+          user_id: 2
+        };
+
+        await this.supplyService.create(payload);
+
+        await this.loadSupplies();
+
+        this.showSupplyModal = false;
+      } catch (error) {
+        console.error('Error al crear el insumo:', error);
+      }
+    },
+    async updateSupply(updatedItem) {
+      try {
+        const id = this.supplyToEdit.id;
+
+        const formattedPayload = {
+          name: updatedItem.name,
+          description: updatedItem.description,
+          perishable: updatedItem.perishable,
+          category_id: updatedItem.category_id,
+          unit_measurement_id: updatedItem.unit_measurement_id,
+          min_stock: updatedItem.min_stock ?? null,
+          max_stock: updatedItem.max_stock ?? null,
+          price: updatedItem.price,
+          user_id: 2 // Assuming user_id is required, replace with actual user ID logic
+        };
+
+        await this.supplyService.update(id, formattedPayload);
+
+        await this.loadSupplies();
+
+        this.showSupplyModal = false;
+      } catch (error) {
+        console.error('Error al actualizar insumo:', error);
+      }
+    },
+    async createBatch(batchData) {
+      try {
+        const payload = {
+          supply_id: batchData.supply_id,
+          stock: batchData.stock,
+          expiration_date: batchData.expiration_date !== undefined ? batchData.expiration_date : null,
+          user_id: 2 // Assuming user_id is required, replace with actual user ID logic
+        };
+        await this.supplyBatchService.create(payload);
+        await this.loadBatchesWithSupply();
+        this.showInventoryModal = false;
+      } catch (error) {
+        console.error('Error al crear el batch:', error);
+      }
+    }
+    ,
+    async loadBatchesWithSupply() {
+      try {
+        const response = await this.supplyBatchService.getAll();
+        const rawBatches = response.data;
+        const enrichedBatches = [];
+
+        for (const b of rawBatches) {
+          const batch = new SupplyBatch(b);
+          try {
+            const supplyResponse = await this.supplyService.getById(batch.supply_id);
+            const supply = new Supply(supplyResponse.data);
+
+            const categoryResponse = await this.categoryService.getById(supply.category_id);
+            supply.category = categoryResponse.data.name;
+
+            const unitResponse = await this.UnitMeasurementService.getById(supply.unit_measurement_id);
+            supply.unit = unitResponse.data.name;
+
+            enrichedBatches.push({
+              ...supply,
+              ...batch,
+              category: supply.category,
+              unit: supply.unit
+            });
+
+          } catch (error) {
+            console.error(`Error al cargar supply/categoría/unidad para batch id ${batch.id}`, error);
+            enrichedBatches.push(batch);
+          }
+        }
+        this.batches = enrichedBatches;
+      } catch (error) {
+        console.error('Error al cargar los batches:', error);
+      }
+    },
+    async loadSupplies() {
+      try {
+        const response = await this.supplyService.getAll();
+        const supplies = SupplyAssembler.toEntitiesFromResponse(response);
+
+        const enrichedSupplies = [];
+
+        for (const supply of supplies) {
+          try {
+            const [categoryResponse, unitResponse] = await Promise.all([
+              this.categoryService.getById(supply.category_id),
+              this.UnitMeasurementService.getById(supply.unit_measurement_id)
+            ]);
+
+            supply.category = categoryResponse.data.name;
+            supply.unit = unitResponse.data.name;
+
+          } catch (error) {
+            console.error(`Error obteniendo detalles de supply con ID ${supply.id}`, error);
+          }
+
+          enrichedSupplies.push(supply);
+        }
+
+        this.supplies = enrichedSupplies;
+        console.log("Estos son los supplies:", this.supplies);
+      } catch (error) {
+        console.error('Error al cargar los supplies:', error);
+      }
+    },
+    async loadCategories() {
+      try {
+        const response = await this.categoryService.getAll();
+        this.categories = SupplyCategoryAssembler.toEntitiesFromResponse(response);
+      } catch (error) {
+        console.error("Error loading categories:", error);
+      }
+    },
+    async loadUnits() {
+      this.UnitMeasurementService.getAll()
+        .then(response => {
+          this.units = UnitMeasurementAssembler.toEntitiesFromResponse(response);
+        })
+        .catch(error => {
+          console.error("Error al cargar las unidades de medida:", error);
+        });
+    },
     openCreateModal() {
       this.isEditing = false;
       this.supplyToEdit = null;
@@ -377,7 +275,7 @@ export default {
     },
     openEditModal(supply) {
       this.isEditing = true;
-      this.supplyToEdit = {...supply};
+      this.supplyToEdit = { ...supply };
       this.showSupplyModal = true;
     },
     openAddModal() {
@@ -386,13 +284,14 @@ export default {
       this.showInventoryModal = true;
     },
     openInventoryEditModal(item) {
-      const matchedSupply = this.supplies.find(s => s.name === item.name);
+      const matchedSupply = this.supplies.find(s => s.id === item.supply_id);
 
       this.selectedInventoryItem = {
+        id: item.id,
         supply: matchedSupply || null,
         stock: item.stock,
         provider: item.provider || null,
-        expiry: item.expiry || null
+        expiry: item.expiration_date || null
       };
 
       this.isEditing = true;
@@ -402,209 +301,132 @@ export default {
       this.itemToDelete = item;
       this.showDeleteModal = true;
     },
-    deleteInventoryItem() {
-      this.currentInventory = this.currentInventory.filter(i =>
-          !(
-              i.name === this.itemToDelete.name &&
-              i.stock === this.itemToDelete.stock &&
-              i.expiry === this.itemToDelete.expiry
-          )
-      );
-      this.showDeleteModal = false;
-      this.itemToDelete = null;
-    }
-    ,
-    createSupply(newItem) {
-      this.supplies.push({...newItem});
-      this.showSupplyModal = false;
-    },
-    updateSupply(updatedItem) {
-      const index = this.supplies.findIndex(s => s.name === updatedItem.name);
-      if (index !== -1) {
-        this.supplies[index] = {...updatedItem};
-      }
-      this.showSupplyModal = false;
-    },
-    handleInventoryUpdate(updatedItem) {
-      const index = this.currentInventory.findIndex(i => i.name === updatedItem.name);
-      if (index !== -1) {
-        this.currentInventory[index] = {...updatedItem};
-      }
-      this.showInventoryModal = false;
-    },
-    handleCreateSupply(newInventoryItem) {
-      this.currentInventory.push(newInventoryItem);
-      this.showInventoryModal = false;
-    },
-    getRowClass(data) {
-      if (!data.expiry) {
-        return '';
-      }
-
-      const today = new Date();
-      const expiryDate = new Date(data.expiry);
-
-      if (expiryDate < today) {
-        return 'expired-row';
-      }
-
-      return '';
+    getExpirationRowClass(data) {
+      return data.expiration_date && new Date(data.expiration_date) < new Date() ? 'expired-row' : '';
     }
   }
 
 }
-
 </script>
 
 <template>
-  <div class="">
+  <div>
     <div class="flex flex-column gap-4">
 
       <div class="surface-card shadow-4 p-4 border-round-3xl">
-        <div
-            class="px-3 py-1 rounded font-semibold text-white w-max"
-            :class="role === 'admin' ? 'bg-green-600' : 'bg-blue-600'"
-        >
-          {{ role }}
-        </div>
-        <div class="flex justify-content-between align-items-center mb-4">
-          <h1>Supplies</h1>
-          <pv-button label="CREAR" icon="pi pi-plus-circle" @click="openCreateModal" class="green-button"/>
+        <div class="flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+          <h1 class="m-0 w-full sm:w-auto text-lg font-semibold">
+            {{ $t('inventory.supplies-catalog-title') }}
+          </h1>
 
+          <pv-button :label="$t('inventory.create-button')" icon="pi pi-plus-circle" @click="openCreateModal"
+            class="green-button w-full sm:w-auto" />
         </div>
 
-        <div v-if="supplies.length === 0" class="text-center">
-          <p>Aún no has agregado insumos. Añádelos para comenzar a gestionar tu inventario.</p>
-          <pv-button label="CREAR INSUMO" icon="pi pi-plus-circle" class="mt-2" @click="openCreateModal"/>
+        <div v-if="supplies.length === 0"
+          class="flex flex-column align-items-center justify-content-center text-center gap-2 p-3">
+          <p class="text-sm sm:text-base font-light m-0">
+            {{ $t('inventory.supplies-catalog-create-and-edit-modal.not-supplies') }}
+          </p>
+          <pv-button :label="$t('inventory.create-button')" icon="pi pi-plus-circle"
+            class="green-button w-full sm:w-auto" @click="openCreateModal" />
         </div>
-
         <div v-else>
-          <pv-carousel :value="supplies" :numVisible="3" :numScroll="1" :showIndicators="false">
+          <pv-carousel :value="supplies" :numVisible="3" :numScroll="1" :showIndicators="isMobileView"
+            :showNavigators="!isMobileView" :responsiveOptions="[
+              { breakpoint: '960px', numVisible: 2, numScroll: 1 },
+              { breakpoint: '640px', numVisible: 1, numScroll: 1 }
+            ]">
             <template #item="slotProps">
-              <inventory-supply-card
-                  :supply="slotProps.data"
-                  @edit="openEditModal"
-              />
+              <inventory-supply-card :supply="slotProps.data" @edit="openEditModal" />
             </template>
           </pv-carousel>
         </div>
       </div>
 
       <div class="surface-card p-4 border-round-3xl">
-        <div class="flex justify-content-around align-items-center mb-4">
-          <h1 class="m-0">Inventory</h1>
+        <div class="flex flex-wrap gap-3 justify-between align-items-center mb-4">
 
-          <pv-input-text v-model="search" placeholder="Buscar insumo" style="width: 400px" class="font-light"/>
-          <pv-button label="AÑADIR" icon="pi pi-plus-circle" @click="openAddModal" class="green-button"/>
+          <h1 class="m-0 w-full lg:w-auto text-lg font-semibold">
+            {{ $t('inventory.supplies-inventory-title') }}
+          </h1>
 
+          <pv-input-text v-model="search" :placeholder="$t('inventory.supplies-inventory-placeholder')"
+            class="font-light w-full sm:w-10 md:w-8 lg:w-5" />
 
-          <div class="flex align-items-center gap-2">
-            <span>1-5 de 10</span>
-            <pv-button icon="pi pi-angle-left" text/>
-            <pv-button icon="pi pi-angle-right" text/>
+          <pv-button :label="$t('inventory.add-button')" icon="pi pi-plus-circle" @click="openAddModal"
+            class="green-button w-full sm:w-auto" />
+
+          <div class="flex align-items-center gap-2 w-full sm:w-auto justify-content-center sm:justify-content-end">
+            <span class="text-sm">{{ paginationStart }}-{{ paginationEnd }} de {{ filteredInventory.length }}</span>
+            <pv-button icon="pi pi-angle-left" text :disabled="currentPage === 1" @click="currentPage--" />
+            <pv-button icon="pi pi-angle-right" text :disabled="currentPage >= totalPages" @click="currentPage++" />
           </div>
         </div>
-        <div style="max-height: 300px; overflow-y: auto;">
-          <pv-data-table
-              :value="filteredInventory"
-              responsiveLayout="scroll"
-              :rowClass="(data) => getRowClass(data)"
-              class="overflow-x-auto"
-          >
-            <pv-column field="name" header="Insumos"/>
-            <pv-column field="category" header="Categoría"/>
-            <pv-column field="unit" header="Unidad de medida"/>
-            <pv-column field="expiry" header="Fecha de caducidad"/>
-            <pv-column field="stock" header="Stock"/>
-            <pv-column v-if="role === 'admin'" field="min" header="Stock Mínimo"/>
-            <pv-column v-if="role === 'admin'" field="max" header="Stock Máximo"/>
-            <pv-column field="perishable" header="Perecible"/>
-            <pv-column header="Acciones">
+        <div style="overflow-x: auto; background: white; border-radius: 8px; padding: 16px; max-height: 400px;">
+          <pv-data-table :value="paginatedInventory" :rowClass="(data) => getExpirationRowClass(data)" scrollable
+            scrollHeight="300px" responsiveLayout="scroll" style="min-width: 900px; font-size: 14px;">
+
+            <pv-column field="name" :header="$t('inventory.table.supply')" />
+            <pv-column field="category" :header="$t('inventory.table.category')" />
+            <pv-column field="unit" :header="$t('inventory.table.unit')" />
+            <pv-column field="expiration_date" :header="$t('inventory.table.expiration-date')" />
+            <pv-column field="stock" :header="$t('inventory.table.stock')" />
+
+            <pv-column v-if="role === 'admin'" field="min_stock" :header="$t('inventory.table.minimum-stock')" />
+            <pv-column v-if="role === 'admin'" field="max_stock" :header="$t('inventory.table.maximum-stock')" />
+
+            <pv-column field="perishable" :header="$t('inventory.table.pereshible')" />
+            <pv-column :header="$t('inventory.table.actions')" style="min-width: 120px;">
               <template #body="slotProps">
-                <pv-button
-                    icon="pi pi-pen-to-square"
-                    text
-                    @click="() => {openInventoryEditModal(slotProps.data) }"
-                />
-                <pv-button
-                    icon="pi pi-trash"
-                    text
-                    severity="danger"
-                    @click="() => confirmDelete(slotProps.data)"
-                />
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                  <pv-button icon="pi pi-pen-to-square" text style="color: #16a34a;"
+                    @click="() => openInventoryEditModal(slotProps.data)" />
+                  <pv-button icon="pi pi-trash" text severity="danger" style="color: #dc2626;"
+                    @click="() => confirmDelete(slotProps.data)" />
+                </div>
               </template>
             </pv-column>
+
           </pv-data-table>
         </div>
 
       </div>
     </div>
 
-    <pv-dialog
-        :visible="showDeleteModal"
-        modal
-        header="Eliminar insumo del inventario"
-        style="width: 450px"
-        @update:visible="showDeleteModal = $event"
-    >
+    <pv-dialog :visible="showDeleteModal" modal :header="$t('inventory.supplies-inventory-delete-modal.title')"
+      style="width: 450px" @update:visible="showDeleteModal = $event">
       <div class="p-1">
-        <p class="font-light">
-          Está a punto de eliminar el insumo
-          <strong>“{{ itemToDelete?.name }}”</strong> con
-          <strong>{{ itemToDelete?.stock }} {{ itemToDelete?.unit }}</strong>
-          en el inventario de forma permanente. <br/>
-          Esta acción es irreversible y no podrá recuperarse luego.
+        <p class="font-light" style="white-space: pre-line;">
+          {{ $t('inventory.supplies-inventory-delete-modal.delete-message', {
+            name: itemToDelete?.name,
+            quantity: `${itemToDelete?.stock} ${itemToDelete?.unit}`
+          }) }}
         </p>
       </div>
       <template #footer>
         <div class="flex justify-content-end gap-2">
-          <pv-button
-              label="CONFIRMAR"
-              severity="success"
-              @click="deleteInventoryItem"
-              class="green-button"
-          />
-          <pv-button
-              label="CANCELAR"
-              severity="danger"
-              @click="showDeleteModal = false"
-              class="red-button"
-          />
+          <pv-button :label="$t('inventory.supplies-inventory-delete-modal.cancel-button')" severity="danger"
+            @click="showDeleteModal = false" class="red-button" />
+          <pv-button :label="$t('inventory.supplies-inventory-delete-modal.confirm-button')" severity="success"
+            @click="deleteBatch" class="green-button" />
         </div>
       </template>
     </pv-dialog>
 
-    <inventory-supply-create-and-edit
-        :role="role"
-        :visible="showSupplyModal"
-        :isEdit="isEditing"
-        :supplyToEdit="supplyToEdit"
-        :categories="categories"
-        :units="units"
-        @create="createSupply"
-        @update="updateSupply"
-        @cancel="showSupplyModal = false"
-        @update:visible="showSupplyModal = $event"
-    />
-    <inventorySupplyAddAndEdit
-        :role="role"
-        :visible="showInventoryModal"
-        :isEdit="isEditing"
-        :itemToEdit="selectedInventoryItem"
-        :supplies="supplies"
-        :providers="providers"
-        :isPerishable="selectedInventoryItem?.perishable === 'Sí'"
-        @create="handleCreateSupply"
-        @update:visible="showInventoryModal = $event"
-        @update="handleInventoryUpdate"
-        @cancel="showInventoryModal = false"
-    />
+
+    <inventory-supply-create-and-edit :role="role" :visible="showSupplyModal" :isEdit="isEditing"
+      :supplyToEdit="supplyToEdit" :categories="categories" :units="units" @create="createSupply" @update="updateSupply"
+      @cancel="showSupplyModal = false" @update:visible="showSupplyModal = $event" />
+    <inventorySupplyAddAndEdit :role="role" :visible="showInventoryModal" :isEdit="isEditing"
+      :itemToEdit="selectedInventoryItem" :supplies="supplies" :providers="providers" @create="createBatch"
+      @update:visible="showInventoryModal = $event" @update="updateBatch" @cancel="showInventoryModal = false" />
   </div>
 </template>
 
 <style>
 h1 {
-  font-weight: 400; /* Regular */
+  font-weight: 400;
   font-size: 23px;
 }
 

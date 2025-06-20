@@ -1,7 +1,24 @@
-<script> import SupplierModal from '../components/supplier-modal.component.vue'
+<script>
+import SupplierModal from '../components/supplier-modal.component.vue'
+import {getRestaurantSuppliers} from "../services/restaurant-contact.service.js";
+import InputText from 'primevue/inputtext'
+import Select from 'primevue/select'
+import ToggleSwitch from 'primevue/toggleSwitch'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Button from 'primevue/button'
 
 export default {
-  name: 'RestaurantSupplierOverview', components: {SupplierModal}, data() {
+  name: 'RestaurantSupplierOverview', components: {
+    SupplierModal,
+    'pv-input-text': InputText,
+    'pv-dropdown': Select,
+    'pv-input-switch': ToggleSwitch,
+    'pv-data-table': DataTable,
+    'pv-column': Column,
+    'pv-button': Button
+  },
+  data() {
     return {
       searchText: '',
       selectedCategory: '',
@@ -14,13 +31,16 @@ export default {
   }, computed: {
     filteredSuppliers() {
       return this.suppliers.filter(s => {
-        const matchesText = s.name.toLowerCase().includes(this.searchText.toLowerCase())
-        const matchesCategory = this.selectedCategory ? s.category === this.selectedCategory : true
-        const matchesStatus = this.onlyActive ? s.status === true : true
-        return matchesText && matchesCategory && matchesStatus
-      })
+        const matchesText = s.name.toLowerCase().includes(this.searchText.toLowerCase());
+        const matchesCategory = this.selectedCategory
+            ? s.categories.includes(this.selectedCategory)
+            : true;
+        const matchesStatus = this.onlyActive ? s.status === true : true;
+        return matchesText && matchesCategory && matchesStatus;
+      });
     }
-  }, mounted() {
+  },
+  mounted() {
     this.checkViewport()
     window.addEventListener('resize', this.checkViewport)
     const added = this.$route.query.added
@@ -38,27 +58,11 @@ export default {
     },
     async loadSuppliers() {
       try {
-        const API_URL = import.meta.env.VITE_API_URL
-        const response = await fetch(`${API_URL}/restaurant_suppliers?restaurant_id=2`)
-        const links = await response.json()
-        const supplierPromises = links.map(link =>
-            fetch(`${API_URL}/users/${link.supplier_id}`).then(r => r.json())
-        )
-
-        const supplierData = await Promise.all(supplierPromises)
-
-        this.suppliers = supplierData.map(s => ({
-          id: s.id,
-          name: s.name,
-          email: s.email,
-          category: s.category || 'Uncategorized',
-          status: s.status ?? true,
-          added: true
-        }))
-
-        this.categories = [...new Set(this.suppliers.map(s => s.category))]
+        this.suppliers = await getRestaurantSuppliers();
+        const allCategories = this.suppliers.flatMap(s => s.categories);
+        this.categories = [...new Set(allCategories)];
       } catch (error) {
-        console.error('Error loading suppliers from backend:', error)
+        console.error('Error loading suppliers from backend:', error);
       }
     },
     goToDetail(id) {
@@ -66,7 +70,9 @@ export default {
     }
   }
 }
+
 </script>
+
 <template>
   <div class="supplier-container"> <!-- Desktop header -->
     <div class="desktop-only" v-if="!isMobile">
@@ -75,26 +81,13 @@ export default {
           <pv-input-text v-model="searchText" placeholder="Search supplier" class="filter-input">
             <template #prepend><i class="pi pi-search"/></template>
           </pv-input-text>
-          <pv-dropdown
-              :options="categories"
-              v-model="selectedCategory"
-              placeholder="Category"
-              class="filter-select"
-          />
-
+          <pv-dropdown :options="categories" v-model="selectedCategory" placeholder="Category" class="filter-select"/>
           <pv-input-switch v-model="onlyActive" :disabled="!suppliers.length"/>
-          <label class="ml-2">Show only actives</label>
-        </div>
-
-        <pv-button
-            label="ADD"
-            icon="pi pi-plus-circle"
-            class="new-supplier-btn"
-            @click="showAddSupplierModal = true"
-        />
+          <label class="ml-2">Show only actives</label></div>
+        <pv-button label="ADD" icon="pi pi-plus-circle" class="new-supplier-btn"
+                   @click="showAddSupplierModal = true"/>
       </div>
     </div>
-
     <!-- Mobile header -->
     <div class="mobile-only" v-else>
       <div class="top-row">
@@ -131,7 +124,11 @@ export default {
       <h5 class="table-title">Supplier list</h5>
       <pv-data-table :value="filteredSuppliers" responsiveLayout="scroll" class="supplier-table">
         <pv-column field="name" header="Name"/>
-        <pv-column field="category" header="Category"/>
+        <pv-column header="Category">
+          <template #body="slotProps">
+            {{ slotProps.data.categories.join(', ') }}
+          </template>
+        </pv-column>
         <pv-column field="email" header="Email"/>
         <pv-column header="">
           <template #body="slotProps">
@@ -165,11 +162,6 @@ export default {
 .new-supplier-btn {
   background-color: #4F8A5B !important;
   color: white !important;
-  border-radius: 2px;
-  padding: 15px 30px;
-}
-
-.btn-content {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -200,7 +192,7 @@ export default {
 }
 
 .p-datatable thead th {
-  background-color: #f9f9f9;
+  background-color: #ffff;
   color: #757575;
   font-weight: 600;
   border-right: none;
@@ -257,10 +249,6 @@ export default {
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
-  }
-
-  .full-width {
-    width: 100%;
   }
 }
 

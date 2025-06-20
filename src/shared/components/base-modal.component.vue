@@ -19,12 +19,22 @@ export default {
   <pv-dialog
       :visible="modelValue"
       :modal="true"
-      :header="title"
-      :closable="closable"
+      :header="false"
+      :closable="false"
       :style="{ width: width }"
       @update:visible="$emit('update:modelValue', $event)"
       @hide="$emit('close')"
   >
+
+    <div class="modal-header flex justify-between items-start w-full mb-4">
+      <h2 class="text-xl font-semibold">{{ title }}</h2>
+      <pv-button
+          icon="pi pi-times"
+          class="p-button-rounded p-button-text p-button-sm ml-auto"
+          @click="$emit('close')"
+      />
+    </div>
+
     <slot />
     <template #footer>
       <slot name="footer" />

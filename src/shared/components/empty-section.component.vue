@@ -6,14 +6,15 @@ export default {
 
 <template>
   <div class="empty-section">
-    <div class="empty-section__icon">
-      <slot name="icon">
-        <i class="pi pi-clipboard" style="font-size: 3rem; color: #6b6a6a;"></i>
-      </slot>
-    </div>
     <div class="empty-section__text">
       <slot>
         No data available.
+      </slot>
+    </div>
+    <p></p>
+    <div class="empty-section__icon">
+      <slot name="icon">
+        <i class="pi pi-clipboard" style="font-size: 3rem; color: #6b6a6a;"></i>
       </slot>
     </div>
   </div>

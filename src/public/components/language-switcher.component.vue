@@ -17,13 +17,13 @@ export default {
 }
 </script>
 <template>
-  <button
+  <pv-button
       @click="toggle"
-      class="w-3 h-10 bg-green-700 hover:bg-green-800 rounded-full flex items-center justify-center text-white"
+      class="w-3 h-10 green-button hover:bg-green-800 rounded-full flex items-center justify-center text-white"
       :aria-label="$t('language.switch')"
   >
     <i class="pi pi-globe text-base" />
-  </button>
+  </pv-button>
 </template>
 
 <style scoped>

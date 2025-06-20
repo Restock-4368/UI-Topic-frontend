@@ -1,33 +1,22 @@
+import httpInstance from "../../../../shared/services/http.instance.js";
 import {BaseService} from "../../../../shared/services/base.service.js";
-import {Supply} from "../model/supply.entity.js";
 
-
+/**
+ * @class SupplyService
+ * @description Service class for handling CRUD operations on supplies using HTTP requests
+ */
 export class SupplyService extends BaseService {
-    constructor() {
-        super(import.meta.env.VITE_SUPPLIES_ENDPOINT_PATH); // e.g. '/api/v1/supplies'
-    }
+  /** @type {string} The API endpoint for supplies */
+  resourceEndpoint = import.meta.env.VITE_SUPPLIES_ENDPOINT_PATH;
 
-    async getAll() {
-        const response = await super.getAll();
-        return response.data.map(s => new Supply(s));
-    }
+  /**
+   * Retrieves supplies by description
+   * @param {string} description - The description to search for
+   * @returns {Promise<AxiosResponse<any>>} Promise that resolves to an array of matching supplies
+   */
+  getByDescription(description) {
+    return httpInstance.get(`${this.resourceEndpoint}?description=${encodeURIComponent(description)}`);
+  }
 
-    async getById(id) {
-        const response = await super.getById(id);
-        return new Supply(response.data);
-    }
 
-    async create(supplyData) {
-        const response = await super.create(supplyData);
-        return new Supply(response.data);
-    }
-
-    async update(id, supplyData) {
-        const response = await super.update(id, supplyData);
-        return new Supply(response.data);
-    }
-
-    async delete(id) {
-        return await super.delete(id);
-    }
 }

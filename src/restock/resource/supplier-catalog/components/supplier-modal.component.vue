@@ -1,41 +1,29 @@
-<script>
-import {defineComponent, ref, onMounted, onBeforeUnmount, computed} from 'vue'
+<script setup> import {ref, onMounted, onBeforeUnmount, computed} from 'vue'
 import {useRouter} from 'vue-router'
+import {getAllSuppliers} from '../services/supplier.service.js'
 
-export default defineComponent({
-  name: 'SupplierModal', emits: ['close'], setup(_, {emit}) {
-    const router = useRouter()
-    const searchText = ref('')
-    const isMobile = ref(false)
-    const suppliers = ref([])
-    const API_URL = import.meta.env.VITE_API_URL
-    const loadSuppliersFromApi = async () => {
-      try {
-        const response = await fetch(`${API_URL}/users?role_id.name=supplier`)
-        const data = await response.json()
-        suppliers.value = data.map(s => ({id: s.id, name: s.name, email: s.email, address: s.address || '-',}))
-      } catch (error) {
-        console.error('Error loading suppliers:', error)
-      }
-    }
-    const filteredSuppliers = computed(() => suppliers.value.filter(s => s.name.toLowerCase().includes(searchText.value.toLowerCase())))
-    const getColumns = computed(() => isMobile.value ? ['name', 'email', 'catalog'] : ['name', 'email', 'address', 'catalog'])
-    const goToDetail = (id) => {
-      router.push(`/dashboard/restaurant/suppliers/${id}`)
-    }
-    const checkViewport = () => {
-      isMobile.value = window.innerWidth <= 800
-    }
-    onMounted(() => {
-      checkViewport()
-      window.addEventListener('resize', checkViewport)
-      loadSuppliersFromApi()
-    })
-    onBeforeUnmount(() => {
-      window.removeEventListener('resize', checkViewport)
-    })
-    return {searchText, suppliers, filteredSuppliers, isMobile, getColumns, goToDetail, emit}
-  }
+const router = useRouter()
+const searchText = ref('')
+const suppliers = ref([])
+const isMobile = ref(false)
+const filteredSuppliers = computed(() =>
+    suppliers.value.filter(s => (s.name || '').toLowerCase().includes(searchText.value.toLowerCase()))
+)
+const getColumns = computed(() => isMobile.value ? ['name', 'email', 'catalog'] : ['name', 'email', 'address', 'catalog'])
+const goToDetail = id => router.push(`/dashboard/restaurant/suppliers/${id}`)
+
+
+function checkViewport() {
+  isMobile.value = window.innerWidth <= 800
+}
+
+onMounted(async () => {
+  checkViewport()
+  window.addEventListener('resize', checkViewport)
+  suppliers.value = await getAllSuppliers()
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', checkViewport)
 })
 </script>
 <template>
@@ -44,15 +32,11 @@ export default defineComponent({
       <p>Fill in the details of the new supplier to add it to your list.</p>
       <div class="flex">
         <pv-input-text v-model="searchText" placeholder="Search supplier" class="filter-field">
-          <template #prepend><i class="pi pi-search"/></template>
+          <template #prefix><i class="pi pi-search"/></template>
         </pv-input-text>
       </div>
 
-      <pv-data-table
-          :value="filteredSuppliers"
-          responsiveLayout="scroll"
-          class="full-width-table"
-      >
+      <pv-data-table :value="filteredSuppliers" responsiveLayout="scroll" class="full-width-table">
         <pv-column v-if="getColumns.includes('name')" field="name" header="Name"/>
         <pv-column v-if="getColumns.includes('email')" field="email" header="Email"/>
         <pv-column v-if="getColumns.includes('address')" field="address" header="Address"/>
@@ -64,12 +48,7 @@ export default defineComponent({
       </pv-data-table>
 
       <div class="modal-actions">
-        <pv-button
-            label="CANCEL"
-            icon="pi pi-times"
-            severity="danger"
-            @click="emit('close')"
-        />
+        <pv-button label="CANCEL" icon="pi pi-times" severity="danger" @click="$emit('close')"/>
       </div>
     </div>
   </div>

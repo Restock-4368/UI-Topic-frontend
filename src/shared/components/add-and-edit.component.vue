@@ -5,8 +5,9 @@ export default {
   name: 'AddAndEditForm',
   components: {PvInputNumber, PvInputText},
   props: {
-    schema: { type: Array, required: true }, // [{ name, label, type, placeholder }]
+    schema: { type: Array, required: true },
     initialData: { type: Object, default: () => ({}) },
+    mode: { type: String, default: 'create' }
   },
   emits: ['submit'],
   data() {
@@ -17,17 +18,25 @@ export default {
   methods: {
     handleUpload(event, fieldName) {
       const file = event.files[0];
-      const reader = new FileReader();
 
-      reader.onload = (e) => {
-        const base64 = e.target.result;
-        this.form[fieldName] = base64;
-      };
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'uitopic');
 
-      reader.readAsDataURL(file);
+      fetch('https://api.cloudinary.com/v1_1/dvspiemtu/image/upload', {
+        method: 'POST',
+        body: formData
+      })
+          .then(res => res.json())
+          .then(data => {
+            console.log('Image uploaded:', data.secure_url);
+            this.form[fieldName] = data.secure_url;
+          })
+          .catch(err => {
+            console.error('Upload failed:', err);
+          });
     }
   }
-
 };
 </script>
 
@@ -50,9 +59,14 @@ export default {
           v-model="form[field.name]"
           :id="field.name"
           :placeholder="field.placeholder"
+          :mode="field.format === 'currency' ? 'currency' : 'decimal'"
+          :currency="field.format === 'currency' ? 'PEN' : null"
+          :locale="'es-PE'"
+          :useGrouping="true"
+          :minFractionDigits="field.format === 'currency' ? 2 : 0"
+          :maxFractionDigits="field.format === 'currency' ? 2 : 0"
           class="w-full"
       />
-
       <pv-input-switch
           v-else-if="field.type === 'boolean'"
           v-model="form[field.name]"
@@ -61,14 +75,34 @@ export default {
 
       <FileUpload
           v-if="field.type === 'file'"
+          name="file"
           mode="basic"
           customUpload
+          auto
           accept="image/*"
-          chooseLabel="Upload Image"
+          class="green-button"
           @uploader="event => handleUpload(event, field.name)"
       />
-      <!-- Add more if you need -->
 
+
+      <div v-if="field.type === 'file' && form[field.name]" class="mt-3">
+        <img
+            :src="form[field.name]"
+            alt="Preview"
+            style="max-width: 100%; border-radius: 10px;"
+        />
+      </div>
+    </div>
+
+    <slot name="extension" :form="form" />
+
+    <div class="flex justify-content-end mt-4">
+      <pv-button
+          :label="mode === 'create' ? 'Save' : 'Update'"
+          icon="pi pi-check"
+          type="submit"
+          class="green-button"
+      />
     </div>
   </form>
 </template>

@@ -22,50 +22,55 @@ export default defineComponent({
   </div>
 </template>
 
-<style scoped>
+<style>
 .restaurant-summary-overview {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding: 2rem;
+  max-width: 1260px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.summary-row {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
 }
 
 .summary-row-1 {
   display: flex;
   gap: 1.5rem;
+  width: 100%;
 }
 
 .summary-row-2 {
   display: flex;
+  width: 100%;
 }
 
 .widget-pending {
-  flex: 2;/* 66% aprox */
+  flex: 2;
+  min-width: 0;
 }
 
 .widget-alerts {
-  flex: 1; /* 33% aprox */
+  flex: 1;
+  min-width: 0;
 }
 
 .widget-supplies {
   width: 100%;
-  max-width: 1400px;
 }
 
 @media (max-width: 1190px) {
-  .summary-row-1 {
+  .summary-row-1, .summary-row-2 {
     flex-direction: column;
   }
 
-  .widget-pending,
-  .widget-alerts,
-  .widget-supplies {
+  .widget-pending, .widget-alerts, .widget-supplies {
     width: 100% !important;
-
   }
-
-  .summary-row-2 {
-    flex-direction: column;
-  }
-}
-</style>
+} </style>
