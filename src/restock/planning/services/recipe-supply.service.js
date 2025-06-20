@@ -9,22 +9,22 @@ export class RecipeSupplyService extends BaseService {
         return httpInstance.get(`${this.resourceEndpoint}/${recipeId}/supplies`);
     }
 
-
     async bulkCreate(recipeId, supplies) {
         return httpInstance.post(
             `${this.resourceEndpoint}/${recipeId}/supplies`, supplies);
     }
 
-    deleteById(recipeId, id) {
-        return httpInstance.delete(`${this.resourceEndpoint}/${recipeId}/supplies/${id}`);
+    deleteById(recipeId, supplyId) {
+        return httpInstance.delete(`${this.resourceEndpoint}/${recipeId}/supplies/${supplyId}`);
     }
 
     async deleteByRecipe(recipeId) {
         const response = await this.getByRecipe(recipeId);
         const recipeSupplies = response.data;
-        const deletions = recipeSupplies.map(rs => this.delete(rs.id));
+        const deletions = recipeSupplies.map(rs => this.deleteById(recipeId, rs.supply_id));
         return Promise.all(deletions);
     }
+
 
     updateById(recipeId, id, data) {
         return httpInstance.put(

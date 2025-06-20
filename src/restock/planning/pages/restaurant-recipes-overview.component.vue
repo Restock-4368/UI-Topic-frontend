@@ -92,7 +92,10 @@ export default {
     },
     openCreateDialog() {
       this.editMode = 'create';
-      this.formModel = { supplies: [] };
+      this.formModel = {
+        supplies: [],
+        user_id: 1
+      };
       this.formVisible = true;
     },
     async openEditDialog(recipe) {
@@ -106,36 +109,38 @@ export default {
       this.formVisible = false;
     },
     async submitForm(form) {
+      console.log("FORM SUBMIT:", form);
+
       if (this.editMode === 'create') {
         const response = await this.recipeService.create(form);
         const created = RecipeAssembler.toEntityFromResponse(response);
-        await this.recipeSupplyService.bulkCreate(created.id, form.supplies);
 
-        for (const supply of form.supplies) {
-          await this.recipeSupplyService.create(created.id, supply);
-        }
+        await this.recipeSupplyService.bulkCreate(created.id, form.supplies);
       } else {
-        await this.recipeService.update(form.id, form);
+        console.log("EDIT MODE - ID:", form.id);
         await this.recipeSupplyService.deleteByRecipe(form.id);
-        for (const supply of form.supplies) {
-          await this.recipeSupplyService.create(form.id, supply);
-        }
+        await this.recipeSupplyService.bulkCreate(form.id, form.supplies);
+        await this.recipeService.update(form.id, form);
       }
 
       await this.loadRecipes();
       this.closeForm();
     },
+
     openDeleteDialog(recipe) {
       this.selectedRecipe = recipe;
       this.deleteVisible = true;
     },
     async confirmDelete() {
-      await this.recipeSupplyService.deleteByRecipe(this.selectedRecipe.id);
       await this.recipeService.delete(this.selectedRecipe.id);
+      await this.recipeSupplyService.deleteByRecipe(this.selectedRecipe.id);
       this.deleteVisible = false;
       this.selectedRecipe = null;
       await this.loadRecipes();
     },
+    getCurrentUserId() {
+      //TODO
+    }
   },
 };
 </script>
@@ -178,12 +183,12 @@ export default {
 
 
     <!-- Empty -->
-    <EmptySection v-if="filteredRecipes.length === 0">
+    <empty-section v-if="filteredRecipes.length === 0">
       <template #icon>
         <i class="pi pi-clipboard" style="font-size: 3rem; color: #bcbcbc;"></i>
       </template>
       You currently have no recipes registered. Create a new recipe to start organizing your preparations and better manage your ingredients from this section.
-    </EmptySection>
+    </empty-section>
 
     <!-- Grid -->
     <div v-else class="recipes-grid">
