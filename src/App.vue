@@ -1,14 +1,17 @@
 <script>
 import Sidebar from './public/components/sidebar.component.vue'
+import NavBar from "./public/components/nav-bar.component.vue";
 
 export default {
   name: 'App',
-  components: { Sidebar },
+  components: {NavBar, Sidebar },
 }
 </script>
 
 <template>
   <div class="layout-container">
+    <nav-bar></nav-bar>
+
     <!-- Sidebar fija al lado izquierdo -->
     <aside>
       <Sidebar />
@@ -27,14 +30,34 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style >
+/* En tu main.css o app.css */
+.p-multiselect-panel {
+  background-color: white !important;
+}
+
+.p-multiselect-items {
+  background-color: white !important;
+}
+
+.p-multiselect-item {
+  background-color: white !important;
+  color: #333 !important;
+}
+
+.p-multiselect-item:hover {
+  background-color: #f5f5f5 !important;
+}
+
+.p-multiselect-item.p-highlight {
+  background-color: #2D5A34 !important;
+  color: white !important;
+}
 .layout-container {
   display: flex;
   height: 100vh;
   
 }
-
-
 
 .main-content {
   flex-grow: 1;
