@@ -4,6 +4,8 @@ import App from './App.vue'
 import index from "./i18n/index.js";
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
+import Material from '@primeuix/themes/material';
+
 import 'primeicons/primeicons.css'
 import 'primeflex/primeflex.css'
 import {
@@ -27,7 +29,7 @@ import {
     Tabs,
     TabPanel, TabList, Tab, TabPanels,
     Checkbox,
-    ConfirmDialog, useConfirm, ConfirmationService, Chip, DatePicker, Toast, ToastService,
+    ConfirmDialog, useConfirm, ConfirmationService, Chip, DatePicker, Toast, ToastService, MultiSelect,
 } from "primevue";
 import router from "./router/index.js";
 
@@ -36,7 +38,7 @@ const app = createApp(App);
 app
     .use(router)
     .use(index)
-    .use(PrimeVue, {ripple: true, theme: {preset: Aura }})
+    .use(PrimeVue, {ripple: true, theme: {preset: Material }})
     .use(ConfirmationService)
     .use(ToastService)
     .component('pv-button', Button)
@@ -68,5 +70,6 @@ app
     .component('pv-chip', Chip)
     .component('pv-date-picker', DatePicker)
     .component('pv-toast', Toast)
+    .component('pv-multiselect', MultiSelect)
 
 .mount('#app');
