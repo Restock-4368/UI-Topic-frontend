@@ -13,7 +13,7 @@ const RoleRedirect = () => import('../public/components/role-redirect.component.
 const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplier-summary-overview.component.vue')
 const RestaurantSupplierOverview = () => import('../restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
 const RestaurantSupplierDetail = () => import('../restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
-const RestaurantAlertsOverview = () => import('../restock/resource/inventory/pages/restaurant-alerts-overview.component.vue')
+const RestaurantNotificationsOverview = () => import('../restock/resource/inventory/pages/restaurant-notifications-overview.component.vue')
 const RestaurantRecipesOverview = () => import('../restock/planning/pages/restaurant-recipes-overview.component.vue')
 const SuppliersOrdersOverview = () => import('../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue')
 /**
@@ -38,8 +38,8 @@ const routes = [
     {
         path: '/dashboard/restaurant/notifications',
         name: 'restaurant-notifications',
-        component: RestaurantAlertsOverview,
-        meta: { title: 'sidebar.restaurant-alerts-overview' }
+        component: RestaurantNotificationsOverview,
+        meta: { title: 'sidebar.restaurant-notifications-overview' }
     },
     {
         path: '/dashboard/restaurant/recipes',

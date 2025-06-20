@@ -26,6 +26,9 @@
     "save-recipe": "Guardar Receta",
     "cancel": "Cancelar"
   },
+  "notifications": {
+    "title": "Notificaciones"
+  },
   "inventory": {
     "supplies-catalog-title": "Catálogo de Insumos",
     "create-button": "CREAR",

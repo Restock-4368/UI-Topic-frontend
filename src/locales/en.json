@@ -26,6 +26,9 @@
     "save-recipe": "Save Recipe",
     "cancel": "Cancel"
   },
+  "notifications": {
+    "title": "Notifications"
+  },
   "inventory": {
     "supplies-catalog-title": "Supplies Catalog",
     "create-button": "CREATE",
