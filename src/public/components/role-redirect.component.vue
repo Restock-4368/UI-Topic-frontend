@@ -13,7 +13,8 @@ export default {
   async created() {
     const userService = new UserService();
     try {
-      const user = await userService.getUserById(1);
+      const user = await userService.getById(1);
+      console.log(user);
       const role = user.role_id?.name;
 
       if (role === 'supplier' || role === 'restaurant') {
