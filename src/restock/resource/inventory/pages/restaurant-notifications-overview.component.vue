@@ -10,7 +10,7 @@
           class="px-4 py-2 rounded"
           :class="activeTab === tab ? 'bg-green-700 text-white' : 'bg-gray-200 text-gray-700'"
       >
-        {{ tab }}
+        {{ $t(`notifications.tabs.${tab.toLowerCase()}`) }}
       </button>
     </div>
 
@@ -99,13 +99,29 @@ export default {
             inventoryNotifications.push({
               type: 'inventory',
               date: b.expiration_date,
-              message: `${supply.name} batch #${b.id} below minimum stock (${b.stock}/${supply.min_stock})`
+              data: {
+                key: 'notifications.messages.lowStock',
+                params: {
+                  supply: supply.name,
+                  id: b.id,
+                  stock: b.stock,
+                  min: supply.min_stock
+                }
+              }
             });
           } else if (b.stock >= supply.max_stock) {
             inventoryNotifications.push({
               type: 'inventory',
               date: b.expiration_date,
-              message: `${supply.name} batch #${b.id} reached maximum stock (${b.stock}/${supply.max_stock})`
+              data: {
+                key: 'notifications.messages.maxStock',
+                params: {
+                  supply: supply.name,
+                  id: b.id,
+                  stock: b.stock,
+                  max: supply.max_stock
+                }
+              }
             });
           }
         });
@@ -121,7 +137,13 @@ export default {
             orderNotifications.push({
               type: 'order',
               date: o.date,
-              message: `Order #${o.id} situation updated to ${situation.name}`
+              data: {
+                key: 'notifications.messages.orderSituation',
+                params: {
+                  id: o.id,
+                  situation: situation.name
+                }
+              }
             });
           }
 
@@ -129,7 +151,12 @@ export default {
             orderNotifications.push({
               type: 'order',
               date: o.date,
-              message: `Order #${o.id} marked as Delivered`
+              data: {
+                key: 'notifications.messages.orderDelivered',
+                params: {
+                  id: o.id
+                }
+              }
             });
           }
         });
@@ -141,20 +168,23 @@ export default {
     }
   },
   computed: {
-    inventoryNotifications() {
-      return this.notifications.filter(n => n.type === 'inventory');
-    },
-    orderNotifications() {
-      return this.notifications.filter(n => n.type === 'order');
-    },
     displayedNotifications() {
+      const translateMessage = (notification) => {
+        return this.$t(notification.data.key, notification.data.params);
+      };
+
+      const translatedNotifications = this.notifications.map(n => ({
+        ...n,
+        message: translateMessage(n)
+      }));
+
       switch (this.activeTab) {
         case 'Inventory':
-          return this.inventoryNotifications;
+          return translatedNotifications.filter(n => n.type === 'inventory');
         case 'Orders':
-          return this.orderNotifications;
+          return translatedNotifications.filter(n => n.type === 'order');
         default:
-          return this.notifications;
+          return translatedNotifications;
       }
     }
   }
