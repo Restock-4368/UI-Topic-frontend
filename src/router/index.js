@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SubscriptionOverviewComponent from '../restock/subscription/pages/subscription-overview.component.vue';
+import ProfileOverviewComponent from "../restock/profiles/pages/profile-overview.component.vue";
 
 
 /**
@@ -95,7 +96,14 @@ const routes = [
         path: '/',
         name: 'root-redirect',
         component: RoleRedirect
-    }
+    },
+
+    //For both roles
+    {
+        path: '/dashboard/profile',
+        name: 'profile',
+        component: ProfileOverviewComponent,
+    },
 ]
 
 const router = createRouter({
