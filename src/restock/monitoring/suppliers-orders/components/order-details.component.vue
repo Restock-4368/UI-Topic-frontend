@@ -13,11 +13,15 @@ export default {
       type: Boolean,
       required: true,
     },
-    suppliesPerOrder: {
+    requestedBatchesPerOrder: {
       type: Array,
       required: true,
     },
     detailedSuppliesPerOrder: {
+      type: Array,
+      required: true,
+    },
+    detailedBatchesPerOrder: {
       type: Array,
       required: true,
     },
@@ -69,12 +73,14 @@ export default {
     prevStep() {
       if (this.step > 1) this.step--;
     },
-    productName(supplyId) {
-      const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(supplyId));
+    productName(batchId) {
+      const batch = this.detailedBatchesPerOrder.find(b => Number(b.id) === Number(batchId));
+      const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(batch.supply_id));
       return supply ? supply.name : 'Unknown Product';
     },
-    productUnitMeasurement(supplyId) {
-      const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(supplyId));
+    productUnitMeasurement(batchId) {
+      const batch = this.detailedBatchesPerOrder.find(b => Number(b.id) === Number(batchId));
+      const supply = this.detailedSuppliesPerOrder.find(s => Number(s.id) === Number(batch.supply_id));
       const unitMeasurement = this.unitsMeasurement.find(u => Number(u.id) === Number(supply.unit_measurement_id));
       return unitMeasurement ? unitMeasurement.name : 'Unknown unit';
     },
@@ -136,7 +142,7 @@ export default {
       <div class="table-container">
       <pv-data-table
           class="supplies-table"
-          :value="suppliesPerOrder"
+          :value="requestedBatchesPerOrder"
           paginator
           :rows="4"
           :rows-per-page-options="[2, 3, 4]"
@@ -144,7 +150,7 @@ export default {
       >
         <pv-column field="date" header="Product name">
           <template #body="{ data }">
-            {{ productName(data.supplyId) }}
+            {{ productName(data.batchId) }}
           </template>
         </pv-column>
 
@@ -156,7 +162,7 @@ export default {
 
         <pv-column header="Unit Measure">
           <template #body="{ data }">
-            {{ productUnitMeasurement(data.supplyId) }}
+            {{ productUnitMeasurement(data.batchId) }}
           </template>
         </pv-column>
       </pv-data-table>
