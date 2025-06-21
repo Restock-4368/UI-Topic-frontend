@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SubscriptionOverviewComponent from '../restock/subscription/pages/subscription-overview.component.vue';
 import ProfileOverviewComponent from "../restock/profiles/pages/profile-overview.component.vue";
 
-
 /**
 * @description Lazy-loaded component imports for route configuration
 * Using dynamic imports to enable code splitting and improve performance
@@ -15,6 +14,8 @@ const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplie
 const RestaurantNotificationsOverview = () => import('../restock/resource/inventory/pages/restaurant-notifications-overview.component.vue')
 const RestaurantRecipesOverview = () => import('../restock/planning/pages/restaurant-recipes-overview.component.vue')
 const SuppliersOrdersOverview = () => import('../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue')
+const SalesComponent = () => import('../restock/monitoring/restaurant-sales/pages/sales.component.vue')
+
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
@@ -35,6 +36,12 @@ const routes = [
         meta: { title: 'sidebar.restaurant-summary-overview' }
     },
     {
+        path: '/dashboard/restaurant/subscription',
+        name: 'restaurant-subscription',
+        component: SubscriptionOverviewComponent,
+        meta: { title: 'sidebar.supplier-summary-overview' }
+    },
+    {
         path: '/dashboard/restaurant/notifications',
         name: 'restaurant-notifications',
         component: RestaurantNotificationsOverview,
@@ -45,6 +52,12 @@ const routes = [
         name: 'restaurant-recipes',
         component: RestaurantRecipesOverview,
         meta: { title: 'sidebar.restaurant-recipes-overview' }
+    },
+    {
+        path: '/dashboard/restaurant/sales',
+        name: 'restaurant-sales',
+        component: SalesComponent,
+        meta: { title: 'sidebar.sales' }
     },
 
     // Suppliers Routes
@@ -58,7 +71,7 @@ const routes = [
         path: '/dashboard/supplier/subscription',
         name: 'supplier-subscription',
         component: SubscriptionOverviewComponent,
-        meta: { title: 'sidebar.supplier-summary-overview' }
+        meta: { title: 'sidebar.subscription' }
     },
     {
         path: '/dashboard/supplier/inventory',

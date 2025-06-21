@@ -90,8 +90,8 @@ export default {
       } else if (role === 2) { // Restaurant
         this.menuItems = [
           { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/restaurant/summary' },
+          { label: 'sidebar.subscription', icon: 'pi pi-credit-card', route: '/dashboard/restaurant/subscription' },
           { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/dashboard/restaurant/inventory' },
-          { label: 'sidebar.suppliers', icon: 'pi pi-users', route: '/dashboard/restaurant/suppliers' },
           { label: 'sidebar.notifications', icon: 'pi pi-bell', route: '/dashboard/restaurant/notifications' },
           { label: 'sidebar.orders', icon: 'pi pi-truck', route: '/dashboard/restaurant/orders' },
           { label: 'sidebar.recipes', icon: 'pi pi-clipboard', route: '/dashboard/restaurant/recipes' },
