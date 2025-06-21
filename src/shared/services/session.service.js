@@ -1,7 +1,6 @@
-import httpInstance from "../../shared/services/http.instance.js";
-import {readonly, ref} from "vue";
+import { ref, readonly } from "vue";
 
-export class SessionService {
+class SessionService {
     constructor() {
         this._profileId = ref(null);
         this.profileId = readonly(this._profileId);
@@ -16,6 +15,8 @@ export class SessionService {
     }
 
     getProfileIdRef() {
-        return this.profileId
+        return this.profileId;
     }
 }
+
+export const sessionService = new SessionService(); // 👈 Instancia única exportada
