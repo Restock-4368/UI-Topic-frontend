@@ -51,6 +51,7 @@ export default {
 <style>
 .plans-container {
   text-align: center;
+  margin-bottom: 2rem;
 }
 
 .plans-header h2,
