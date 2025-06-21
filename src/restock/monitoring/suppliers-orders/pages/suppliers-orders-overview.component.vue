@@ -639,6 +639,7 @@ export default {
 
 <template>
   <pv-toast></pv-toast>
+
   <pv-tabs v-model:value="activeTab">
     <pv-tab-list>
       <pv-tab class="full-width-tab" v-for="tab in tabs" :key="tab.title" :value="tab.value">
@@ -745,6 +746,37 @@ export default {
 ::v-deep(.p-tab.full-width-tab[aria-selected="false"]:hover) {
   background-color: rgba(77, 210, 25, 0.1) !important; /* ligero fondo azul al pasar */
   color: #757e75 !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  ::v-deep(.p-tablist) {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  ::v-deep(.p-tab.full-width-tab) {
+    flex: 0 0 auto !important;
+    min-width: 120px;
+    padding: 0.5rem 1rem;
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+@media (max-width: 768px) {
+  .table-wrapper table {
+    width: auto !important;
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 480px) {
+  ::v-deep(.p-datatable[responsive-layout="stack"]) {
+    --p-stack-table-th-width: 40% !important;
+  }
 }
 
 </style>
