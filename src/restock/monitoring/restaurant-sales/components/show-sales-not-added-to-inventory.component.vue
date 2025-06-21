@@ -291,8 +291,8 @@ export default {
       <button class="close-button" @click="closeComponent">✕</button>
 
       <div>
-        <h2 class="title">REGISTERED SALES NOT DISCOUNTED IN INVENTORY</h2>
-        <p v-if="registered_sales_not_discounted_in_inventory" class="sub-text">Select the sales you want to deduct the supplies used from the inventory</p>
+        <h2 class="title">{{ $t('sales_restaurant.sales_not_added_in_inventory.title') }}</h2>
+        <p v-if="registered_sales_not_discounted_in_inventory" class="sub-text">{{ $t('sales_restaurant.sales_not_added_in_inventory.subtitle') }}</p>
         <div v-if="registered_sales_not_discounted_in_inventory" class="select-all">
             <input
             type="checkbox"
@@ -300,7 +300,7 @@ export default {
             :indeterminate="selectedSales.length > 0 && !isAllSelected"
             @change="toggleAllSelection($event.target.checked)"
             />
-            <label>Select All</label>
+            <label>{{ $t('sales_restaurant.sales_not_added_in_inventory.selectAll') }}</label>
         </div>
        
       </div>
@@ -309,10 +309,10 @@ export default {
         <table class="custom-table">
           <thead>
             <tr>
-              <th>Code</th>
-              <th>Quantity of Dishes</th>
-              <th>Quantity of Additional Supplies</th>
-              <th>Actions</th>
+              <th>{{ $t('sales_restaurant.sales_not_added_in_inventory.code') }}</th>
+              <th>{{ $t('sales_restaurant.sales_not_added_in_inventory.quantityDishes') }}</th>
+              <th>{{ $t('sales_restaurant.sales_not_added_in_inventory.quantityAdditionalSupplies') }}</th>
+              <th>{{ $t('sales_restaurant.sales_not_added_in_inventory.actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -321,12 +321,15 @@ export default {
               <td>{{ sale.recipeCount }}</td>
               <td>{{ sale.additionalSupplyCount }}</td>
               <td class="actions">
-                <i class="pi pi-file" @click="openSaleDetail(sale)"></i>
-                <input
-                  type="checkbox"
-                  :checked="isSelected(sale)"
-                  @change="toggleSelection(sale, $event.target.checked)"
-                />
+                <div class="separate">
+                  <span class="pi pi-file" @click="openSaleDetail(sale)"></span>
+                  <input
+                    type="checkbox"
+                    :checked="isSelected(sale)"
+                    @change="toggleSelection(sale, $event.target.checked)"
+                  />
+                </div>
+              
               </td>
             </tr>
           </tbody>
@@ -336,10 +339,10 @@ export default {
 
       <div class="buttons">
         <button class="button-cancel" @click="closeComponent">
-          CANCEL <i class="pi pi-times"></i>
+          {{ $t('sales_restaurant.sales_not_added_in_inventory.cancel') }} <i class="pi pi-times"></i>
         </button>
         <button v-if="registered_sales_not_discounted_in_inventory" class="button-register" @click="registerSalesToInventory">
-          REGISTER <i class="pi pi-check-circle"></i>
+          {{ $t('sales_restaurant.sales_not_added_in_inventory.register') }} <i class="pi pi-check-circle"></i>
         </button>
       </div>
     </div>
@@ -454,7 +457,6 @@ export default {
         margin-right: 2rem;
     }
 
-    .actions {
-        gap: 6px;
-    }
+
+   
 </style>

@@ -45,7 +45,6 @@
       "confirm-password": "Confirmar nueva contraseña",
       "confirm-password-placeholder": "Confirma la nueva contraseña",
       "save-changes": "GUARDAR CAMBIOS",
-
       "delete-account": "Eliminar cuenta",
       "delete-account-warning": "Esta acción eliminará permanentemente tu cuenta. Todos tus datos personales, historial y configuraciones serán eliminados. No podrás recuperar tu cuenta tras la eliminación. Tu suscripción será cancelada.",
       "confirm-delete": "CONFIRMAR ELIMINACIÓN"
@@ -156,8 +155,9 @@
     "actions": "Acciones",
     "sale_details": {
       "title": "DETALLES DE LA VENTA",
+      "name_customer": "Nombre del cliente",
       "number_dishes": "Numero de platos",
-      "number_additional_supplies": "Numbero de insumos adicionales",
+      "number_additional_supplies": "Numero de insumos adicionales",
       "dishes": "Platos",
       "additional_supplies": "Insumos adicionales",
       "name": "Nombre",
@@ -171,7 +171,26 @@
       "code": "Código",
       "quantityDishes": "Cantidad de platos",
       "quantityAdditionalSupplies": "Cantidad de insumos adicionales",
-      "actions": "Acciones"
+      "actions": "Acciones",
+      "cancel": "Cancelar",
+      "register": "Registrar"
+    },
+    "register_sale_modal": {
+      "title": "Registrar venta",
+      "sub-title": "Complete los detalles de una nueva venta para acceder a la opción de actualización de inventario.",
+      "dishes": "Platos",
+      "select_dish": "Selecciona un plato de tu lista de recetas",
+      "additionalSuppllies": "Insumos adicionales",
+      "select_additionalSupply": "Selecciona un insumo de tu inventario",
+      "selected_dishes": "Platos seleccionados",
+      "selected_additionalSupplies": "Insumos adicionales seleccionados",
+      "name": "Nombre",
+      "unit_price": "Precio unitario",
+      "quantity": "Cantidad",
+      "actions": "Acciones",
+      "cancel": "CANCELAR",
+      "register": "REGISTRAR",
+      "nothing-selected": "Seleccione los platos e ingredientes adicionales del pedido para ver la venta completa."
     },
     "sale_confirmation": {
       "title": "Venta registrada correctamente"
