@@ -36,12 +36,6 @@ export default {
       selectedDateRange: null,
       sortField: 'date',
       sortOrder: 1, // 1 to increase, -1 to descendent
-      statusOptions: [
-        { label: 'All Status', value: null },
-        { label: 'On Hold', value: 'on hold' },
-        { label: 'Preparing', value: 'preparing' },
-        { label: 'On the Way', value: 'on the way' }
-      ]
     }
   },
   methods: {
@@ -175,6 +169,13 @@ export default {
 
   },
   computed: {
+    statusOptions(){
+      return [
+        { label: this.$t('supplier-orders.state.on-hold'), value: 'on hold' },
+        { label: this.$t('supplier-orders.state.preparing'), value: 'preparing' },
+        { label: this.$t('supplier-orders.state.on-the-way'), value: 'on the way' }
+      ]
+    },
     restaurantBusinessNamesPerOrder() {
       const nameMap = {};
 
@@ -205,9 +206,7 @@ export default {
       @clear-filters="resetFilters"
       v-model:search-query="searchQuery"
       v-model:selected-date-range="selectedDateRange"
-      :search-placeholder="'Search orders by restaurant...'"
       :sort-order="sortOrder"
-      sort-label="Order Date"
       @toggle-sort="toggleSort"
   >
     <!-- Slot to personalize filters -->
@@ -227,7 +226,7 @@ export default {
 
   <!-- Empty -->
   <empty-section v-if="filteredOrders().length === 0">
-    You currently have no orders approved.
+    {{ $t('supplier-orders.empty.accepted-orders') }}
     <template #icon>
       <i class="pi pi-truck" style="font-size: 3rem; color: #bcbcbc;"></i>
     </template>
@@ -242,43 +241,43 @@ export default {
       responsive-layout="scroll"
       :row-class="rowClass"
   >
-    <pv-column field="date" header="Order date">
+    <pv-column field="date" :header="$t('supplier-orders.table.date')">
       <template #body="{ data }">
         {{ formatDate(data.date) }}
       </template>
     </pv-column>
 
-    <pv-column header="State">
+    <pv-column :header="$t('supplier-orders.state.title')">
       <template #body="{ data }">
         {{ getOrderState(data).name }}
       </template>
     </pv-column>
 
-    <pv-column header="Ship date">
+    <pv-column :header="$t('supplier-orders.table.ship-date')">
       <template #body="{ data }">
         {{ data.estimatedShipDate ? formatDate(data.estimatedShipDate) : 'Not set' }}
       </template>
     </pv-column>
 
-    <pv-column header="Restaurant Name">
+    <pv-column :header="$t('supplier-orders.table.restaurant-name')">
       <template #body="{ data }">
         {{ restaurantBusinessNamesPerOrder[data.id] }}
       </template>
     </pv-column>
 
-    <pv-column header="N° Requested products">
+    <pv-column :header="$t('supplier-orders.table.requested-products')">
       <template #body="{ data }">
         {{ data.requestedProductsCount }}
       </template>
     </pv-column>
 
-    <pv-column header="Final Price">
+    <pv-column :header="$t('supplier-orders.table.final-price')">
       <template #body="{ data }">
         S/ {{ data.totalPrice }}
       </template>
     </pv-column>
 
-    <pv-column header="Actions">
+    <pv-column :header="$t('supplier-orders.table.actions')">
       <template #body="{ data }">
         <pv-button
             class="p-button-icon-style"

@@ -25,7 +25,6 @@ export default {
   },
   data() {
     return {
-      steps: ["On hold", "Preparing", "On the way", "Delivered"],
       statusToStepIndex: {
         1: 0,  // -> "On hold"
         2: 1,  //  -> "Preparing"
@@ -121,6 +120,14 @@ export default {
     }
   },
   computed: {
+    steps() {
+      return [
+        this.$t('supplier-orders.state.on-hold'),
+        this.$t('supplier-orders.state.preparing'),
+        this.$t('supplier-orders.state.on-the-way'),
+        this.$t('supplier-orders.state.delivered')
+      ];
+    },
     internalVisible: {
       get() {
         return this.modelValue;
@@ -145,16 +152,16 @@ export default {
   >
     <div class="situation">
       <p class="block text-sm font-bold text-gray-700 mb-1">
-        Situation
-        <pv-chip class=" text-sm ml-1 mt-1 mb-1">Approved</pv-chip>
+        {{ $t('supplier-orders.situation.title') }}
+        <pv-chip class=" text-sm ml-1 mt-1 mb-1">{{ $t('supplier-orders.situation.approved') }}</pv-chip>
       </p>
     </div>
 
     <div class="modal-content">
 
-      <p class="subtitle">Update the details of a registered order</p>
+      <p class="subtitle">{{ $t('supplier-orders.update-order.description') }}</p>
 
-      <h4 class="section-title">State</h4>
+      <h4 class="section-title">{{ $t('supplier-orders.state.title') }}</h4>
 
       <!-- Stepper container -->
       <div class="stepper-container">
@@ -210,19 +217,19 @@ export default {
 
 
       <div class="date-section">
-        <p class="date-label">Estimated Shipping Date</p>
+        <p class="date-label">{{ $t('supplier-orders.estimated-ship-date') }}</p>
         <pv-date-picker
             id="expiry"
             v-model="localOrder.estimatedShipDate"
             showIcon
             class="date-picker"
-            placeholder="Select date"
+            :placeholder="$t('supplier-orders.placeholder.select-date')"
         />
       </div>
 
       <div class="time-section">
         <p class="date-label">
-          Estimated Shipping Time
+          {{ $t('supplier-orders.estimated-ship-time') }}
         </p>
         <pv-date-picker
             id="shipTime"
@@ -230,27 +237,29 @@ export default {
             timeOnly
             hourFormat="24"
             showIcon
-            placeholder="Select time"
+            :placeholder="$t('supplier-orders.placeholder.select-time')"
             class="date-picker"
         />
 
       <!-- Description -->
       <div class="section-description">
-        <p class="block text-sm font-medium text-gray-700 mt-3 mb-2">Order Description</p>
-        <pv-input-text id="description" v-model="localOrder.description" placeholder="Description" class="description-input"  />
+        <p class="block text-sm font-medium text-gray-700 mt-3 mb-2">{{ $t('supplier-orders.description') }}</p>
+        <pv-input-text id="description" v-model="localOrder.description"
+                       :placeholder="$t('supplier-orders.placeholder.description')"
+                       class="description-input"  />
       </div>
 
     </div>
 
     <template #footer>
       <div class="modal-footer">
-        <button class="btn btn-close" @click="close">Close</button>
+        <button class="btn btn-close" @click="close">{{ $t('supplier-orders.manage-new-orders.buttons.close') }}</button>
 
         <button
             class="btn btn-accept"
             @click="submitOrder"
         >
-          Update Order
+          {{ $t('supplier-orders.update-order.buttons.save') }}
         </button>
 
       </div>

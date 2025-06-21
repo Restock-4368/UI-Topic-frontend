@@ -173,22 +173,22 @@ export default {
 
 <template>
   <base-modal :model-value="modelValue"
-              :title="'New Order Management'"
+              :title="$t('supplier-orders.manage-new-orders.title')"
               @close="close"
   >
 
     <div class="modal-content">
 
-      <p class="subtitle">Complete the order details to start tracking your order. </p>
+      <p class="subtitle">{{ $t('supplier-orders.manage-new-orders.description') }}</p>
 
       <div v-if="step === 1">
         <div class="section-header">
-          <h4 class="section-title">Supplies</h4>
-          <p class="section-description">Select the supplies you have available for the order.</p>
+          <h4 class="section-title">{{ $t('supplier-orders.supplies.title') }}</h4>
+          <p class="section-description">{{ $t('supplier-orders.supplies.description') }}</p>
         </div>
 
         <div class="select-all-container">
-          <p class="select-all-label">Select All</p>
+          <p class="select-all-label">{{ $t('supplier-orders.supplies.select-all') }}</p>
           <pv-check-box
               v-model="selectAll"
               :binary="true"
@@ -204,19 +204,19 @@ export default {
               :rows-per-page-options="[2, 3, 4]"
               responsive-layout="scroll"
           >
-            <pv-column field="date" header="Product name">
+            <pv-column field="date" :header="$t('supplier-orders.supplies.headers.product-name')">
               <template #body="{ data }">
                 {{ productName(data.batchId) }}
               </template>
             </pv-column>
 
-            <pv-column header="Quantity">
+            <pv-column :header="$t('supplier-orders.supplies.headers.quantity')">
               <template #body="{ data }">
                 {{ data.quantity }}
               </template>
             </pv-column>
 
-            <pv-column header="Unit Measure">
+            <pv-column :header="$t('supplier-orders.supplies.headers.unit-measure')">
               <template #body="{ data }">
                 {{ productUnitMeasurement(data.batchId) }}
               </template>
@@ -236,12 +236,12 @@ export default {
         </div>
 
         <div class="total-price">
-          <strong class="block text-sm font-medium text-gray-700 mb-1">Total Price: {{ order.totalPrice }}</strong>
+          <strong class="block text-sm font-medium text-gray-700 mb-1">{{ $t('supplier-orders.supplies.total-price') }}: {{ order.totalPrice }}</strong>
         </div>
 
         <!-- Description -->
         <div class="section-description">
-          <p class="block text-sm font-medium text-gray-700 mb-2">Order Description</p>
+          <p class="block text-sm font-medium text-gray-700 mb-2">{{ $t('supplier-orders.description') }}</p>
           <pv-input-text id="description" v-model="localOrder.description" placeholder="Description"
                          class="description-input"/>
         </div>
@@ -251,19 +251,19 @@ export default {
       <div v-else-if="step === 2">
 
         <div class="date-section">
-          <p class="date-label">Estimated Shipping Date</p>
+          <p class="date-label">{{ $t('supplier-orders.estimated-ship-date') }}</p>
           <pv-date-picker
               id="expiry"
               v-model="localOrder.estimatedShipDate"
               showIcon
               class="date-picker"
-              placeholder="Select date"
+              :placeholder="$t('supplier-orders.placeholder.select-date')"
           />
         </div>
 
         <div class="time-section">
           <p class="date-label">
-            Estimated Shipping Time
+            {{ $t('supplier-orders.estimated-ship-time') }}
           </p>
           <pv-date-picker
               id="shipTime"
@@ -271,11 +271,11 @@ export default {
               timeOnly
               hourFormat="24"
               showIcon
-              placeholder="Select hour"
+              :placeholder="$t('supplier-orders.placeholder.select-time')"
               class="date-picker"
           />
 
-          <h3 class="summary-title">Order Summary</h3>
+          <h3 class="summary-title">{{ $t('supplier-orders.manage-new-orders.order-summary') }}</h3>
           <ul class="summary-list">
             <li class="summary-item" v-for="id in checkedBatches" :key="id">
               {{ productName(id) }} ({{ productUnitMeasurement(id) }})
@@ -295,10 +295,10 @@ export default {
               class="btn btn-back"
               @click="prevStep"
           >
-            Back
+            {{ $t('supplier-orders.manage-new-orders.buttons.back') }}
           </button>
 
-          <button class="btn btn-close" @click="close">Close</button>
+          <button class="btn btn-close" @click="close">{{ $t('supplier-orders.manage-new-orders.buttons.close') }}</button>
 
         </div>
 
@@ -308,7 +308,7 @@ export default {
               class="btn btn-next"
               @click="nextStep"
           >
-            Next
+            {{ $t('supplier-orders.manage-new-orders.buttons.next') }}
           </button>
 
           <button
@@ -316,7 +316,7 @@ export default {
               class="btn btn-accept"
               @click="submitOrder"
           >
-            Accept selection
+            {{ $t('supplier-orders.manage-new-orders.buttons.submit-order') }}
           </button>
         </div>
 

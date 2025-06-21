@@ -74,18 +74,31 @@ export default {
       activeTab: 0,
       loading: false,
 
-      // Configuration
-      tabs: [
-        { title: 'New Orders', value: 0 },
-        { title: 'Orders In Progress', value: 1 },
-        { title: 'Orders History', value: 2 }
-      ]
     };
   },
   async created() {
     await this.initializeComponent();
   },
   computed: {
+    tabs() {
+      const _current = this.$i18n.locale;
+
+      return [
+        {
+          title: this.$t('supplier-orders.tabs.new-orders'),
+          value: 0
+        },
+        {
+          title: this.$t('supplier-orders.tabs.accepted-orders'),
+          value: 1
+        },
+        {
+          title: this.$t('supplier-orders.tabs.history-orders'),
+          value: 2
+        }
+      ];
+    },
+
     deliveredOrders() {
       return this.orders.filter(order => {
         const state = this.findOrderState(order.stateId);
@@ -384,9 +397,9 @@ export default {
         await this.reloadOrderData();
 
         this.closeAllModals();
-        this.showSuccessMessage('Order updated successfully');
+        this.showSuccessMessage(this.$t('supplier-orders.notifications.order-updated'))
       } catch (error) {
-        this.handleError('Failed to update order', error);
+        this.handleError(this.$t('supplier-orders.notifications.error-update'), error)
       } finally {
         this.processingOrder = false;
       }
@@ -422,9 +435,21 @@ export default {
         }
 
         await this.reloadOrderData()
-        this.showSuccessMessage(`Order ${action} successfully`)
+
+        if (action === 'declined') {
+          this.showSuccessMessage(this.$t('supplier-orders.notifications.order-declined'))
+        }
+        else if (action === 'cancelled') {
+          this.showSuccessMessage(this.$t('supplier-orders.notifications.order-cancelled'))
+        }
+
       } catch (error) {
-        this.handleError(`Failed ${action} order`, error)
+        if (action === 'declined') {
+          this.showSuccessMessage(this.$t('supplier-orders.notifications.order-declined'))
+        }
+        else if (action === 'cancelled') {
+          this.showSuccessMessage(this.$t('supplier-orders.notifications.order-cancelled'))
+        }
       } finally {
         this.processingOrder = false
       }
@@ -465,9 +490,9 @@ export default {
         await this.reloadOrderData();
         await this.loadBatches()
         this.closeAllModals()
-        this.showSuccessMessage('Order updated successfully')
+        this.showSuccessMessage(this.$t('supplier-orders.notifications.order-processed'))
       } catch (error) {
-        this.handleError('Failed to update order', error)
+        this.handleError(this.$t('supplier-orders.notifications.error-process'), error)
       } finally {
         this.processingOrder = false
       }
@@ -594,7 +619,7 @@ export default {
     showSuccessMessage(message) {
       this.$toast.add({
         severity: 'success',
-        summary: 'Success',
+        summary: this.$t('supplier-orders.notifications.summary-error'),
         detail: message,
         life: 3000
       });
@@ -705,12 +730,5 @@ export default {
 
 <style scoped>
 
-.full-width-tab[aria-selected="true"] {
-  border: 2px solid #131313 !important;
-  background: linear-gradient(135deg, rgba(100, 35, 0, 0.06), rgba(128, 58, 0, 0.06)) !important;
-  color: #131313 !important;
-  box-shadow: inset 0 2px 4px rgba(225, 144, 38, 0.1) !important;
-  font-weight: bold !important;
-}
 
 </style>

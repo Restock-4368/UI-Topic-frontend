@@ -210,10 +210,7 @@ export default {
   <filters-section
       v-model:search-query="searchQuery"
       v-model:selected-date-range="selectedDateRange"
-      :search-placeholder="'Search orders by restaurant...'"
       :sort-order="sortOrder"
-      sort-label="Order Date"
-      title="Orders"
       @clear-filters="resetFilters"
       @toggle-sort="toggleSort"
   >
@@ -222,7 +219,7 @@ export default {
 
   <!-- Empty -->
   <empty-section v-if="filteredOrders.length === 0">
-    You currently have no orders received.
+    {{ $t('supplier-orders.empty.new-orders') }}
     <template #icon>
       <i class="pi pi-truck" style="font-size: 3rem; color: #bcbcbc;"></i>
     </template>
@@ -236,31 +233,31 @@ export default {
       paginator
       responsive-layout="scroll"
   >
-    <pv-column field="date" header="Order date">
+    <pv-column field="date" :header="$t('supplier-orders.table.date')">
       <template #body="{ data }">
         {{ formatDate(data.date) }}
       </template>
     </pv-column>
 
-    <pv-column header="Restaurant Name">
+    <pv-column :header="$t('supplier-orders.table.restaurant-name')">
       <template #body="{ data }">
         {{ restaurantBusinessNamesPerOrder[data.id] }}
       </template>
     </pv-column>
 
-    <pv-column header="N° Requested products">
+    <pv-column :header="$t('supplier-orders.table.requested-products')">
       <template #body="{ data }">
         {{ suppliesPerOrderCount[data.id] }}
       </template>
     </pv-column>
 
-    <pv-column header="Final Price">
+    <pv-column :header="$t('supplier-orders.table.final-price')">
       <template #body="{ data }">
         S/ {{ finalPricePerOrder[data.id] }}
       </template>
     </pv-column>
 
-    <pv-column header="Actions">
+    <pv-column :header="$t('supplier-orders.table.actions')">
       <template #body="{ data }">
         <pv-button
             class="p-button-icon-style"

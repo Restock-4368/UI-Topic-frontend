@@ -49,7 +49,6 @@ export default {
   data() {
     return {
       step: 1,
-      steps: ["On hold", "Preparing", "On the way", "Delivered"],
       statusToStepIndex: {
         1: 0,  // -> "On hold"
         2: 1,  //  -> "Preparing"
@@ -59,6 +58,14 @@ export default {
     };
   },
   computed: {
+    steps() {
+      return [
+        this.$t('supplier-orders.state.on-hold'),
+        this.$t('supplier-orders.state.preparing'),
+        this.$t('supplier-orders.state.on-the-way'),
+        this.$t('supplier-orders.state.delivered')
+      ];
+    },
     computedCurrentIndex() {
       return this.orderState?.id !== undefined
           ? this.statusToStepIndex[this.orderState.id] ?? 0
@@ -124,19 +131,19 @@ export default {
 
 <template>
   <base-modal :model-value="modelValue"
-              :title="'Order Details'"
+              :title="$t('supplier-orders.details.title')"
               @close="close"
   >
 
   <div class="modal-content">
 
-    <p class="subtitle">View the details of a registered order.</p>
+    <p class="subtitle">{{ $t('supplier-orders.details.description') }}</p>
 
 
     <div v-if="step === 1">
       <div class="section-header">
-        <h4 class="section-title">Supplies</h4>
-        <p class="section-description">View the supplies you have available for the order.</p>
+        <h4 class="section-title">{{ $t('supplier-orders.supplies.title') }}</h4>
+        <p class="section-description">V{{ $t('supplier-orders.supplies.description') }}</p>
       </div>
 
       <div class="table-container">
@@ -148,19 +155,19 @@ export default {
           :rows-per-page-options="[2, 3, 4]"
           responsive-layout="scroll"
       >
-        <pv-column field="date" header="Product name">
+        <pv-column field="date" :header="$t('supplier-orders.supplies.headers.product-name')">
           <template #body="{ data }">
             {{ productName(data.batchId) }}
           </template>
         </pv-column>
 
-        <pv-column header="Quantity">
+        <pv-column :header="$t('supplier-orders.supplies.headers.quantity')">
           <template #body="{ data }">
             {{ data.quantity }}
           </template>
         </pv-column>
 
-        <pv-column header="Unit Measure">
+        <pv-column :header="$t('supplier-orders.supplies.headers.unit-measure')">
           <template #body="{ data }">
             {{ productUnitMeasurement(data.batchId) }}
           </template>
@@ -170,12 +177,12 @@ export default {
     </div>
 
       <div class="total-price">
-        <strong class="block text-sm font-medium text-gray-700 mb-1" >Total Price: {{ order.totalPrice }}</strong>
+        <strong class="block text-sm font-medium text-gray-700 mb-1" >{{ $t('supplier-orders.supplies.total-price') }}: {{ order.totalPrice }}</strong>
       </div>
 
     <div class="state-dragger"  v-if="!hideState">
 
-      <p class="section-title">State</p>
+      <p class="section-title">{{ $t('supplier-orders.state.title') }}</p>
 
       <!-- Contenedor del stepper -->
       <div class="stepper-container">
@@ -237,25 +244,25 @@ export default {
 
       <div class="situation" v-if="hideState">
         <p class="block text-sm font-bold text-gray-700 mb-1">
-          Situation
+          {{ $t('supplier-orders.situation.title') }}:
           <pv-chip class=" text-sm ml-1 mt-1 mb-1">{{ orderSituation?.name || 'Unknown' }}</pv-chip>
         </p>
       </div>
 
-      
+
       <div class="restaurant-section">
-        <p class="block text-sm font-bold text-gray-700 mb-2">Restaurant Name: </p>
+        <p class="block text-sm font-bold text-gray-700 mb-2">{{ $t('supplier-orders.restaurant-name') }}: </p>
         <p class="mb-3">{{ restaurantBusinessName(order) }}</p>
       </div>
 
       <div class="date-section" v-if="!hideState">
-        <p class="block text-sm font-bold text-gray-700 mb-2">Estimated Ship Date and Time: </p>
+        <p class="block text-sm font-bold text-gray-700 mb-2">{{ $t('supplier-orders.details.estimated-date') }}: </p>
         <p class="mb-3"> {{ formatDate(order.estimatedShipDate) }},  {{ formatTime(order.estimatedShipTime) }}</p>
       </div>
 
 
       <div class="description-section">
-        <p class="block text-sm font-bold text-gray-700 mb-2">Order Description</p>
+        <p class="block text-sm font-bold text-gray-700 mb-2">{{ $t('supplier-orders.description') }}:</p>
         <p class="mb-3">{{ order.description }}</p>
       </div>
 
@@ -272,11 +279,11 @@ export default {
             class="btn btn-back"
             @click="prevStep"
         >
-          Back
+          {{ $t('supplier-orders.details.buttons.back') }}
         </button>
 
 
-        <button class="btn btn-close" @click="close">Close</button>
+        <button class="btn btn-close" @click="close">{{ $t('supplier-orders.details.buttons.close') }}</button>
       </div>
 
       <div class="footer-right">
@@ -285,7 +292,7 @@ export default {
             class="btn btn-next"
             @click="nextStep"
         >
-          Next
+          {{ $t('supplier-orders.details.buttons.next') }}
         </button>
       </div>
     </div>
