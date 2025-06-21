@@ -204,8 +204,9 @@ export default {
       const allProfiles = ProfileAssembler.toEntitiesFromResponse(profilesResponse);
 
       this.adminRestaurantsProfiles = allProfiles.filter(profile =>
-          this.users.some(user => Number(user.id) === Number(profile.userId))
+          this.users.some(user => Number(user.id) === Number(profile.user_id))
       );
+
     },
 
     async loadUnitsMeasurement() {
@@ -392,50 +393,86 @@ export default {
     },
 
     async handleDeclineOrder(order, action) {
-      if (this.processingOrder) return;
-
-      this.processingOrder = true;
+      if (this.processingOrder) return
+      this.processingOrder = true
 
       try {
+        let situationId = (action === 'cancelled' ? 4 : 3)
+        await this.updateOrderSituation(order, situationId)
 
-        let situationId = 0;
+        if (action === 'cancelled') {
+          const previouslyAccepted = this.requestedBatchesInOrders
+              .filter(rb =>
+                  Number(rb.orderId) === Number(order.id) &&
+                  rb.accepted
+              )
 
-        if( action === 'declined') {
-          situationId = 3; // Declined situation
+          for (const rb of previouslyAccepted) {
+            const batchId = rb.batchId
+            const quantity = rb.quantity
+
+            const batch = this.batches.find(b => Number(b.id) === Number(batchId))
+            if (!batch) continue
+
+            batch.stock = Number(batch.stock) + Number(quantity)
+
+            await this.batchesServices.update(batchId, batch)
+
+          }
         }
-        else if( action === 'cancelled') {
-          situationId = 4; // Cancelled situation
-        }
 
-        await this.updateOrderSituation(order, situationId);
-        await this.reloadOrderData();
-
-        this.showSuccessMessage('Order ' + action + ' successfully');
+        await this.reloadOrderData()
+        this.showSuccessMessage(`Order ${action} successfully`)
       } catch (error) {
-        this.handleError('Failed ' + action + ' order', error);
+        this.handleError(`Failed ${action} order`, error)
       } finally {
-        this.processingOrder = false;
+        this.processingOrder = false
       }
     },
 
     async handleOrderSubmission(updateData) {
-      if (this.processingOrder) return;
-
-      this.processingOrder = true;
+      if (this.processingOrder) return
+      this.processingOrder = true
 
       try {
         await this.updateOrderDetails(updateData);
         await this.updateSuppliesAcceptance(updateData);
-        await this.reloadOrderData();
 
-        this.closeAllModals();
-        this.showSuccessMessage('Order processed successfully');
+        const acceptedBatches = this.requestedBatchesInOrders
+            .filter(rb =>
+                Number(rb.orderId) === Number(updateData.order.id) &&
+                updateData.selectedBatches.includes(Number(rb.batchId))
+            )
+
+        for (const rb of acceptedBatches) {
+          const batchId = rb.batchId
+          const quantity = rb.quantity
+
+          const batch = this.batches.find(b => Number(b.id) === Number(batchId))
+          if (!batch) continue
+
+          const newStock = Number(batch.stock) - Number(quantity)
+          batch.stock = newStock;
+          console.log('Updating batch stock:', batch, 'New stock:', newStock)
+
+          await this.batchesServices.update(batchId, batch)
+
+        }
+
+        await this.reloadOrderData()
+        await this.updateOrderDetails(updateData);
+        await this.updateSuppliesAcceptance(updateData);
+        await this.reloadOrderData();
+        await this.loadBatches()
+        this.closeAllModals()
+        this.showSuccessMessage('Order updated successfully')
       } catch (error) {
-        this.handleError('Failed to process order', error);
+        this.handleError('Failed to update order', error)
       } finally {
-        this.processingOrder = false;
+        this.processingOrder = false
       }
     },
+
     // Order update methods
     async updateOrderSituation(order, situationId) {
       const orderUpdatePayload = this.createOrderUpdatePayload(order, { situationId });

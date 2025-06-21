@@ -179,9 +179,9 @@ export default {
       const nameMap = {};
 
       this.orders.forEach(order => {
-        const profile = this.adminRestaurantsProfiles.find(p => p.userId === order.adminRestaurantId);
+        const profile = this.adminRestaurantsProfiles.find(p => p.user_id === order.adminRestaurantId);
 
-        nameMap[order.id] = profile ? profile.businessName : 'Unknown Restaurant';
+        nameMap[order.id] = profile ? profile.business.name : 'Unknown Restaurant';
       });
 
       return nameMap;

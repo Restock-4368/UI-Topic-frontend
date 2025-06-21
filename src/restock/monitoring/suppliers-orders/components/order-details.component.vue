@@ -102,8 +102,8 @@ export default {
       });
     },
     restaurantBusinessName(order) {
-        const profile = this.adminRestaurantsProfiles.find(p => p.userId === order.adminRestaurantId);
-        return profile ? profile.businessName : 'Unknown Restaurant';
+        const profile = this.adminRestaurantsProfiles.find(p => p.user_id === order.adminRestaurantId);
+        return profile ? profile.business.name : 'Unknown Restaurant';
     },
     close() {
       this.$emit('update:modelValue', false);
@@ -229,24 +229,26 @@ export default {
       </div>
     </div>
 
-    <div class="situation" v-if="hideState">
-      <p class="block text-sm font-bold text-gray-700 mb-1">
-        Situation
-        <pv-chip class=" text-sm ml-1 mt-1 mb-1">{{ orderSituation?.name || 'Unknown' }}</pv-chip>
-      </p>
-    </div>
 
     </div>
 
     <!-- Step 2: Summary view -->
     <div v-if="step === 2">
 
+      <div class="situation" v-if="hideState">
+        <p class="block text-sm font-bold text-gray-700 mb-1">
+          Situation
+          <pv-chip class=" text-sm ml-1 mt-1 mb-1">{{ orderSituation?.name || 'Unknown' }}</pv-chip>
+        </p>
+      </div>
+
+      
       <div class="restaurant-section">
         <p class="block text-sm font-bold text-gray-700 mb-2">Restaurant Name: </p>
         <p class="mb-3">{{ restaurantBusinessName(order) }}</p>
       </div>
 
-      <div class="date-section">
+      <div class="date-section" v-if="!hideState">
         <p class="block text-sm font-bold text-gray-700 mb-2">Estimated Ship Date and Time: </p>
         <p class="mb-3"> {{ formatDate(order.estimatedShipDate) }},  {{ formatTime(order.estimatedShipTime) }}</p>
       </div>
