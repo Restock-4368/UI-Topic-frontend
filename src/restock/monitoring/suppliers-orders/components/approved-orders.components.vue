@@ -149,10 +149,10 @@ export default {
     },
     confirmDelete(order) {
       this.$confirm.require({
-        message: 'Are you sure you want to cancel this order?',
-        header: 'Cancel Order',
-        acceptLabel: 'Yes, cancel',
-        rejectLabel: 'Cancel',
+        message: this.$t('supplier-orders.cancel.message'),
+        header: this.$t('supplier-orders.cancel.title'),
+        acceptLabel: this.$t('supplier-orders.cancel.buttons.confirm'),
+        rejectLabel: this.$t('supplier-orders.cancel.buttons.cancel'),
         rejectClass: 'btn-cancel',
         acceptClass: 'btn-decline',
         accept: () => {

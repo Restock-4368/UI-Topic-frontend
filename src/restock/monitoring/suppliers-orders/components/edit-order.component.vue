@@ -147,7 +147,7 @@ export default {
 
 <template>
   <base-modal :model-value="modelValue"
-              :title="'Update Order'"
+              :title="$t('supplier-orders.update-order.title')"
               @close="close"
   >
     <div class="situation">

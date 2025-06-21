@@ -185,11 +185,11 @@ export default {
     },
     confirmDecline(order) {
       this.$confirm.require({
-        message: 'This action is irreversible. Are you sure you want to decline the entire selected order?',
-        header: 'Decline Order',
-        acceptLabel: 'Yes, decline',
+        message: this.$t('supplier-orders.decline.message'),
+        header: this.$t('supplier-orders.decline.title'),
+        acceptLabel: this.$t('supplier-orders.decline.buttons.confirm'),
         rejectClass: 'btn-cancel',
-        rejectLabel: 'Cancel',
+        rejectLabel: this.$t('supplier-orders.decline.buttons.cancel'),
         acceptClass: 'btn-decline',
         accept: () => {
           this.declineOrder(order);
