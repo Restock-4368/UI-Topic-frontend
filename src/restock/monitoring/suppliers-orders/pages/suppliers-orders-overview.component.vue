@@ -74,18 +74,31 @@ export default {
       activeTab: 0,
       loading: false,
 
-      // Configuration
-      tabs: [
-        { title: 'New Orders', value: 0 },
-        { title: 'Orders In Progress', value: 1 },
-        { title: 'Orders History', value: 2 }
-      ]
     };
   },
   async created() {
     await this.initializeComponent();
   },
   computed: {
+    tabs() {
+      const _current = this.$i18n.locale;
+
+      return [
+        {
+          title: this.$t('supplier-orders.tabs.new-orders'),
+          value: 0
+        },
+        {
+          title: this.$t('supplier-orders.tabs.accepted-orders'),
+          value: 1
+        },
+        {
+          title: this.$t('supplier-orders.tabs.history-orders'),
+          value: 2
+        }
+      ];
+    },
+
     deliveredOrders() {
       return this.orders.filter(order => {
         const state = this.findOrderState(order.stateId);
@@ -204,8 +217,9 @@ export default {
       const allProfiles = ProfileAssembler.toEntitiesFromResponse(profilesResponse);
 
       this.adminRestaurantsProfiles = allProfiles.filter(profile =>
-          this.users.some(user => Number(user.id) === Number(profile.userId))
+          this.users.some(user => Number(user.id) === Number(profile.user_id))
       );
+
     },
 
     async loadUnitsMeasurement() {
@@ -383,59 +397,107 @@ export default {
         await this.reloadOrderData();
 
         this.closeAllModals();
-        this.showSuccessMessage('Order updated successfully');
+        this.showSuccessMessage(this.$t('supplier-orders.notifications.order-updated'))
       } catch (error) {
-        this.handleError('Failed to update order', error);
+        this.handleError(this.$t('supplier-orders.notifications.error-update'), error)
       } finally {
         this.processingOrder = false;
       }
     },
 
     async handleDeclineOrder(order, action) {
-      if (this.processingOrder) return;
-
-      this.processingOrder = true;
+      if (this.processingOrder) return
+      this.processingOrder = true
 
       try {
+        let situationId = (action === 'cancelled' ? 4 : 3)
+        await this.updateOrderSituation(order, situationId)
 
-        let situationId = 0;
+        if (action === 'cancelled') {
+          const previouslyAccepted = this.requestedBatchesInOrders
+              .filter(rb =>
+                  Number(rb.orderId) === Number(order.id) &&
+                  rb.accepted
+              )
 
-        if( action === 'declined') {
-          situationId = 3; // Declined situation
+          for (const rb of previouslyAccepted) {
+            const batchId = rb.batchId
+            const quantity = rb.quantity
+
+            const batch = this.batches.find(b => Number(b.id) === Number(batchId))
+            if (!batch) continue
+
+            batch.stock = Number(batch.stock) + Number(quantity)
+
+            await this.batchesServices.update(batchId, batch)
+
+          }
         }
-        else if( action === 'cancelled') {
-          situationId = 4; // Cancelled situation
+
+        await this.reloadOrderData()
+
+        if (action === 'declined') {
+          this.showSuccessMessage(this.$t('supplier-orders.notifications.order-declined'))
+        }
+        else if (action === 'cancelled') {
+          this.showSuccessMessage(this.$t('supplier-orders.notifications.order-cancelled'))
         }
 
-        await this.updateOrderSituation(order, situationId);
-        await this.reloadOrderData();
-
-        this.showSuccessMessage('Order ' + action + ' successfully');
       } catch (error) {
-        this.handleError('Failed ' + action + ' order', error);
+        if (action === 'declined') {
+          this.showSuccessMessage(this.$t('supplier-orders.notifications.order-declined'))
+        }
+        else if (action === 'cancelled') {
+          this.showSuccessMessage(this.$t('supplier-orders.notifications.order-cancelled'))
+        }
       } finally {
-        this.processingOrder = false;
+        this.processingOrder = false
       }
     },
 
     async handleOrderSubmission(updateData) {
-      if (this.processingOrder) return;
-
-      this.processingOrder = true;
+      if (this.processingOrder) return
+      this.processingOrder = true
 
       try {
         await this.updateOrderDetails(updateData);
         await this.updateSuppliesAcceptance(updateData);
-        await this.reloadOrderData();
 
-        this.closeAllModals();
-        this.showSuccessMessage('Order processed successfully');
+        const acceptedBatches = this.requestedBatchesInOrders
+            .filter(rb =>
+                Number(rb.orderId) === Number(updateData.order.id) &&
+                updateData.selectedBatches.includes(Number(rb.batchId))
+            )
+
+        for (const rb of acceptedBatches) {
+          const batchId = rb.batchId
+          const quantity = rb.quantity
+
+          const batch = this.batches.find(b => Number(b.id) === Number(batchId))
+          if (!batch) continue
+
+          const newStock = Number(batch.stock) - Number(quantity)
+          batch.stock = newStock;
+          console.log('Updating batch stock:', batch, 'New stock:', newStock)
+
+          await this.batchesServices.update(batchId, batch)
+
+        }
+
+        await this.reloadOrderData()
+        await this.updateOrderDetails(updateData);
+        await this.updateSuppliesAcceptance(updateData);
+        await this.reloadOrderData();
+        await this.loadBatches()
+        this.closeAllModals()
+        this.showSuccessMessage(this.$t('supplier-orders.notifications.order-processed'))
       } catch (error) {
-        this.handleError('Failed to process order', error);
+        this.handleError(this.$t('supplier-orders.notifications.error-process'), error)
       } finally {
-        this.processingOrder = false;
+        this.processingOrder = false
       }
     },
+
     // Order update methods
     async updateOrderSituation(order, situationId) {
       const orderUpdatePayload = this.createOrderUpdatePayload(order, { situationId });
@@ -557,7 +619,7 @@ export default {
     showSuccessMessage(message) {
       this.$toast.add({
         severity: 'success',
-        summary: 'Success',
+        summary: this.$t('supplier-orders.notifications.summary-success'),
         detail: message,
         life: 3000
       });
@@ -566,7 +628,7 @@ export default {
     showErrorMessage(message) {
       this.$toast.add({
         severity: 'error',
-        summary: 'Error',
+        summary: this.$t('supplier-orders.notifications.summary-error'),
         detail: message,
         life: 3000
       });
@@ -577,6 +639,7 @@ export default {
 
 <template>
   <pv-toast></pv-toast>
+
   <pv-tabs v-model:value="activeTab">
     <pv-tab-list>
       <pv-tab class="full-width-tab" v-for="tab in tabs" :key="tab.title" :value="tab.value">
@@ -668,12 +731,52 @@ export default {
 
 <style scoped>
 
-.full-width-tab[aria-selected="true"] {
-  border: 2px solid #131313 !important;
-  background: linear-gradient(135deg, rgba(100, 35, 0, 0.06), rgba(128, 58, 0, 0.06)) !important;
-  color: #131313 !important;
-  box-shadow: inset 0 2px 4px rgba(225, 144, 38, 0.1) !important;
-  font-weight: bold !important;
+::v-deep(.p-tab.full-width-tab[aria-selected="true"]) {
+  background-color: rgba(79, 138, 91, 0.54) !important;
+  color: #323030 !important;
+  border-bottom: 2px solid #4F8A5B !important;
+}
+
+::v-deep(.p-tab.full-width-tab[aria-selected="false"]) {
+  background-color: transparent !important;
+  color: #666666 !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+::v-deep(.p-tab.full-width-tab[aria-selected="false"]:hover) {
+  background-color: rgba(77, 210, 25, 0.1) !important; /* ligero fondo azul al pasar */
+  color: #757e75 !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  ::v-deep(.p-tablist) {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  ::v-deep(.p-tab.full-width-tab) {
+    flex: 0 0 auto !important;
+    min-width: 120px;
+    padding: 0.5rem 1rem;
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+@media (max-width: 768px) {
+  .table-wrapper table {
+    width: auto !important;
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 480px) {
+  ::v-deep(.p-datatable[responsive-layout="stack"]) {
+    --p-stack-table-th-width: 40% !important;
+  }
 }
 
 </style>

@@ -144,9 +144,9 @@ export default {
       const nameMap = {};
 
       this.orders.forEach(order => {
-        const profile = this.adminRestaurantsProfiles.find(p => p.userId === order.adminRestaurantId);
+        const profile = this.adminRestaurantsProfiles.find(p => p.user_id === order.adminRestaurantId);
 
-        nameMap[order.id] = profile ? profile.businessName : 'Unknown Restaurant';
+        nameMap[order.id] = profile ? profile.business.name : 'Unknown Restaurant';
       });
 
       return nameMap;
@@ -176,7 +176,7 @@ export default {
           severity="success"
       >
         <i class="pi pi-download"></i>
-        DOWNLOAD HISTORY
+        {{ $t('supplier-orders.filters.download') }}
       </pv-button>
     </template>
 
@@ -184,7 +184,7 @@ export default {
 
   <!-- Empty -->
   <empty-section v-if="filteredOrders().length === 0">
-    You currently have no orders delivered.
+    {{ $t('supplier-orders.empty.history-orders') }}
     <template #icon>
       <i class="pi pi-truck" style="font-size: 3rem; color: #bcbcbc;"></i>
     </template>
@@ -199,31 +199,31 @@ export default {
       responsive-layout="scroll"
       :row-class="rowClass"
   >
-    <pv-column field="date" header="Order date">
+    <pv-column field="date" :header="$t('supplier-orders.table.date')">
       <template #body="{ data }">
         {{ formatDate(data.date) }}
       </template>
     </pv-column>
 
-    <pv-column header="Ship date">
+    <pv-column :header="$t('supplier-orders.table.ship-date')">
       <template #body="{ data }">
         {{ data.estimatedShipDate ? formatDate(data.estimatedShipDate) : 'Not set' }}
       </template>
     </pv-column>
 
-    <pv-column header="Restaurant Name">
+    <pv-column :header="$t('supplier-orders.table.restaurant-name')">
       <template #body="{ data }">
         {{ restaurantBusinessNamesPerOrder[data.id] }}
       </template>
     </pv-column>
 
-    <pv-column header="N° Requested products">
+    <pv-column :header="$t('supplier-orders.table.requested-products')">
       <template #body="{ data }">
         {{ requestedSuppliesCount(data) }}
       </template>
     </pv-column>
 
-    <pv-column header="Final Price">
+    <pv-column :header="$t('supplier-orders.table.final-price')">
       <template #body="{ data }">
         S/ {{ data.totalPrice }}
       </template>

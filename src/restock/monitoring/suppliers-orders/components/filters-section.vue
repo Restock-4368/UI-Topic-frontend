@@ -28,14 +28,14 @@ export default {
     }
   },
   emits: ['update:searchQuery', 'update:selectedDateRange', 'toggle-sort'],
-  data() {
-    return {
-      dateRangeOptions: [
-        { label: 'Last 7 days', value: '7days' },
-        { label: 'Last 30 days', value: '30days' },
-        { label: 'Last 3 months', value: '3months' }
+  computed: {
+    dateRanges() {
+      return [
+        { value: '7days', label: this.$t('supplier-orders.filters.last-7days') },
+        { value: '30days', label: this.$t('supplier-orders.filters.last-30days') },
+        { value: '3months', label: this.$t('supplier-orders.filters.last-3months') },
       ]
-    };
+    }
   }
 }
 </script>
@@ -51,7 +51,7 @@ export default {
         <pv-input-text
             :value="searchQuery"
             @update:modelValue="$emit('update:searchQuery', $event)"
-            :placeholder="searchPlaceholder"
+            :placeholder="$t('supplier-orders.filters.search-placeholder')"
             class="search-input"
         />
       </div>
@@ -64,10 +64,10 @@ export default {
         <pv-dropdown
             :value="selectedDateRange"
             @update:modelValue="$emit('update:selectedDateRange', $event)"
-            :options="dateRangeOptions"
+            :options="dateRanges"
             option-label="label"
             option-value="value"
-            placeholder="Order Date range"
+            :placeholder="$t('supplier-orders.filters.date-range-placeholder')"
             class="filter-dropdown"
             :show-clear="true"
         />
@@ -78,7 +78,7 @@ export default {
           @click="$emit('toggle-sort')"
           class="sort-button"
       >
-        {{ sortLabel }}
+        {{ $t('supplier-orders.filters.order-date-button') }}
         <i :class="['pi', sortOrder === 1 ? 'pi-sort-up' : 'pi-sort-down']"></i>
       </button>
 
