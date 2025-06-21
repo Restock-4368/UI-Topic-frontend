@@ -36,9 +36,9 @@ const app = createApp(App);
 app
     .use(router)
     .use(index)
-    .use(PrimeVue, {ripple: true, theme: {preset: Aura }})
-    .use(ConfirmationService)
+    .use(PrimeVue, { ripple: true, theme: { preset: Aura } })
     .use(ToastService)
+    .use(ConfirmationService)
     .component('pv-button', Button)
     .component('pv-dropdown', Dropdown)
     .component('pv-card', Card)
@@ -69,4 +69,4 @@ app
     .component('pv-date-picker', DatePicker)
     .component('pv-toast', Toast)
 
-.mount('#app');
+    .mount('#app');

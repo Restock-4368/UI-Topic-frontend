@@ -89,5 +89,9 @@
       "confirm-button": "CONFIRMAR",
       "cancel-button": "CANCELAR"
     }
+  },
+  "subscription": {
+    "title1": "PLANES FLEXIBLES PARA LLEVAR LA GESTIÓN DE TU RESTAURANTE",
+    "title2": "AL SIGUIENTE NIVEL"
   }
 }

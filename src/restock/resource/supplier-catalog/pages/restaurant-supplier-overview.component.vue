@@ -141,7 +141,7 @@ export default {
   <supplier-modal v-if="showAddSupplierModal" @close="showAddSupplierModal = false"/>
 </template>
 
-<style >
+<style>
 .supplier-container {
   padding: 24px;
   margin: 0 2rem 0 2rem;
@@ -207,7 +207,7 @@ export default {
   margin-top: 40px;
   color: #7f8c8d;
 }
-
+  
 .supplier-icon {
   font-size: 160px;
   color: #7f8c8d;
