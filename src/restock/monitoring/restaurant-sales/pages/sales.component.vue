@@ -248,10 +248,10 @@ export default {
   <pv-toast position="top-right" />
   <div class="ventas-container">
     <div class="ventas-header">
-        <h2>Register your sales</h2>
+        <h2>{{ $t('sales_restaurant.register_sale') }}</h2>
         
         <pv-button
-            label="New Sale"
+            :label="$t('sales_restaurant.new_sale')"
             icon="pi pi-plus"
             iconPos="right"
             class="nueva-venta-btn"
@@ -260,14 +260,14 @@ export default {
     </div>
     <hr class="my-3 border-top-1 border-300" />
 
-    <p class="text-question">Want to update your inventory? Select the sales you want here:</p>
+    <p class="text-question">{{ $t('sales_restaurant.update_inventory') }}</p>
 
     <pv-button
         class="registered-sales-btn"
         @click="openSalesNotAddedToInventoryModal"
         icon="pi pi-list"
         iconPos="right"
-        label="REGISTERED SALES NOT DISCOUNTED IN INVENTORY"
+        :label="$t('sales_restaurant.registered_sales_not_discounted')"
     />
 
     <!-- Display when there are no recorded sales discounted in inventory -->
@@ -282,15 +282,15 @@ export default {
     <div v-if="showHistorySalesAddedInInventory">
         <div class="flex-title-history-sales">
             <i class="pi pi-history"></i>
-            <p>History of sales updated in inventory</p>
+            <p>{{ $t('sales_restaurant.history_sales') }}</p>
         </div>
 
-        <p class="subtitle">Registered sales that have already deducted supplies from inventory</p>
+        <p class="subtitle">{{ $t('sales_restaurant.registered_sales') }}</p>
 
         <!-- Filtro de búsqueda -->
         <pv-input-text
         v-model="filterValue"
-        :placeholder="'Search for sale by code'"
+        :placeholder="$t('sales_restaurant.search')"
         class="filter-field"
         />
 
@@ -304,10 +304,10 @@ export default {
                 responsiveLayout="scroll"
                 class="full-width-table"
             >
-                <pv-column field="code" :header="'code'" />
-                <pv-column field="recipeCount" :header="'quantity of dishes'" />
-                <pv-column field="additionalSupplyCount" :header="'quantity of additional supplies'" />
-                <pv-column :header="'actions'">
+                <pv-column field="code" :header="$t('sales_restaurant.code')" />
+                <pv-column field="recipeCount" :header="$t('sales_restaurant.quantity_dishes')" />
+                <pv-column field="additionalSupplyCount" :header="$t('sales_restaurant.quantity_additional_supplies')" />
+                <pv-column :header="$t('sales_restaurant.actions')">
                 <template #body="{ data }">
                     <i class="pi pi-file" style="cursor: pointer;" @click="openSaleDetail(data)"></i>
                 </template>
@@ -326,10 +326,6 @@ export default {
         v-if="showModalRegisterSale"
         @close="showModalRegisterSale = false"
         @registerSale="onRegisterSale"
-    />
-    <SaleConfirmationComponent
-        v-if="showModalSaleConfirmation"
-        @close="showModalSaleConfirmation = false"
     />
     <ShowSalesNotAddedToInventoryComponent
         v-if="showModalSalesNotAddedToInventory"

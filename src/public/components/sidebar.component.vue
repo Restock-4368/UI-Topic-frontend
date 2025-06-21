@@ -47,7 +47,6 @@
 import { RouterLink } from 'vue-router'
 import LanguageSwitcher from './language-switcher.component.vue'
 import logo from '../../assets/images/logo-restock.png'
-import { mockUser } from '../../shared/mocks/user.mock.ts';
 import {UserService} from "../../restock/iam/services/user.service.js";
 
 export default {

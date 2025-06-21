@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SubscriptionOverviewComponent from '../restock/subscription/pages/subscription-overview.component.vue';
 import SalesComponent from '../restock/monitoring/restaurant-sales/pages/sales.component.vue';
+import SupplierAlertsOverviewComponent from '../restock/monitoring/suppliers-orders/pages/supplier-alerts-overview.component.vue';
 
 
 /**
@@ -103,6 +104,12 @@ const routes = [
         name: 'supplier-orders',
         component: SuppliersOrdersOverview,
         meta: { title: 'sidebar.orders' }
+    },
+    {
+        path: '/dashboard/supplier/notifications',
+        name: 'notificaction-suppliers',
+        component: SupplierAlertsOverviewComponent,
+        meta: { title: 'sidebar.notifications' }
     },
     {
         path: '/',
