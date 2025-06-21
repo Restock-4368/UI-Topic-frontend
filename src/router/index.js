@@ -12,8 +12,6 @@ const RestaurantSummaryOverview = () => import('../restock/Analytics/pages/resta
 const SupplierReviewComponent = () => import('../restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
 const RoleRedirect = () => import('../public/components/role-redirect.component.vue');
 const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplier-summary-overview.component.vue')
-const RestaurantSupplierOverview = () => import('../restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
-const RestaurantSupplierDetail = () => import('../restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
 const RestaurantNotificationsOverview = () => import('../restock/resource/inventory/pages/restaurant-notifications-overview.component.vue')
 const RestaurantRecipesOverview = () => import('../restock/planning/pages/restaurant-recipes-overview.component.vue')
 const SuppliersOrdersOverview = () => import('../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue')
@@ -67,18 +65,6 @@ const routes = [
         name: 'supplier-inventory',
         component: Inventory,
         meta: { title: 'sidebar.inventory' }
-    },
-    {
-        path: '/dashboard/restaurant/suppliers',
-        name: 'supplier-catalog',
-        component: RestaurantSupplierOverview,
-        meta: { title: 'sidebar.supplier-catalog-overview' }
-    },
-    {
-        path: '/dashboard/restaurant/suppliers/:id',
-        name: 'supplier-detail',
-        component: RestaurantSupplierDetail,
-        meta: { title: 'sidebar.supplier-detail' }
     },
     {
         path: '/dashboard/supplier/ratings',
