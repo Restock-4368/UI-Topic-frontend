@@ -580,6 +580,14 @@
       "date": "2025-06-20",
       "added_inventory": true,
       "id": 10
+    },
+    {
+      "code": "M3M4EB",
+      "diner_name": "Valeria",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 11
     }
   ],
   "sales_recipes": [
@@ -612,6 +620,12 @@
       "recipe_id": 2,
       "quantity": 1,
       "id": 5
+    },
+    {
+      "sale_id": 11,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 6
     }
   ],
   "sales_additional_supplies": [
