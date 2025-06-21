@@ -10,7 +10,7 @@ export default {
   components: {SecuritySettings, BusinessDataSettings, PersonalDataSettings},
   props: {
     profile: {
-      type: Object,
+      type: [Object, null],
       required: true
     },
     categories: {

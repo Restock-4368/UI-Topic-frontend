@@ -3,7 +3,7 @@ export default {
   name: "personal-data-settings",
   props: {
     profile: {
-      type: Object,
+      type: [Object, null],
       required: true,
     }
   },

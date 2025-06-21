@@ -1,29 +1,13 @@
 <script>
-import {Profile} from "../model/profile.entity.js";
-import {User} from "../../iam/model/user.entity.js";
-import {Business} from "../model/business.entity.js";
+
 import {ProfileAssembler} from "../services/profile.assembler.js";
-import {UserAssembler} from "../../iam/services/user.assembler.js";
 import {BusinessService} from "../services/business.service.js";
 import ProfileDetails from "../components/profile-details.component.vue";
 import ProfileSettings from "../components/profile-settings.component.vue";
 import {ProfileService} from "../services/profile.service.js";
-import {
-  OrderToSupplierSituationService
-} from "../../resource/orders-to-suppliers/services/order-to-supplier-situation.service.js";
-import {
-  OrderToSupplierStateService
-} from "../../resource/orders-to-suppliers/services/order-to-supplier-state.service.js";
-import {OrderToSupplierService} from "../../resource/orders-to-suppliers/services/order-to-supplier.service.js";
-import {
-  OrderToSupplierBatchService
-} from "../../resource/orders-to-suppliers/services/order-to-supplier-batch.service.js";
 import {UserService} from "../../iam/services/user.service.js";
-import {SupplyBatchService} from "../../resource/inventory/services/supply-batch.service.js";
-import {SupplyService} from "../../resource/inventory/services/supply.service.js";
-import {UnitMeasurementService} from "../../resource/inventory/services/unit-measurement.service.js";
-import {SessionService} from "../../../shared/services/session.service.js";
 import {BusinessAssembler} from "../services/business.assembler.js";
+import {sessionService} from "../../../shared/services/session.service.js";
 
 export default {
   name: "profile-overview",
@@ -68,7 +52,7 @@ export default {
 
     async loadProfile() {
       try {
-        const resource = await this.profileService.getById(1);
+        const resource = await this.profileService.getById(sessionService.getProfileId());
         this.profile = ProfileAssembler.toEntityFromResource(resource.data);
 
         this.categoriesArray = this.profile.business?.categories

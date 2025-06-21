@@ -3,7 +3,7 @@ export default {
   name: "profile-details",
   props: {
     profile: {
-      type: Object,
+      type: [Object, null],
       default: () => ({
         name: '',
         last_name: '',
@@ -46,7 +46,7 @@ export default {
 
       <!-- Profile Image -->
       <img
-          :src="profile.avatar"
+          :src="this.profile?.avatar"
           alt="User photo"
           class="profile-photo"
       />
@@ -54,42 +54,42 @@ export default {
       <!-- Card Content -->
       <div class="card-content text">
         <div class="personal-details-form">
-          <h4 class="name">{{ profile.name }} {{ profile.last_name }}</h4>
+          <h4 class="name">{{ profile?.name }} {{ profile?.last_name }}</h4>
 
           <p class="info">
             <i class="pi pi-user icon"></i>
-            {{ profile.email }}
+            {{ profile?.email }}
           </p>
 
           <!-- Phone -->
           <p class="info">
             <i class="pi pi-phone icon"></i>
-            {{ profile.phone }}
+            {{ profile?.phone }}
           </p>
 
           <!-- Address -->
           <p class="info">
             <i class="pi pi-map-marker icon"></i>
-            {{ profile.address }} - {{ profile.country }}
+            {{ profile?.address }} - {{ profile?.country }}
           </p>
 
           <hr>
 
           <!-- Company Name -->
           <h5 class="subtitle">Business Name:</h5>
-          <p>{{ profile.business?.name }}</p>
+          <p>{{ profile?.business?.name }}</p>
 
           <!-- Company Address -->
           <h5 class="subtitle">Business Address:</h5>
-          <p>{{ profile.business?.address }}</p>
+          <p>{{ profile?.business?.address }}</p>
 
           <!-- Company Phone -->
           <h5 class="subtitle">Business Phone:</h5>
-          <p>{{ profile.business?.phone }}</p>
+          <p>{{ profile?.business?.phone }}</p>
 
           <!-- Company Email -->
           <h5 class="subtitle">Business Email:</h5>
-          <p>{{ profile.business?.email }}</p>
+          <p>{{ profile?.business?.email }}</p>
 
           <h5 class="subtitle">Categories:</h5>
 
