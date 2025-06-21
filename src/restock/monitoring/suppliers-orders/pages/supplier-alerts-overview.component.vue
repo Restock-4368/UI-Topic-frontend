@@ -64,7 +64,7 @@ if (diffMins < 60) {
               elapsedTime,
               total_price: order.total_price,
               situation: situation.data[0]?.name || 'Unknown',
-              restaurant: profile.data[0]?.business_name || 'Unknown'
+              restaurant: profile.data[0]?.business.name || 'Unknown'
             };
           } catch (innerError) {
             console.warn(`❌ Error enriqueciendo orden ID ${order.id}`, innerError);

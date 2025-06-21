@@ -98,26 +98,26 @@ export default {
         ✕
       </button>
 
-      <h2 class="title">Register Sale</h2>
+      <h2 class="title">{{ $t('sales_restaurant.register_sale_modal.title') }}</h2>
 
       <div class="content">
         <p class="sub-text">
-          Complete the details of a new sale to access the inventory update option.
+          {{ $t('sales_restaurant.register_sale_modal.sub-title') }}
         </p>
 
         <!-- Dish selection -->
-        <p>Dishes</p>
+        <p>{{ $t('sales_restaurant.register_sale_modal.dishes') }}</p>
         <select class="full-width" v-model="selectedDishId" @change="agregarPlato">
-          <option disabled value="">Select a dish from your recipe list</option>
+          <option disabled value="">{{ $t('sales_restaurant.register_sale_modal.select_dish') }}</option>
           <option v-for="dish in availableDishes" :key="dish.id" :value="dish.id">
             {{ dish.name }}
           </option>
         </select>
 
         <!-- Additional supply selection -->
-        <p>Additional Supplies</p>
+        <p>{{ $t('sales_restaurant.register_sale_modal.additionalSuppllies') }}</p>
         <select class="full-width"  v-model="selectedAdditionalSupplyId" @change="agregarInsumo">
-          <option disabled value="">Select a supply from your inventory</option>
+          <option disabled value="">{{ $t('sales_restaurant.register_sale_modal.select_additionalSupply') }}</option>
           <option v-for="supply in availableAdditionalSupplies" :key="supply.id" :value="supply.id">
             {{ supply.name }}
           </option>
@@ -125,14 +125,14 @@ export default {
 
         <!-- Selected dishes table -->
         <div v-if="selectedDishes.length > 0">
-          <h3>Selected dishes</h3>
+          <h3>{{ $t('sales_restaurant.register_sale_modal.selected_dishes') }}</h3>
           <table class="custom-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Unit Price</th>
-                <th>Quantity</th>
-                <th>Actions</th>
+                <th>{{ $t('sales_restaurant.register_sale_modal.name') }}</th>
+                <th>{{ $t('sales_restaurant.register_sale_modal.unit_price') }}</th>
+                <th>{{ $t('sales_restaurant.register_sale_modal.quantity') }}</th>
+                <th>{{ $t('sales_restaurant.register_sale_modal.actions') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -152,14 +152,14 @@ export default {
 
         <!-- Selected additional supplies table -->
         <div v-if="selectedAdditionalSupplies.length > 0">
-          <h3 class="margin-top">Selected additional supplies</h3>
+          <h3 class="margin-top">{{ $t('sales_restaurant.register_sale_modal.selected_additionalSupplies') }}</h3>
           <table class="custom-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Unit Price</th>
-                <th>Quantity</th>
-                <th>Actions</th>
+                <th>{{ $t('sales_restaurant.register_sale_modal.name') }}</th>
+                <th>{{ $t('sales_restaurant.register_sale_modal.unit_price') }}</th>
+                <th>{{ $t('sales_restaurant.register_sale_modal.quantity') }}</th>
+                <th>{{ $t('sales_restaurant.register_sale_modal.actions') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -180,16 +180,16 @@ export default {
         <!-- Message when nothing selected -->
         <div class="no-dishes-additonalsupplies-selected"
           v-if="selectedDishes.length === 0 && selectedAdditionalSupplies.length === 0">
-          Select the additional dishes and ingredients of the order to view the complete sale.
+          {{ $t('sales_restaurant.register_sale_modal.nothing-selected') }}
         </div>
       </div>
 
       <div class="buttons">
         <button class="button-cancel" @click="closeComponent">
-          CANCEL
+          {{ $t('sales_restaurant.register_sale_modal.cancel') }}
         </button>
         <button v-if="selectedDishes.length || selectedAdditionalSupplies.length" class="button-register" @click="registerSale">
-          REGISTER
+          {{ $t('sales_restaurant.register_sale_modal.register') }}
         </button>
       </div>
     </div>

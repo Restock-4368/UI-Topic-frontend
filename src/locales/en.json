@@ -45,7 +45,6 @@
       "confirm-password": "Confirm new password",
       "confirm-password-placeholder": "Confirm new password",
       "save-changes": "SAVE CHANGES",
-
       "delete-account": "Delete account",
       "delete-account-warning": "This action will permanently delete your account. All your personal data, history and settings will be deleted. You will not be able to recover your account after deletion. Your subscription will be deleted.",
       "confirm-delete": "CONFIRM DELETE"
@@ -155,7 +154,8 @@
     "quantity_additional_supplies": "Quantity of additional supplies",
     "actions": "Actions",
     "sale_details": {
-      "title": "SALE DETAIL",
+      "title": "SALE DETAILS",
+      "name_customer": "Customer name",
       "number_dishes": "Number of dishes",
       "number_additional_supplies": "Number of additional supplies",
       "dishes": "Dishes",
@@ -171,7 +171,26 @@
       "code": "Code",
       "quantityDishes": "Quantity of Dishes",
       "quantityAdditionalSupplies": "Quantity of Additional Supplies",
-      "actions": "Actions"
+      "actions": "Actions",
+      "cancel": "Cancel",
+      "register": "Register"
+    },
+    "register_sale_modal": {
+      "title": "Register Sale",
+      "sub-title": "Complete the details of a new sale to access the inventory update option.",
+      "dishes": "Dishes",
+      "select_dish": "Select a dish from your recipe list",
+      "additionalSuppllies": "Additional Supplies",
+      "select_additionalSupply": "Select a supply from your inventory",
+      "selected_dishes": "Selected dishes",
+      "selected_additionalSupplies": "Selected additional supplies",
+      "name": "Name",
+      "unit_price": "Unit Price",
+      "quantity": "Quantity",
+      "actions": "Actions",
+      "cancel": "CANCEL",
+      "register": "REGISTER",
+      "nothing-selected": "Select the additional dishes and ingredients of the order to view the complete sale."
     },
     "sale_confirmation": {
       "title": "Sale Registered Successfully"

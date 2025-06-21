@@ -622,6 +622,30 @@
       "date": "2025-06-20",
       "added_inventory": true,
       "id": 11
+    },
+    {
+      "code": "YGEGA0",
+      "diner_name": "Carlos",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": false,
+      "id": 12
+    },
+    {
+      "code": "NP35AB",
+      "diner_name": "Sofía",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": false,
+      "id": 13
+    },
+    {
+      "code": "R4AEOF",
+      "diner_name": "Carlos",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": false,
+      "id": 14
     }
   ],
   "sales_recipes": [
@@ -660,6 +684,24 @@
       "recipe_id": 2,
       "quantity": 1,
       "id": 6
+    },
+    {
+      "sale_id": 12,
+      "recipe_id": 4,
+      "quantity": 4,
+      "id": 7
+    },
+    {
+      "sale_id": 13,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 8
+    },
+    {
+      "sale_id": 14,
+      "recipe_id": 3,
+      "quantity": 1,
+      "id": 9
     }
   ],
   "sales_additional_supplies": [
@@ -698,6 +740,12 @@
       "supply_id": 1,
       "quantity": 20,
       "id": 6
+    },
+    {
+      "sale_id": 12,
+      "supply_id": 15,
+      "quantity": 8,
+      "id": 7
     }
   ],
   "comments": [
