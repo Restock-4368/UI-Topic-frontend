@@ -619,7 +619,7 @@ export default {
     showSuccessMessage(message) {
       this.$toast.add({
         severity: 'success',
-        summary: this.$t('supplier-orders.notifications.summary-error'),
+        summary: this.$t('supplier-orders.notifications.summary-success'),
         detail: message,
         life: 3000
       });
@@ -628,7 +628,7 @@ export default {
     showErrorMessage(message) {
       this.$toast.add({
         severity: 'error',
-        summary: 'Error',
+        summary: this.$t('supplier-orders.notifications.summary-error'),
         detail: message,
         life: 3000
       });
