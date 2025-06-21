@@ -41,13 +41,13 @@ export default {
     <div class="profile-details-card">
       <!-- Card Header -->
       <div class="card-header">
-        <h3 class="card-title text">Profile Details</h3>
+        <h3 class="card-title text">{{ $t('profile.title') }}</h3>
       </div>
 
       <!-- Profile Image -->
       <img
           :src="this.profile?.avatar"
-          alt="User photo"
+          alt="$t('profile.altUserPhoto')"
           class="profile-photo"
       />
 
@@ -76,22 +76,22 @@ export default {
           <hr>
 
           <!-- Company Name -->
-          <h5 class="subtitle">Business Name:</h5>
+          <h5 class="subtitle">{{ $t('profile.business-name') }}:</h5>
           <p>{{ profile?.business?.name }}</p>
 
           <!-- Company Address -->
-          <h5 class="subtitle">Business Address:</h5>
+          <h5 class="subtitle">{{ $t('profile.business-address') }}:</h5>
           <p>{{ profile?.business?.address }}</p>
 
           <!-- Company Phone -->
-          <h5 class="subtitle">Business Phone:</h5>
+          <h5 class="subtitle">{{ $t('profile.business-phone') }}:</h5>
           <p>{{ profile?.business?.phone }}</p>
 
           <!-- Company Email -->
-          <h5 class="subtitle">Business Email:</h5>
+          <h5 class="subtitle">{{ $t('profile.business-email') }}:</h5>
           <p>{{ profile?.business?.email }}</p>
 
-          <h5 class="subtitle">Categories:</h5>
+          <h5 class="subtitle">{{ $t('profile.categories') }}:</h5>
 
           <div class="category-chip-list">
             <span

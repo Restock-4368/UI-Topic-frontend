@@ -79,7 +79,7 @@ export default {
       <div class="card-content">
         <div class="business-data-form">
           <!-- Business Name -->
-          <label class="field-label">Business Name</label>
+          <label class="field-label">{{ $t('profile.business-name') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localBusiness.name"
@@ -91,7 +91,7 @@ export default {
           </div>
 
           <!-- Business Address -->
-          <label class="field-label">Business Address</label>
+          <label class="field-label">{{ $t('profile.business-address') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localBusiness.address"
@@ -103,7 +103,7 @@ export default {
           </div>
 
           <!-- Business Phone -->
-          <label class="field-label">Business Phone</label>
+          <label class="field-label">{{ $t('profile.business-phone') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localBusiness.phone"
@@ -115,7 +115,7 @@ export default {
           </div>
 
           <!-- Company Email -->
-          <label class="field-label">Business Email</label>
+          <label class="field-label">{{ $t('profile.business-email') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localBusiness.email"
@@ -127,7 +127,7 @@ export default {
           </div>
 
           <!-- Business Categories -->
-          <label class="field-label">Business Categories</label>
+          <label class="field-label">{{ $t('profile.business-categories') }}</label>
           <div class="form-field full-width">
             <pv-multiselect
                 v-model="selectedCategories"
@@ -166,7 +166,7 @@ export default {
             class="save-changes-button"
             aria-label="Save changes"
         >
-          SAVE CHANGES
+          {{ $t('profile.settings.save-changes') }}
         </button>
       </div>
     </div>

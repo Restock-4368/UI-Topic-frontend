@@ -26,11 +26,6 @@ export default {
   data() {
     return {
       activeTab: 0,
-      tabs: [
-        { label: 'Personal Data' },
-        { label: 'Business Data' },
-        { label: 'Security and Privacy' }
-      ]
     }
   },
 
@@ -47,7 +42,21 @@ export default {
       this.$emit('profile-and-user-updated', user)
     }
   },
-
+  computed: {
+    tabs() {
+      return [
+        {
+          label: this.$t('profile.settings.personal-info')
+        },
+        {
+          label: this.$t('profile.settings.business-info')
+        },
+        {
+          label: this.$t('profile.settings.security-info')
+        }
+      ]
+    }
+  },
   emits: [
     'profile-updated',
     'profile-and-business-updated',
@@ -60,14 +69,13 @@ export default {
   <div class="profile-settings-container">
     <div class="profile-settings-card">
       <div class="card-header">
-        <h2 class="card-title">Edit your information</h2>
+        <h2 class="card-title">{{ $t('profile.settings.title') }}</h2>
       </div>
       <div class="card-content">
         <div class="tab-group">
           <div class="tab-headers">
             <button
                 v-for="(tab, index) in tabs"
-                :key="index"
                 :class="['tab-button', { active: activeTab === index }]"
                 @click="activeTab = index"
             >

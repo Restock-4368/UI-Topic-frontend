@@ -86,19 +86,19 @@ export default {
     <!-- Change password section -->
     <div class="security-card">
       <div class="card-header">
-        <h3 class="card-title">Change password</h3>
+        <h3 class="card-title">{{ $t('profile.settings.change-password') }}</h3>
       </div>
 
       <div class="card-content">
         <div class="content-container">
           <!-- Current password -->
-          <label class="field-label">Current password</label>
+          <label class="field-label">{{ $t('profile.settings.current-password') }}</label>
           <div class="form-field full-width">
             <div class="password-field">
               <input
                   v-model="currentPassword"
                   :type="hideCurrentPassword ? 'password' : 'text'"
-                  placeholder="Enter current password"
+                  :placeholder="$t('profile.settings.current-password-placeholder')"
                   aria-label="Current password"
                   class="form-input"
               />
@@ -115,13 +115,13 @@ export default {
           </div>
 
           <!-- New password -->
-          <label class="field-label">New password</label>
+          <label class="field-label">{{ $t('profile.settings.new-password') }}</label>
           <div class="form-field full-width">
             <div class="password-field">
               <input
                   v-model="newPassword"
                   :type="hideNewPassword ? 'password' : 'text'"
-                  placeholder="Enter new password"
+                  :placeholder="$t('profile.settings.new-password-placeholder')"
                   aria-label="New password"
                   class="form-input"
               />
@@ -138,13 +138,13 @@ export default {
           </div>
 
           <!-- Confirm new password -->
-          <label class="field-label">Confirm new password</label>
+          <label class="field-label">{{ $t('profile.settings.confirm-password') }}</label>
           <div class="form-field full-width">
             <div class="password-field">
               <input
                   v-model="newPasswordConfirm"
                   :type="hideNewPasswordConfirm ? 'password' : 'text'"
-                  placeholder="Confirm new password"
+                  :placeholder="$t('profile.settings.confirm-password-placeholder')"
                   aria-label="Confirm new password"
                   class="form-input"
               />
@@ -168,7 +168,7 @@ export default {
             class="save-changes-button"
             aria-label="Save password changes"
         >
-          SAVE CHANGES
+          {{ $t('profile.settings.save-changes') }}
         </button>
       </div>
     </div>
@@ -176,18 +176,17 @@ export default {
     <!-- Delete account section -->
     <div class="security-card">
       <div class="card-header">
-        <h3 class="card-title">Delete account</h3>
+        <h3 class="card-title">{{ $t('profile.settings.delete-account') }}</h3>
       </div>
 
       <div class="card-content">
         <div class="content-container">
-          <p>This action will permanently delete your account. All your personal data, history and settings will
-            be deleted. You will not be able to recover your account after deletion. Your subscription will be deleted.</p>
+          <p>{{ $t('profile.settings.delete-account-warning') }}</p>
         </div>
       </div>
 
       <div class="card-actions">
-        <button class="delete-button">CONFIRM DELETE</button>
+        <button class="delete-button">{{ $t('profile.settings.confirm-delete') }}</button>
       </div>
     </div>
 

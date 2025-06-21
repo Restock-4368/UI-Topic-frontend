@@ -49,7 +49,7 @@ export default {
       <div class="card-content">
         <div class="personal-data-form">
           <!-- Name -->
-          <label class="field-label">Name</label>
+          <label class="field-label">{{ $t('profile.name') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localProfile.name"
@@ -61,7 +61,7 @@ export default {
           </div>
 
           <!-- Last Name -->
-          <label class="field-label">Last Name</label>
+          <label class="field-label">{{ $t('profile.last-name') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localProfile.last_name"
@@ -73,7 +73,7 @@ export default {
           </div>
 
           <!-- Email -->
-          <label class="field-label">Email</label>
+          <label class="field-label">{{ $t('profile.email') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localProfile.email"
@@ -85,7 +85,7 @@ export default {
           </div>
 
           <!-- Phone -->
-          <label class="field-label">Phone</label>
+          <label class="field-label">{{ $t('profile.phone') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localProfile.phone"
@@ -97,7 +97,7 @@ export default {
           </div>
 
           <!-- Address -->
-          <label class="field-label">Address</label>
+          <label class="field-label">{{ $t('profile.address') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localProfile.address"
@@ -109,7 +109,7 @@ export default {
           </div>
 
           <!-- Country -->
-          <label class="field-label">Country</label>
+          <label class="field-label">{{ $t('profile.country') }}</label>
           <div class="form-field full-width">
             <input
                 v-model="localProfile.country"
@@ -128,7 +128,7 @@ export default {
             class="save-changes-button"
             aria-label="Save changes"
         >
-          SAVE CHANGES
+          {{ $t('profile.settings.save-changes') }}
         </button>
       </div>
     </div>
