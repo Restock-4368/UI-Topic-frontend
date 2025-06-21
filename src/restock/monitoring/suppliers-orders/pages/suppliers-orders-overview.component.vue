@@ -730,5 +730,21 @@ export default {
 
 <style scoped>
 
+::v-deep(.p-tab.full-width-tab[aria-selected="true"]) {
+  background-color: rgba(79, 138, 91, 0.54) !important;
+  color: #323030 !important;
+  border-bottom: 2px solid #4F8A5B !important;
+}
+
+::v-deep(.p-tab.full-width-tab[aria-selected="false"]) {
+  background-color: transparent !important;
+  color: #666666 !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+::v-deep(.p-tab.full-width-tab[aria-selected="false"]:hover) {
+  background-color: rgba(77, 210, 25, 0.1) !important; /* ligero fondo azul al pasar */
+  color: #757e75 !important;
+}
 
 </style>
