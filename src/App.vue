@@ -45,7 +45,6 @@ export default {
 }
 
 .content-wrapper {
-  padding: 24px;
   background-color: #ffffff;
   flex-grow: 1;
 }

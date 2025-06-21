@@ -103,5 +103,9 @@
       "confirm-button": "CONFIRM",
       "cancel-button": "CANCEL"
     }
+  },
+  "subscription": {
+    "title1": "FLEXIBLE PLANS TO TAKE YOUR RESTAURANT MANAGEMENT",
+    "title2": "TO THE NEXT LEVEL"
   }
 }

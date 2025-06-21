@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SubscriptionOverviewComponent from '../restock/subscription/pages/subscription-overview.component.vue';
+import SalesComponent from '../restock/monitoring/restaurant-sales/pages/sales.component.vue';
 
 
 /**
@@ -36,6 +37,12 @@ const routes = [
         meta: { title: 'sidebar.restaurant-summary-overview' }
     },
     {
+        path: '/dashboard/restaurant/subscription',
+        name: 'restaurant-subscription',
+        component: SubscriptionOverviewComponent,
+        meta: { title: 'sidebar.supplier-summary-overview' }
+    },
+    {
         path: '/dashboard/restaurant/notifications',
         name: 'restaurant-notifications',
         component: RestaurantNotificationsOverview,
@@ -46,6 +53,12 @@ const routes = [
         name: 'restaurant-recipes',
         component: RestaurantRecipesOverview,
         meta: { title: 'sidebar.restaurant-recipes-overview' }
+    },
+    {
+        path: '/dashboard/restaurant/sales',
+        name: 'restaurant-sales',
+        component: SalesComponent,
+        meta: { title: 'sidebar.sales' }
     },
 
     // Suppliers Routes
@@ -59,7 +72,7 @@ const routes = [
         path: '/dashboard/supplier/subscription',
         name: 'supplier-subscription',
         component: SubscriptionOverviewComponent,
-        meta: { title: 'sidebar.supplier-summary-overview' }
+        meta: { title: 'sidebar.subscription' }
     },
     {
         path: '/dashboard/supplier/inventory',

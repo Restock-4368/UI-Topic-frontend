@@ -1,6 +1,7 @@
 <script>
+import { mockUser } from '../../../shared/mocks/user.mock.js';
 import SubscriptionCardsComponent from '../components/subscription-cards/subscription-cards.component.vue';
-
+import {SubscriptionService} from '../services/subscription.service.js';
 export default {
   name: 'subscription-overview',
   components: {
@@ -8,60 +9,29 @@ export default {
   },
   data() {
     return {
-      subscriptions: [
-        {
-          "id": "1",
-          "name": "Monthly plan",
-          "duration": 1,
-          "price": "59.99",
-          "status": true,
-          "popular": false,
-          "features": [
-            "Automated inventory management",
-            "Ordering and purchasing control",
-            "Reporting and analytics ",
-            "Critical stock notifications",
-            "Integration with suppliers"
-          ],
-          "rol_id": "1"
-        },
-        {
-          "id": "2",
-          "name": "Anual plan",
-          "duration": 12,
-          "price": "39.99",
-          "status": true,
-          "popular": true,
-          "features": [
-            "Gestión de inventario automatizado",
-            "Control de pedidos y compras",
-            "Reporte y analítica",
-            "Notificaciones de stock crítico",
-            "Integración con proveedores"
-          ],
-          "rol_id": "1"
-        },
-        {
-          "id": "3",
-          "name": "Semiannual Plan",
-          "duration": 6,
-          "price": "49.99",
-          "status": true,
-          "popular": false,
-          "features": [
-            "Automated inventory management",
-            "Ordering and purchasing control",
-            "Reporting and analytics",
-            "Critical stock notifications",
-            "Integration with suppliers"
-          ],
-          "rol_id": "1"
-        }
-      ],
+      subscriptions: [], //subscripciones
+      user: mockUser,
+
+    }
+  },
+  methods: {
+   getAllSubscriptions() {
+      this.subscriptionService.getAll()
+        .then(response => {
+          console.log('Subscriptions fetched successfully:', response);
+          this.subscriptions = response.data.filter(
+            s => s.rol_id === String(this.user.role_id.id)
+          );
+          console.log('Filtered subscriptions:', this.subscriptions);
+        })
+        .catch(error => {
+          console.error('Error fetching subscriptions:', error);
+        });
     }
   },
   created() {
-    console.log(" subscriptions: ", this.subscriptions);
+    this.subscriptionService = new SubscriptionService();
+    this.getAllSubscriptions();
   }
 }
 </script>
@@ -69,8 +39,8 @@ export default {
 <template>
   <div class="plans-container px-4">
     <div class="plans-header mb-4">
-      <h2>FLEXIBLE PLANS TO TAKE YOUR RESTAURANT MANAGEMENT</h2>
-      <h3>TO THE NEXT LEVEL</h3>
+      <h2>{{ $t('subscription.title1') }}</h2>
+      <h3>{{ $t('subscription.title2') }}</h3>
     </div>
 
     <!-- componente hijo -->
@@ -79,8 +49,6 @@ export default {
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap');
-
 .plans-container {
   text-align: center;
 }
