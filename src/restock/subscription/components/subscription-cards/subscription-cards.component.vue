@@ -125,7 +125,7 @@ export default {
   border-radius: 3px;
   font-size: 14px;
   font-weight: 500;
-  margin: 2.4rem 0rem 2rem 0rem;
+  margin: 1rem 0rem 2rem 0rem;
   transition: background-color 500ms ease, color 500ms ease;
 }
 
