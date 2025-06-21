@@ -4,7 +4,7 @@ import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import {OrderToSupplierService} from '../services/order-to-supplier.service.js';
-import {OrderToSupplierSupplyService} from '../services/order-to-supplier-supply.service.js';
+import {OrderToSupplierBatchService} from "../services/order-to-supplier-batch.service.js";
 import {SupplyService} from '../../inventory/services/supply.service.js';
 import {UserService} from "../../../iam/services/user.service.js";
 import {UnitMeasurementService} from '../../inventory/services/unit-measurement.service.js';
@@ -69,7 +69,7 @@ export default {
   },
   async mounted() {
     const orderService = new OrderToSupplierService();
-    const supplyRelService = new OrderToSupplierSupplyService();
+    const supplyRelService = new OrderToSupplierBatchService()
     const supplyService = new SupplyService();
     const userService = new UserService();
     const unitService = new UnitMeasurementService();

@@ -858,7 +858,8 @@
       "id": 1,
       "supply_id": 1,
       "stock": 50,
-      "expiration_date": "2025-06-01"
+      "expiration_date": "2025-06-01",
+      "supplier_id": 1
     },
     {
       "id": 2,
