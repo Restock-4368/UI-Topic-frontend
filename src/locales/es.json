@@ -26,6 +26,20 @@
     "save-recipe": "Guardar Receta",
     "cancel": "Cancelar"
   },
+  "notifications": {
+    "title": "Notificaciones",
+    "tabs": {
+      "all": "Todas",
+      "inventory": "Inventario",
+      "orders": "Pedidos"
+    },
+    "messages": {
+      "lowStock": "Lote de {supply} #{id} por debajo del stock mínimo ({stock}/{min})",
+      "maxStock": "Lote de {supply} #{id} alcanzó el stock máximo ({stock}/{max})",
+      "orderSituation": "Situación del pedido #{id} actualizada a {situation}",
+      "orderDelivered": "Pedido #{id} marcado como Entregado"
+    }
+  },
   "inventory": {
     "supplies-catalog-title": "Catálogo de Insumos",
     "create-button": "CREAR",
@@ -89,5 +103,51 @@
       "confirm-button": "CONFIRMAR",
       "cancel-button": "CANCELAR"
     }
+  },
+  "subscription": {
+    "title1": "PLANES FLEXIBLES PARA LLEVAR LA GESTIÓN DE TU RESTAURANTE",
+    "title2": "AL SIGUIENTE NIVEL"
+  },
+  "sales_restaurant": {
+    "register_sale": "Registra tus ventas",
+    "new_sale": "NUEVA VENTA",
+    "update_inventory": "Quieres actualizar tu inventario? Selecciona las ventas que quieres aqui:",
+    "registered_sales_not_discounted": "VENTAS REGISTRADAS QUE NO SE HAN DESCONTADO DEL INVENTARIO",
+    "history_sales": "Historial de ventas actualizadas en inventario",
+    "registered_sales": "Ventas registradas que ya descontaron insumos del inventario",
+    "search": "Buscar venta por código",
+    "code": "Codigo",
+    "quantity_dishes": "Cantidad de platos",
+    "quantity_additional_supplies": "Quantity de insumos adicionales",
+    "actions": "Acciones",
+    "sale_details": {
+      "title": "DETALLES DE LA VENTA",
+      "number_dishes": "Numero de platos",
+      "number_additional_supplies": "Numbero de insumos adicionales",
+      "dishes": "Platos",
+      "additional_supplies": "Insumos adicionales",
+      "name": "Nombre",
+      "unit_price": "Precio por unidad",
+      "quantity": "Cantidad"
+    },
+    "sales_not_added_in_inventory": {
+      "title": "VENTAS REGISTRADAS QUE NO HAN DESCONTADO INSUMOS DEL INVENTARIO",
+      "subtitle": "Selecciona las ventas a las que deseas descontar los insumos utilizados del inventario",
+      "selectAll": "Seleccionar todo",
+      "code": "Código",
+      "quantityDishes": "Cantidad de platos",
+      "quantityAdditionalSupplies": "Cantidad de insumos adicionales",
+      "actions": "Acciones"
+    },
+    "sale_confirmation": {
+      "title": "Venta registrada correctamente"
+    }
+  },
+  "notifications_suppliers": {
+    "title": "Notificaciones de ordenes",
+    "restaurant": "Restaurante",
+    "evaluate": "Evaluar",
+    "status": "Stado",
+    "last-update": "Ultima actualización"
   }
 }

@@ -14,7 +14,7 @@ export class BaseService {
     }
 
     create(resource) {
-        return httpInstance.post(this.resourceEndpoint, resource);
+        return httpInstance.post(this.resourceEndpoint, resource).then(res => res.data);
     }
 
     update(id, resource) {

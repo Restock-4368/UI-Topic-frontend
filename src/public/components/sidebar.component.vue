@@ -82,6 +82,7 @@ export default {
       } else if (role === 'restaurant') {
         this.menuItems = [
           { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/restaurant/summary' },
+          { label: 'sidebar.subscription', icon: 'pi pi-credit-card', route: '/dashboard/restaurant/subscription' },
           { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/dashboard/restaurant/inventory' },
           { label: 'sidebar.suppliers', icon: 'pi pi-users', route: '/dashboard/restaurant/suppliers' },
           { label: 'sidebar.notifications', icon: 'pi pi-bell', route: '/dashboard/restaurant/notifications' },

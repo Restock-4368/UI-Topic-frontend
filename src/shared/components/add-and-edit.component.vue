@@ -33,11 +33,11 @@ export default {
       })
           .then(res => res.json())
           .then(data => {
-            console.log('✅ Image uploaded:', data.secure_url);
+            console.log('Image uploaded:', data.secure_url);
             this.form[fieldName] = data.secure_url;
           })
           .catch(err => {
-            console.error('❌ Upload failed:', err);
+            console.error('Upload failed:', err);
           });
     }
   }

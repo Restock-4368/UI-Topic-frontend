@@ -92,7 +92,10 @@ export default {
     },
     openCreateDialog() {
       this.editMode = 'create';
-      this.formModel = { supplies: [] };
+      this.formModel = {
+        supplies: [],
+        user_id: 1
+      };
       this.formVisible = true;
     },
     async openEditDialog(recipe) {
@@ -106,30 +109,38 @@ export default {
       this.formVisible = false;
     },
     async submitForm(form) {
+      console.log("FORM SUBMIT:", form);
+
       if (this.editMode === 'create') {
         const response = await this.recipeService.create(form);
         const created = RecipeAssembler.toEntityFromResponse(response);
+
         await this.recipeSupplyService.bulkCreate(created.id, form.supplies);
       } else {
-        await this.recipeService.update(form.id, form);
+        console.log("EDIT MODE - ID:", form.id);
         await this.recipeSupplyService.deleteByRecipe(form.id);
         await this.recipeSupplyService.bulkCreate(form.id, form.supplies);
+        await this.recipeService.update(form.id, form);
       }
 
       await this.loadRecipes();
       this.closeForm();
     },
+
     openDeleteDialog(recipe) {
       this.selectedRecipe = recipe;
       this.deleteVisible = true;
     },
     async confirmDelete() {
-      await this.recipeSupplyService.deleteByRecipe(this.selectedRecipe.id);
       await this.recipeService.delete(this.selectedRecipe.id);
+      await this.recipeSupplyService.deleteByRecipe(this.selectedRecipe.id);
       this.deleteVisible = false;
       this.selectedRecipe = null;
       await this.loadRecipes();
     },
+    getCurrentUserId() {
+      //TODO
+    }
   },
 };
 </script>
@@ -172,12 +183,12 @@ export default {
 
 
     <!-- Empty -->
-    <EmptySection v-if="filteredRecipes.length === 0">
+    <empty-section v-if="filteredRecipes.length === 0">
       <template #icon>
         <i class="pi pi-clipboard" style="font-size: 3rem; color: #bcbcbc;"></i>
       </template>
       You currently have no recipes registered. Create a new recipe to start organizing your preparations and better manage your ingredients from this section.
-    </EmptySection>
+    </empty-section>
 
     <!-- Grid -->
     <div v-else class="recipes-grid">
@@ -193,14 +204,14 @@ export default {
     </div>
 
     <!-- CREATE / EDIT Modal -->
-    <CreateAndEdit
+    <create-and-edit
         v-model="formVisible"
         :mode="editMode"
         createTitle="Create Recipe"
         editTitle="Edit Recipe"
         @close="closeForm"
     >
-      <AddAndEditForm
+      <add-and-edit-form
           :schema="formSchema"
           :initialData="formModel"
           :mode="editMode"
@@ -210,8 +221,8 @@ export default {
           <h4 class="mt-4 mb-2">Recipe Supplies</h4>
           <SupplySelector v-model="form.supplies" />
         </template>
-      </AddAndEditForm>
-    </CreateAndEdit>
+      </add-and-edit-form>
+    </create-and-edit>
 
     <DeleteConfirmation
         v-model="deleteVisible"

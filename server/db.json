@@ -502,26 +502,154 @@
   ],
   "sales": [
     {
-      "id": 1,
+      "code": "PXBMGI",
+      "diner_name": "Luis",
       "admin_restaurant_id": 1,
-      "diner_name": "mari",
-      "total_price": 10,
-      "date": "2025-05-28",
-      "added_inventory": false
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 1
+    },
+    {
+      "code": "8UWI7E",
+      "diner_name": "Ana",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 2
+    },
+    {
+      "code": "JQC5ML",
+      "diner_name": "Ana",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 3
+    },
+    {
+      "code": "OBOO2M",
+      "diner_name": "Juan",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 4
+    },
+    {
+      "code": "URNS3N",
+      "diner_name": "Miguel",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 5
+    },
+    {
+      "code": "WV40NK",
+      "diner_name": "Ana",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 6
+    },
+    {
+      "code": "4Y37CH",
+      "diner_name": "Valeria",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 7
+    },
+    {
+      "code": "TB2E8S",
+      "diner_name": "Miguel",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 8
+    },
+    {
+      "code": "ECDNML",
+      "diner_name": "Sofía",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 9
+    },
+    {
+      "code": "G8URLL",
+      "diner_name": "Valeria",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 10
     }
   ],
   "sales_recipes": [
     {
       "sale_id": 1,
-      "recipe_id": 1,
-      "quantity": 10
+      "recipe_id": 3,
+      "quantity": 12,
+      "id": 1
+    },
+    {
+      "sale_id": 7,
+      "recipe_id": 4,
+      "quantity": 1,
+      "id": 2
+    },
+    {
+      "sale_id": 8,
+      "recipe_id": 4,
+      "quantity": 1,
+      "id": 3
+    },
+    {
+      "sale_id": 9,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 4
+    },
+    {
+      "sale_id": 10,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 5
     }
   ],
   "sales_additional_supplies": [
     {
       "sale_id": 1,
+      "supply_id": 12,
+      "quantity": 10,
+      "id": 1
+    },
+    {
+      "sale_id": 2,
       "supply_id": 1,
-      "quantity": 1
+      "quantity": 15,
+      "id": 2
+    },
+    {
+      "sale_id": 3,
+      "supply_id": 1,
+      "quantity": 50,
+      "id": 3
+    },
+    {
+      "sale_id": 4,
+      "supply_id": 1,
+      "quantity": 17,
+      "id": 4
+    },
+    {
+      "sale_id": 5,
+      "supply_id": 1,
+      "quantity": 15,
+      "id": 5
+    },
+    {
+      "sale_id": 6,
+      "supply_id": 1,
+      "quantity": 20,
+      "id": 6
     }
   ],
   "comments": [
@@ -855,16 +983,15 @@
   ],
   "batches": [
     {
-      "id": 1,
       "supply_id": 1,
-      "stock": 50,
+      "stock": 0,
       "expiration_date": "2025-06-01",
-      "supplier_id": 1
+      "id": 1
     },
     {
       "id": 2,
       "supply_id": 2,
-      "stock": 100,
+      "stock": 86,
       "expiration_date": "2025-06-03"
     },
     {
@@ -875,7 +1002,7 @@
     },
     {
       "id": 4,
-      "supply_id": 6,
+      "supply_id": 1,
       "stock": 10,
       "expiration_date": "2025-06-27"
     },
@@ -910,8 +1037,8 @@
       "id": 9
     },
     {
-      "supply_id": 9,
-      "stock": 5,
+      "stock": 0,
+      "supply_id": 7,
       "expiration_date": "2025-06-18",
       "id": 10
     },
