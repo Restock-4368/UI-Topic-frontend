@@ -174,7 +174,6 @@ export default {
 
 .title {
     text-align: center;
-    padding-top: px;
     font-weight: 800;
 }
 
