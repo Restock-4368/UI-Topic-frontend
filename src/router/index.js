@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SubscriptionOverviewComponent from '../restock/subscription/pages/subscription-overview.component.vue';
 import ProfileOverviewComponent from "../restock/profiles/pages/profile-overview.component.vue";
+import SupplierAlertsOverviewComponent from '../restock/monitoring/suppliers-orders/pages/supplier-alerts-overview.component.vue';
+
 
 /**
 * @description Lazy-loaded component imports for route configuration
@@ -90,6 +92,12 @@ const routes = [
         name: 'supplier-orders',
         component: SuppliersOrdersOverview,
         meta: { title: 'sidebar.orders' }
+    },
+    {
+        path: '/dashboard/supplier/notifications',
+        name: 'notificaction-suppliers',
+        component: SupplierAlertsOverviewComponent,
+        meta: { title: 'sidebar.notifications' }
     },
     {
         path: '/',

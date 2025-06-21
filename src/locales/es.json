@@ -152,7 +152,7 @@
     "search": "Buscar venta por código",
     "code": "Codigo",
     "quantity_dishes": "Cantidad de platos",
-    "quantity_additional_supplies": "Quantity de insumos adicionales",
+    "quantity_additional_supplies": "Cantidad de insumos adicionales",
     "actions": "Acciones",
     "sale_details": {
       "title": "DETALLES DE LA VENTA",
@@ -181,7 +181,7 @@
     "title": "Notificaciones de ordenes",
     "restaurant": "Restaurante",
     "evaluate": "Evaluar",
-    "status": "Stado",
+    "situation": "Situacion",
     "last-update": "Ultima actualización"
   }
 }
