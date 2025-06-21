@@ -1,9 +1,9 @@
-import {OrderToSupplierSupply} from "../model/order-to-supplier-supply.entity.js";
+import {OrderToSupplierBatch} from "../model/order-to-supplier-batch.entity.js";
 
-export class OrderToSupplierSupplyAssembler {
+export class OrderToSupplierBatchAssembler {
 
     static toEntityFromResource(resource) {
-        return new OrderToSupplierSupply(resource);
+        return new OrderToSupplierBatch(resource);
     }
 
     static toEntitiesFromResponse(response) {
