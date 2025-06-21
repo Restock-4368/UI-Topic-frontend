@@ -1,11 +1,26 @@
 <script>
 import Sidebar from './public/components/sidebar.component.vue'
 import NavBar from "./public/components/nav-bar.component.vue";
+import {Profile} from "./restock/profiles/model/profile.entity.js";
+import {User} from "./restock/iam/model/user.entity.js";
+import {ProfileService} from "./restock/profiles/services/profile.service.js";
+import {ProfileAssembler} from "./restock/profiles/services/profile.assembler.js";
+import {sessionService} from "./shared/services/session.service.js";
 
 export default {
   name: 'App',
   components: {NavBar, Sidebar },
+   async created () {
+
+ // DEFINIR AQUI EL ID DEL PERFIL ACTUAL
+    // 1 -> Supplier pepe
+    // 2 -> Restaurant maria
+    // 3 -> Supplier Juan
+    // 4 -> Restaurant Luis
+     sessionService.setProfileId(2); // Simula la asignación del ID del perfil
+  },
 }
+
 </script>
 
 <template>
@@ -13,8 +28,8 @@ export default {
     <nav-bar></nav-bar>
 
     <!-- Sidebar fija al lado izquierdo -->
-    <aside>
-      <Sidebar />
+    <aside >
+      <Sidebar/>
     </aside>
 
     <!-- Contenido principal -->

@@ -47,30 +47,38 @@
 import { RouterLink } from 'vue-router'
 import LanguageSwitcher from './language-switcher.component.vue'
 import logo from '../../assets/images/logo-restock.png'
-import { mockUser } from '../../shared/mocks/user.mock.ts';
-import {UserService} from "../../restock/iam/services/user.service.js";
+import {ProfileService} from "../../restock/profiles/services/profile.service.js";
+import {ProfileAssembler} from "../../restock/profiles/services/profile.assembler.js";
+import {sessionService} from "../../shared/services/session.service.js";
 
 export default {
   name: 'Sidebar',
   components: { RouterLink, LanguageSwitcher },
+  props: {
+    user: {
+      type: Object,
+      required: false,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       logo,
-      user: null,
       sidebarVisible: false,
       isMobile: window.innerWidth < 1260,
       menuItems: [], // se llenará según el rol
-      userService: new UserService()
     }
   },
-  created() {
-    this.userService.getById(2).then(user => {
-      this.user = user;
-      const role = this.user.role;  // Accede al nombre del rol directamente
+  async created() {
 
+    const profileService = new ProfileService();
+    let resource =  await profileService.getById(sessionService.getProfileId());
+    const profile = ProfileAssembler.toEntityFromResource(resource.data);
+
+      const role = profile.user.role_id;
       console.log(role); // Verifica si el rol es correcto
 
-      if (role === 'supplier') {
+      if (role === 1) { // Supplier
         this.menuItems = [
           { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/supplier/summary' },
           { label: 'sidebar.subscription', icon: 'pi pi-credit-card', route: '/dashboard/supplier/subscription' },
@@ -79,7 +87,7 @@ export default {
           { label: 'sidebar.orders', icon: 'pi pi-truck', route: '/dashboard/supplier/orders' },
           { label: 'sidebar.ratings', icon: 'pi pi-star', route: '/dashboard/supplier/ratings' }
         ];
-      } else if (role === 'restaurant') {
+      } else if (role === 2) { // Restaurant
         this.menuItems = [
           { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/restaurant/summary' },
           { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/dashboard/restaurant/inventory' },
@@ -90,7 +98,6 @@ export default {
           { label: 'sidebar.sales', icon: 'pi pi-chart-line', route: '/dashboard/restaurant/sales' }
         ];
       }
-    });
   },
   mounted() {
     window.addEventListener('resize', this.checkMobile)
