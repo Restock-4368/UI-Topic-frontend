@@ -37,24 +37,24 @@ export default {
       </button>
 
       <!-- Title -->
-      <h2 class="title">Sale Details "{{ sale.code }}"</h2>
+      <h2 class="title">{{ $t('sales_restaurant.sale_details.title') }} "{{ sale.code }}"</h2>
 
       <div class="content">
-        <p class="sub-text">Name of the customer: {{ sale.diner_name || '' }}</p>
-        <p class="sub-text">Number of dishes: {{ sale.recipeCount || 0 }}</p>
-        <p class="sub-text">Number of additional supplies: {{ sale.additionalSupplyCount || 0 }}</p>
+        <p class="sub-text">{{ $t('sales_restaurant.sale_details.name_customer') }}: {{ sale.diner_name || '' }}</p>
+        <p class="sub-text">{{ $t('sales_restaurant.sale_details.number_dishes') }}: {{ sale.recipeCount || 0 }}</p>
+        <p class="sub-text">{{ $t('sales_restaurant.sale_details.number_additional_supplies') }}: {{ sale.additionalSupplyCount || 0 }}</p>
 
         <hr />
 
         <!-- Dishes table -->
         <div class="dishes">
-          <h3 class="subtitle2">Dishes</h3>
+          <h3 class="subtitle2">{{ $t('sales_restaurant.sale_details.dishes') }}</h3>
           <table v-if="this.dishes.length >0" class="custom-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Unit Price</th>
-                <th>Quantity</th>
+                <th>{{ $t('sales_restaurant.sale_details.name') }}</th>
+                <th>{{ $t('sales_restaurant.sale_details.unit_price') }}</th>
+                <th>{{ $t('sales_restaurant.sale_details.quantity') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -70,13 +70,13 @@ export default {
 
         <!-- Additional supplies table -->
         <div class="additionalSupplies">
-          <h3 class="subtitle2">Additional Supplies</h3>
+          <h3 class="subtitle2">{{ $t('sales_restaurant.sale_details.additional_supplies') }}</h3>
           <table v-if="this.additionalSupplies.length >0" class="custom-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Unit Price</th>
-                <th>Quantity</th>
+                <th>{{ $t('sales_restaurant.sale_details.name') }}</th>
+                <th>{{ $t('sales_restaurant.sale_details.unit_price') }}</th>
+                <th>{{ $t('sales_restaurant.sale_details.quantity') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -174,7 +174,6 @@ export default {
 
 .title {
     text-align: center;
-    padding-top: px;
     font-weight: 800;
 }
 

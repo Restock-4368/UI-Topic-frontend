@@ -17,6 +17,39 @@
     "rights-reserved": "all rights reserved.",
     "developed-by": "Developed by"
   },
+  "profile": {
+    "title": "Profile Details",
+    "alt-user-photo": "User photo",
+    "name": "Name",
+    "last-name": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "country": "Country",
+    "business-name": "Business Name",
+    "business-address": "Business Address",
+    "business-phone": "Business Phone",
+    "business-email": "Business Email",
+    "categories": "Categories",
+    "business-categories": "Business Categories",
+    "settings": {
+      "title": "Edit Your Information",
+      "personal-info": "Personal Data",
+      "business-info": "Business Data",
+      "security-info": "Security and Privacy",
+      "change-password": "Change password",
+      "current-password": "Current password",
+      "current-password-placeholder": "Enter current password",
+      "new-password": "New password",
+      "new-password-placeholder": "Enter new password",
+      "confirm-password": "Confirm new password",
+      "confirm-password-placeholder": "Confirm new password",
+      "save-changes": "SAVE CHANGES",
+      "delete-account": "Delete account",
+      "delete-account-warning": "This action will permanently delete your account. All your personal data, history and settings will be deleted. You will not be able to recover your account after deletion. Your subscription will be deleted.",
+      "confirm-delete": "CONFIRM DELETE"
+    }
+  },
   "recipes": {
     "title": "Recipes",
     "add-recipe": "Add Recipe",
@@ -121,7 +154,8 @@
     "quantity_additional_supplies": "Quantity of additional supplies",
     "actions": "Actions",
     "sale_details": {
-      "title": "SALE DETAIL",
+      "title": "SALE DETAILS",
+      "name_customer": "Customer name",
       "number_dishes": "Number of dishes",
       "number_additional_supplies": "Number of additional supplies",
       "dishes": "Dishes",
@@ -137,7 +171,26 @@
       "code": "Code",
       "quantityDishes": "Quantity of Dishes",
       "quantityAdditionalSupplies": "Quantity of Additional Supplies",
-      "actions": "Actions"
+      "actions": "Actions",
+      "cancel": "Cancel",
+      "register": "Register"
+    },
+    "register_sale_modal": {
+      "title": "Register Sale",
+      "sub-title": "Complete the details of a new sale to access the inventory update option.",
+      "dishes": "Dishes",
+      "select_dish": "Select a dish from your recipe list",
+      "additionalSuppllies": "Additional Supplies",
+      "select_additionalSupply": "Select a supply from your inventory",
+      "selected_dishes": "Selected dishes",
+      "selected_additionalSupplies": "Selected additional supplies",
+      "name": "Name",
+      "unit_price": "Unit Price",
+      "quantity": "Quantity",
+      "actions": "Actions",
+      "cancel": "CANCEL",
+      "register": "REGISTER",
+      "nothing-selected": "Select the additional dishes and ingredients of the order to view the complete sale."
     },
     "sale_confirmation": {
       "title": "Sale Registered Successfully"
@@ -147,7 +200,132 @@
     "title": "Orders Notifications",
     "restaurant": "Restaurant",
     "evaluate": "Evaluate",
-    "status": "Status",
+    "situation": "Situation",
     "last-update": "Last Update"
+  },
+  "supplier-orders": {
+    "tabs": {
+      "new-orders": "New Orders",
+      "history-orders": "Order History",
+      "accepted-orders": "Orders In Progress"
+    },
+    "table": {
+      "date": "Order Date",
+      "restaurant-name": "Restaurant Name",
+      "requested-products": "N° Requested Products",
+      "final-price": "Final Price",
+      "state": "State",
+      "ship-date": "Ship Date",
+      "actions": "Actions"
+    },
+    "description": "Order Description",
+    "restaurant-name": "Restaurant Name",
+    "estimated-ship-date": "Estimated Shipping Date",
+    "estimated-ship-time": "Estimated Shipping Time",
+    "placeholder": {
+      "select-date": "Select date",
+      "select-time": "Select time",
+      "description": "Description"
+    },
+    "details": {
+      "title": "Order Details",
+      "description": "View the details of a registered order.",
+      "estimated-date": "Estimated Ship Date and Time",
+      "buttons": {
+        "back": "Back",
+        "next": "Next",
+        "close": "Close"
+      }
+    },
+    "manage-new-orders": {
+      "title": "New Order Management",
+      "description": "Complete the order details to start tracking your order.",
+      "order-summary": "Order Summary",
+      "buttons": {
+        "submit-order": "Accept selection",
+        "close": "Close",
+        "back": "Back",
+        "next": "Next"
+      }
+    },
+    "update-order": {
+      "title": "Update Order",
+      "description": "Update the details of a registered order.",
+      "order-summary": "Order Summary",
+      "buttons": {
+        "save": "Update Order",
+        "close": "Close"
+      }
+    },
+    "decline": {
+      "title": "Decline Order",
+      "message": "This action is irreversible. Are you sure you want to decline the entire selected order?",
+      "buttons": {
+        "confirm": "Yes, decline",
+        "cancel": "Cancel"
+      }
+    },
+    "cancel": {
+      "title": "Cancel Order",
+      "message": "Are you sure you want to cancel this order?",
+      "buttons": {
+        "confirm": "Yes, decline",
+        "cancel": "Cancel"
+      }
+    },
+    "supplies":
+    {
+      "title": "Supplies",
+      "description": "View the supplies you have available for the order.",
+      "select-all": "Select All",
+      "headers": {
+        "product-name": "Product Name",
+        "quantity": "Quantity",
+        "unit-measure": "Unit Measure"
+      },
+      "total-price": "Total Price"
+    },
+    "notifications": {
+      "summary-success": "Success",
+      "summary-error": "Error",
+      "order-updated": "Order updated successfully",
+      "order-processed": "Order processed successfully",
+      "order-declined": "Order declined successfully",
+      "order-cancelled": "Order cancelled successfully",
+      "error-update": "Failed to update order",
+      "error-process": "Failed to process order",
+      "error-decline": "Failed to decline order",
+      "error-cancel": "Failed to cancel order"
+    },
+    "filters":
+    {
+      "title": "Orders",
+      "search-placeholder": "Search orders by restaurant...",
+      "date-range-placeholder": "Order Date Range",
+      "order-date-button": "Order Date",
+      "status": "Status",
+      "download": "Download History",
+      "last-7days": "Last 7 Days",
+      "last-30days": "Last 30 Days",
+      "last-3months": "Last 3 Months",
+      "all-states": "All States"
+    },
+    "state": {
+      "title": "State",
+      "preparing": "Preparing",
+      "delivered": "Delivered",
+      "on-hold": "On hold",
+      "on-the-way": "On the way"
+    },
+    "situation": {
+      "title": "Situation",
+      "pending": "Pending",
+      "approved": "Approved"
+    },
+    "empty": {
+      "new-orders": "You currently have no orders received.",
+      "history-orders": "You currently have no orders delivered.",
+      "accepted-orders": "You currently have no orders approved."
+    }
   }
 }

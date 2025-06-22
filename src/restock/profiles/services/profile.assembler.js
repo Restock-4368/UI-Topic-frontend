@@ -8,8 +8,8 @@ export class ProfileAssembler {
 
     static toEntitiesFromResponse(response) {
         const profilesResponse = response.data;
-        return profilesResponse.map((order) => {
-            return this.toEntityFromResource(order);
+        return profilesResponse.map((profile) => {
+            return this.toEntityFromResource(profile);
         });
     }
 }

@@ -47,122 +47,156 @@
       "name": "restaurant"
     }
   ],
+  "businesses": [
+    {
+      "id": 1,
+      "name": "Frescos del Valle",
+      "address": "Calle del Mercado 456",
+      "categories": "Fast Food, Vegetables, Fruits, Dairy",
+      "phone": "987654321",
+      "email": "frescosdelvalle2@gmail.com"
+    },
+    {
+      "id": 2,
+      "name": "Sabores del Perú",
+      "address": "Calle de la Gastronomía 789",
+      "categories": "Fast Food, Vegetables, Fruits, Dairy",
+      "phone": "987654321",
+      "email": "saboresperu@gmail.com"
+    },
+    {
+      "id": 3,
+      "name": "Proveedor Triunfo S.A.C.",
+      "address": "Calle Proveedores 123",
+      "categories": "Vegetables, Fruits, Dairy",
+      "phone": "987654321",
+      "email": "proveedortriunfo@gmail.com"
+    },
+    {
+      "id": 4,
+      "name": "El Huarique del Sabor",
+      "address": "Calle Cevichería 123",
+      "categories": "Fast Food, Vegetables, Fruits, Dairy",
+      "phone": "987654321",
+      "email": "huariquesabor@gmail.com"
+    }
+  ],
   "profiles": [
     {
       "id": 1,
       "name": "Don Pepe",
       "last_name": "Gonzales",
-      "username": "donpepe",
+      "email": "pepe@gmail.com",
       "avatar": "https://i.pravatar.cc/150?img=1",
       "phone": "987654321",
       "address": "Av. Principal 123",
       "country": "Perú",
-      "description": "Proveedor de ingredientes frescos",
-      "business_name": "Frescos del Valle",
-      "business_address": "Calle del Mercado 456",
-      "user_id": 1
+      "business_id": 1,
+      "user_id": 1,
+      "business": {
+        "id": 1,
+        "name": "Frescos del Valle",
+        "address": "Calle del Mercado 456",
+        "categories": "Fast Food, Vegetables, Fruits, Dairy",
+        "phone": "987654321",
+        "email": "frescosdelvalle2@gmail.com"
+      },
+      "user": {
+        "id": 1,
+        "email": "pepe@gmail.com",
+        "password": "password123",
+        "role_id": 1,
+        "subscription_id": 1,
+        "start_date": "2023-01-01",
+        "subscription_payment_details_id": 1
+      }
     },
     {
       "id": 2,
-      "name": "Chef Rosa",
+      "name": "Chef Maria",
       "last_name": "Martinez",
-      "username": "rosachef",
+      "email": "maria@example.com",
       "avatar": "https://i.pravatar.cc/150?img=2",
       "phone": "987645321",
       "address": "Av. Principal 133",
       "country": "Perú",
-      "description": "Dueña de restaurante con recetas tradicionales",
-      "business_name": "Raíces del Sabor",
-      "business_address": "Calle del Mercado 346",
-      "user_id": 2
+      "business_id": 2,
+      "user_id": 2,
+      "business": {
+        "id": 2,
+        "name": "Sabores del Perú",
+        "address": "Calle de la Gastronomía 789",
+        "categories": "Fast Food, Vegetables, Fruits, Dairy",
+        "phone": "987654321",
+        "email": "saboresperu@gmail.com"
+      },
+      "user": {
+        "id": 2,
+        "email": "maria@example.com",
+        "password": "maria456",
+        "role_id": 2,
+        "subscription_id": 2,
+        "start_date": "2023-02-15",
+        "subscription_payment_details_id": 2
+      }
     },
     {
       "id": 3,
-      "name": "Prueba",
-      "last_name": "Proveedor",
-      "username": "pruebaproveedor",
+      "name": "Juan",
+      "last_name": "Nito",
+      "email": "juanito@gmail.com",
       "avatar": "https://i.pravatar.cc/150?img=3",
       "phone": "999123456",
       "address": "Calle Falsa 123",
       "country": "Perú",
-      "description": "Proveedor de prueba para testeo",
-      "business_name": "Proveedor S.A.C.",
-      "business_address": "Mercado Central 101",
-      "user_id": 3
+      "business_id": 3,
+      "user_id": 3,
+      "business": {
+        "id": 3,
+        "name": "Proveedor Triunfo S.A.C.",
+        "address": "Calle Proveedores 123",
+        "categories": "Vegetables, Fruits, Dairy",
+        "phone": "987654321",
+        "email": "proveedortriunfo@gmail.com"
+      },
+      "user": {
+        "id": 3,
+        "email": "juanito@gmail.com",
+        "password": "juan123",
+        "role_id": 1,
+        "subscription_id": 1,
+        "start_date": "2023-03-10",
+        "subscription_payment_details_id": 3
+      }
     },
     {
       "id": 4,
       "name": "Chef Luis",
       "last_name": "Salazar",
-      "username": "huariqueluis",
+      "email": "elhuarique@gmail.com",
       "avatar": "https://i.pravatar.cc/150?img=4",
       "phone": "987601234",
       "address": "Calle Cevichería 123",
       "country": "Perú",
-      "description": "Restaurante de cocina marina y criolla",
-      "business_name": "El Huarique del Sabor",
-      "business_address": "Calle Cevichería 123",
-      "user_id": 4
-    }
-  ],
-  "business_categories": [
-    {
-      "id": 1,
-      "name": "Fast Food"
-    },
-    {
-      "id": 2,
-      "name": "Beverages"
-    },
-    {
-      "id": 3,
-      "name": "Desserts"
-    },
-    {
-      "id": 4,
-      "name": "Grill"
-    },
-    {
-      "id": 5,
-      "name": "Pizzeria"
-    },
-    {
-      "id": 6,
-      "name": "Buffet"
-    }
-  ],
-  "profiles_business_categories": [
-    {
-      "profile_id": 1,
-      "business_category_id": 1
-    },
-    {
-      "profile_id": 1,
-      "business_category_id": 2
-    },
-    {
-      "profile_id": 1,
-      "business_category_id": 3
-    },
-    {
-      "profile_id": 1,
-      "business_category_id": 4
-    },
-    {
-      "profile_id": 1,
-      "business_category_id": 5
-    },
-    {
-      "profile_id": 1,
-      "business_category_id": 6
-    },
-    {
-      "profile_id": 3,
-      "business_category_id": 2
-    },
-    {
-      "profile_id": 4,
-      "business_category_id": 4
+      "business_id": 4,
+      "user_id": 4,
+      "business": {
+        "id": 4,
+        "name": "El Huarique del Sabor",
+        "address": "Calle Cevichería 123",
+        "categories": "Fast Food, Vegetables, Fruits, Dairy",
+        "phone": "987654321",
+        "email": "huariquesabor@gmail.com"
+      },
+      "user": {
+        "id": 4,
+        "email": "elhuarique@gmail.com",
+        "password": "restaurante2024",
+        "subscription_id": 2,
+        "start_date": "2024-03-01",
+        "subscription_payment_details_id": 2,
+        "role_id": 2
+      }
     }
   ],
   "recipes": [
@@ -580,6 +614,38 @@
       "date": "2025-06-20",
       "added_inventory": true,
       "id": 10
+    },
+    {
+      "code": "M3M4EB",
+      "diner_name": "Valeria",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 11
+    },
+    {
+      "code": "YGEGA0",
+      "diner_name": "Carlos",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": false,
+      "id": 12
+    },
+    {
+      "code": "NP35AB",
+      "diner_name": "Sofía",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": false,
+      "id": 13
+    },
+    {
+      "code": "R4AEOF",
+      "diner_name": "Carlos",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": false,
+      "id": 14
     }
   ],
   "sales_recipes": [
@@ -612,6 +678,30 @@
       "recipe_id": 2,
       "quantity": 1,
       "id": 5
+    },
+    {
+      "sale_id": 11,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 6
+    },
+    {
+      "sale_id": 12,
+      "recipe_id": 4,
+      "quantity": 4,
+      "id": 7
+    },
+    {
+      "sale_id": 13,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 8
+    },
+    {
+      "sale_id": 14,
+      "recipe_id": 3,
+      "quantity": 1,
+      "id": 9
     }
   ],
   "sales_additional_supplies": [
@@ -650,6 +740,12 @@
       "supply_id": 1,
       "quantity": 20,
       "id": 6
+    },
+    {
+      "sale_id": 12,
+      "supply_id": 15,
+      "quantity": 8,
+      "id": 7
     }
   ],
   "comments": [
@@ -679,15 +775,15 @@
     {
       "id": 2,
       "date": "2025-01-01T05:00:00.000Z",
-      "description": null,
       "estimated_ship_date": "2025-01-06T05:00:00.000Z",
       "estimated_ship_time": "2025-01-06T07:50:00.000Z",
+      "description": "No description provided",
       "admin_restaurant_id": 2,
       "supplier_id": 1,
       "order_to_supplier_state_id": 1,
-      "order_to_supplier_situation_id": 1,
+      "order_to_supplier_situation_id": 2,
       "requested_products_count": 2,
-      "total_price": 30.55,
+      "total_price": 5.5,
       "partially_accepted": false
     },
     {
@@ -827,7 +923,7 @@
       "order_to_supplier_id": 2,
       "batch_id": 3,
       "quantity": 5,
-      "accepted": false
+      "accepted": true
     },
     {
       "id": 4,
@@ -883,7 +979,7 @@
       "order_to_supplier_id": 2,
       "batch_id": 4,
       "quantity": 1,
-      "accepted": false
+      "accepted": true
     },
     {
       "id": 12,
@@ -983,28 +1079,30 @@
   ],
   "batches": [
     {
+      "id": 1,
       "supply_id": 1,
-      "stock": 0,
-      "expiration_date": "2025-06-01",
-      "id": 1
+      "stock": 50,
+      "expiration_date": "2025-06-01"
     },
     {
       "id": 2,
       "supply_id": 2,
-      "stock": 86,
+      "stock": 100,
       "expiration_date": "2025-06-03"
     },
     {
       "id": 3,
       "supply_id": 3,
-      "stock": 200,
-      "expiration_date": "2025-06-03"
+      "stock": 195,
+      "expiration_date": "2025-06-03",
+      "user_id": null
     },
     {
       "id": 4,
-      "supply_id": 1,
-      "stock": 10,
-      "expiration_date": "2025-06-27"
+      "supply_id": 6,
+      "stock": 9,
+      "expiration_date": "2025-06-27",
+      "user_id": null
     },
     {
       "id": 5,
@@ -1037,8 +1135,8 @@
       "id": 9
     },
     {
-      "stock": 0,
-      "supply_id": 7,
+      "supply_id": 9,
+      "stock": 5,
       "expiration_date": "2025-06-18",
       "id": 10
     },
