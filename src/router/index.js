@@ -17,7 +17,7 @@ const RestaurantNotificationsOverview = () => import('../restock/resource/invent
 const RestaurantRecipesOverview = () => import('../restock/planning/pages/restaurant-recipes-overview.component.vue')
 const SuppliersOrdersOverview = () => import('../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue')
 const SalesComponent = () => import('../restock/monitoring/restaurant-sales/pages/sales.component.vue')
-
+const RestaurantOrdersToSuppliersOverview = () => import('../restock/resource/orders-to-suppliers/pages/restaurant-order-to-supplier-overview.component.vue')
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
@@ -54,6 +54,12 @@ const routes = [
         name: 'restaurant-recipes',
         component: RestaurantRecipesOverview,
         meta: { title: 'sidebar.restaurant-recipes-overview' }
+    },
+    {
+        path: '/dashboard/restaurant/orders',
+        name: 'restaurant-orders-to-suppliers',
+        component: RestaurantOrdersToSuppliersOverview,
+        meta: { title: 'sidebar.orders' }
     },
     {
         path: '/dashboard/restaurant/sales',

@@ -12,5 +12,4 @@ export class OrderToSupplierBatchService extends BaseService {
         return this.getByQuery("batch_id", batchId);
     }
 
-
 }
