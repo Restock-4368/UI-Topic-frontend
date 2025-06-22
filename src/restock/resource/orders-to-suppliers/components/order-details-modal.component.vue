@@ -1,156 +1,94 @@
-<script>
-import BaseModal from '../../../../shared/components/base-modal.component.vue'
-import Button from 'primevue/button'
-import InputNumber from 'primevue/inputnumber'
+<script> import Dialog from 'primevue/dialog';
+import Button from 'primevue/button';
+import Card from 'primevue/card';
+import Divider from 'primevue/divider';
 
 export default {
-  name: 'OrderDetailsModalComponent',
-  components: {
-    BaseModal,
-    'pv-button': Button,
-    'pv-input-number': InputNumber
-  },
-  props: {
-    modelValue: Boolean,
-    selectedBatches: {
-      type: Array,
-      default: () => []
-    }
-  },
-  emits: ['update:modelValue', 'close', 'back', 'submitted'],
-  data() {
-    return {
-      batchQuantities: {}
-    }
-  },
-  watch: {
-    selectedBatches: {
-      immediate: true,
-      handler(newVal) {
-        console.log('🧪 [DetailModal] selectedBatches:', newVal);
-        console.log('🧪 [groupedBySupply]:', this.groupedBySupply);
-
-        newVal?.forEach(({batch}) => {
-          if (batch && batch.id != null && this.batchQuantities[batch.id] == null) {
-            this.batchQuantities = {
-              ...this.batchQuantities,
-              [batch.id]: 1
-            };
-          }
-        });
-      }
-    }
-  },
+  name: 'OrderDetailsModal',
+  components: {'pv-dialog': Dialog, 'pv-button': Button, 'pv-card': Card, 'pv-divider': Divider},
+  props: {visible: Boolean, order: Object, providerProfiles: Array},
+  emits: ['close'],
   computed: {
-    groupedBySupply() {
-      const map = new Map();
-      this.selectedBatches?.forEach(({supply, batch, supplier}) => {
-        if (!supply || !batch) return;
-        const supplyId = supply.id;
-        if (!map.has(supplyId)) {
-          map.set(supplyId, {
-            supply,
-            batches: []
-          });
-        }
-        map.get(supplyId).batches.push({batch, supply, supplier});
-      });
-      return Array.from(map.values());
-    },
-    totalItems() {
-      return Object.values(this.batchQuantities).reduce((acc, val) => acc + (val || 0), 0);
-    },
-    totalPrice() {
-      return this.selectedBatches.reduce((acc, {batch, supply}) => {
-        const qty = this.batchQuantities[batch.id] || 0;
-        return acc + qty * (supply.price || 0);
-      }, 0);
+    providerProfile() {
+      return this.providerProfiles.find(p => p.id === this.order?.supplier_id);
+    }, hasOrderBatches() {
+      return Array.isArray(this.order?.orderBatches) && this.order.orderBatches.length > 0;
+    }, formattedDate() {
+      return this.order?.date ? new Date(this.order.date).toLocaleDateString() : '';
+    }, formattedEstimatedDate() {
+      return this.order?.estimated_ship_date ? new Date(this.order.estimated_ship_date).toLocaleDateString() : '';
+    }, formattedEstimatedTime() {
+      return this.order?.estimated_ship_time ? new Date(this.order.estimated_ship_time).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      }) : '';
     }
   },
   methods: {
     close() {
-      this.$emit('update:modelValue', false);
       this.$emit('close');
-    },
-    goBack() {
-      this.$emit('back');
-    },
-    submitOrder() {
-      this.$emit('submitted', {
-        batches: this.selectedBatches,
-        quantities: this.batchQuantities
-      });
-      this.close();
     }
   }
-};
-</script>
-
-
+}; </script>
 <template>
-  <base-modal :model-value="modelValue" title="Revisar detalle de orden" @close="close">
+  <pv-dialog :visible="visible" modal header="Order Details" :style="{ width: '700px' }" @hide="close">
     <template #default>
-      <div v-for="group in groupedBySupply" :key="group.supply.id">
-        <p><strong>Insumo:</strong> {{ group.supply.name }}</p>
-        <p>{{ group.supply.description }}</p>
+      <div v-if="order"><h3>Order Information</h3>
+        <div class="info-grid"><p><strong>State:</strong> {{ order.state?.name || 'N/A' }}</p>
+          <p><strong>Situation:</strong> {{ order.situation?.name || 'N/A' }}</p>
+          <p><strong>Order Creation Date:</strong> {{ formattedDate }}</p>
+          <p><strong>Estimated Shipping Date:</strong> {{ formattedEstimatedDate }}</p>
+          <p><strong>Estimated Shipping Hour:</strong> {{ formattedEstimatedTime }}</p>
+          <p><strong>Total Price:</strong> S/. {{ Number(order.total_price).toFixed(2) }}</p>
+          <p><strong>Requested Products:</strong> {{ order.requested_products_count || 'N/A' }}</p></div>
+        <pv-divider/>
 
-        <div v-for="entry in group.batches" :key="entry.batch.id">
-          <p>
-            Proveedor: {{ entry.supplier.name }} |
-            Batch: #{{ entry.batch.id }} |
-            Stock: {{ entry.batch.stock }} |
-            Expira: {{ entry.batch.expiration_date }}
-          </p>
-          <pv-input-number
-              v-model="batchQuantities[entry.batch.id]"
-              :max="entry.batch.stock"
-              :min="0"
-              showButtons
-          />
+        <h3>Supplier</h3>
+        <div v-if="providerProfile">
+          <p><strong>Name:</strong> {{ providerProfile.name }} {{ providerProfile.lastName }}</p>
+          <p><strong>Phone:</strong> {{ providerProfile.phone || 'N/A' }}</p>
+          <p><strong>Address:</strong> {{ providerProfile.business_address || 'N/A' }}</p>
+        </div>
+        <div v-else>
+          <p>No provider info found.</p>
+        </div>
+
+        <pv-divider/>
+
+        <h3>Supplies</h3>
+        <div v-if="hasOrderBatches">
+          <div v-for="batch in order.orderBatches" :key="batch.id" class="supply-card">
+            <h4>{{ batch.batch?.supply?.name || 'Unnamed Supply' }}</h4>
+            <p><strong>Description:</strong> {{ batch.batch?.supply?.description || 'No description' }}</p>
+            <p><strong>Category:</strong> {{ batch.batch?.supply?.category?.name || 'N/A' }}</p>
+            <p><strong>Unit:</strong> {{ batch.batch?.supply?.unit_measurement?.name || 'N/A' }}</p>
+            <p><strong>Price:</strong> S/. {{ Number(batch.batch?.supply?.price || 0).toFixed(2) }}</p>
+            <p><strong>Requested Quantity:</strong> {{ batch.quantity }}</p>
+            <p><strong>Accepted:</strong> {{ batch.accepted ? 'Yes' : 'No' }}</p>
+            <pv-divider/>
+          </div>
+        </div>
+        <div v-else>
+          <p>No supplies found for this order.</p>
         </div>
       </div>
-      <div class="total-footer">
-        <p><strong>Total de unidades:</strong> {{ totalItems }}</p>
-        <p><strong>Total a pagar:</strong> S/ {{ totalPrice.toFixed(2) }}</p>
-      </div>
     </template>
-
     <template #footer>
-      <pv-button label="Cancelar" class="btn-cancel" @click="close"/>
-      <pv-button label="Agregar otro producto" class="btn-back" @click="goBack"/>
-      <pv-button label="Confirmar orden" class="btn-submit" @click="submitOrder"/>
+      <pv-button label="Close" icon="pi pi-times" @click="close"/>
     </template>
-  </base-modal>
+  </pv-dialog>
 </template>
-<style scoped> .summary-block {
-  margin-bottom: 2rem;
+<style scoped> .info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-.batch-entry {
-  margin: 0.5rem 0;
-}
-
-.quantity-input {
-  width: 150px;
-}
-
-.total-footer {
-  text-align: right;
-  margin-top: 1.5rem;
-}
-
-.btn-cancel {
-  background-color: #d9534f;
-  color: white;
-}
-
-.btn-back {
-  background-color: #f28c38;
-  color: white;
-}
-
-.btn-submit {
-  background-color: #4f8a5b;
-  color: white;
-}
-</style>
+.supply-card {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+} </style>
