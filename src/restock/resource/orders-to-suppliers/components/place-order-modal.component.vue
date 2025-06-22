@@ -37,14 +37,13 @@ export default {
             };
           }
         });
-      },
-      modelValue(val) {
-        if (!val) {
-          this.quantities = {};
-          this.groupedBatches = [];
-        }
       }
     },
+    modelValue(val) {
+      if (!val) {
+        this.batchQuantities = {};
+      }
+    }
   },
   computed: {
     groupedBySupply() {
@@ -81,12 +80,25 @@ export default {
       this.$emit('back');
     },
     submitOrder() {
+      if (!this.selectedBatches.length) {
+        this.close();
+        return;
+      }
+
+      const supplierId = this.selectedBatches[0]?.supplier?.id;
+
+      console.log('🧪 Confirmed supplier id:', supplierId);
+
       this.$emit('submitted', {
         batches: this.selectedBatches,
-        quantities: this.batchQuantities
+        quantities: this.batchQuantities,
+        supplierId
       });
+
       this.close();
     }
+
+
   }
 };
 </script>
@@ -102,7 +114,7 @@ export default {
         <div v-for="entry in group.batches" :key="entry.batch.id">
           <p>
             Proveedor: {{ entry.supplier.name }} |
-            Batch: #{{ entry.batch.id }} |
+            <!--            Batch: #{{ entry.batch.id }} |-->
             Stock: {{ entry.batch.stock }} |
             Expira: {{ entry.batch.expiration_date }}
           </p>
@@ -127,18 +139,7 @@ export default {
     </template>
   </base-modal>
 </template>
-<style scoped> .summary-block {
-  margin-bottom: 2rem;
-}
-
-.batch-entry {
-  margin: 0.5rem 0;
-}
-
-.quantity-input {
-  width: 150px;
-}
-
+<style scoped>
 .total-footer {
   text-align: right;
   margin-top: 1.5rem;

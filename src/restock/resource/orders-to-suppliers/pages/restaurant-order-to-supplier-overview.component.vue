@@ -13,6 +13,8 @@ import OrderToSupplierTable from '../components/order-to-supplier-table.componen
 import PlaceOrderModalComponent from "../components/place-order-modal.component.vue";
 import OrderFeedbackModalComponent from "../components/order-feedback-modal.component.vue";
 import OrderDetailsModalComponent from "../components/order-details-modal.component.vue";
+import {SupplyBatchService} from '../../inventory/services/supply-batch.service.js';
+import {SupplyCategoryService} from '../../inventory/services/supply-category.service.js';
 
 export default {
   name: 'RestaurantOrderToSupplierOverview',
@@ -42,41 +44,83 @@ export default {
       showOrderDetails: false,
       showFeedbackModal: false,
       selectedOrder: null,
+      batches: [],
+      supplyCategories: [],
     };
   },
 
   computed: {
-    hasOrders() {
-      return this.orders.length > 0 && this.suppliesInOrders.length > 0;
-    }, filteredOrders() {
+    filteredOrders() {
       return this.orders.filter(order => {
-        const supplier = order.supplier; // ahora ya viene embebido
-        const supplierMatch = this.selectedSupplier ? supplier?.id === this.selectedSupplier.id : true;
-        const searchMatch = this.searchText ? (supplier?.name || '').toLowerCase().includes(this.searchText.toLowerCase()) || (supplier?.email || '').toLowerCase().includes(this.searchText.toLowerCase()) || (order.description || '').toLowerCase().includes(this.searchText.toLowerCase()) : true;
+        const supplierMatch = this.selectedSupplier
+            ? order.supplier?.id === this.selectedSupplier
+            : true;
+
+        const stateName = order.state?.name?.toLowerCase() || '';
+        const situationName = order.situation?.name?.toLowerCase() || '';
+        const searchMatch = this.searchText
+            ? stateName.includes(this.searchText.toLowerCase()) ||
+            situationName.includes(this.searchText.toLowerCase())
+            : true;
+
         return supplierMatch && searchMatch;
       });
     }
+
   }, methods: {
     async loadData() {
-      const [ordersRes, orderSuppliesRes, suppliesRes, usersRes, unitsRes, statesRes, situationsRes] = await Promise.all([new OrderToSupplierService().getAll(), new OrderToSupplierBatchService().getAll(), new SupplyService().getAll(), new UserService().getAll(), new UnitMeasurementService().getAll(), new OrderToSupplierStateService().getAll(), new OrderToSupplierSituationService().getAll()]);
+      const [ordersRes, orderSuppliesRes, suppliesRes, usersRes, unitsRes, statesRes, situationsRes, batchesRes,
+        categoriesRes] = await Promise.all([new OrderToSupplierService().getAll(), new OrderToSupplierBatchService().getAll(), new SupplyService().getAll(), new UserService().getAll(), new UnitMeasurementService().getAll(), new OrderToSupplierStateService().getAll(), new OrderToSupplierSituationService().getAll(), new SupplyBatchService().getAll(), new SupplyCategoryService().getAll()]);
+      this.batches = batchesRes.data;
+      this.supplyCategories = categoriesRes.data;
       const rawOrders = ordersRes.data.filter(o => o.admin_restaurant_id === this.currentRestaurantId);
-      const enrichedOrders = rawOrders.map(order => {
+      this.orders = rawOrders.map(order => {
         const state = statesRes.data.find(s => s.id === order.order_to_supplier_state_id);
         const situation = situationsRes.data.find(s => s.id === order.order_to_supplier_situation_id);
         const supplier = usersRes.data.find(s => s.id === order.supplier_id);
-        return {...order, state, situation, supplier};
+        return { ...order, state, situation, supplier };
       });
-      this.orders = enrichedOrders;
+
       this.suppliesInOrders = orderSuppliesRes.data;
       this.supplies = suppliesRes.data;
-      this.suppliers = usersRes.data;
+
+      this.suppliers = usersRes.data
+          .filter(user => user.role_id === 1)
+          .map(user => ({
+            ...user,
+            name: user.name || user.email // fallback
+          }));
+
       this.units = unitsRes.data;
       this.states = statesRes.data;
       this.situations = situationsRes.data;
     },
     openDetails(order) {
-      this.selectedOrder = order
-      this.showOrderDetails = true
+      const batches = this.suppliesInOrders
+          .filter(obs => obs.order_to_supplier_id === order.id)
+          .map(obs => {
+            const batch = this.batches?.find(b => b.id === obs.batch_id) || {};
+            const supply = this.supplies.find(s => s.id === batch?.supply_id) || {};
+            const unit = this.units.find(u => u.id === supply?.unit_measurement_id) || {};
+            const category = this.supplyCategories.find(c => c.id === supply?.category_id) || {};
+            return {
+              ...obs,
+              batch: {
+                ...batch,
+                supply: {
+                  ...supply,
+                  unit,
+                  category
+                }
+              }
+            };
+          });
+      this.selectedOrder = {
+        ...order,
+        orderBatches: batches
+      };
+
+      this.showOrderDetails = true;
     },
     openFeedback(order) {
       if (order.state?.name?.toLowerCase() !== 'delivered') {
@@ -86,9 +130,11 @@ export default {
       this.selectedOrder = order;
       this.showFeedbackModal = true;
     }
-  }, mounted() {
+  },
+  mounted() {
     this.loadData();
-  }, watch: {
+  },
+  watch: {
     showOrderModal(val) {
       if (!val) {
         setTimeout(() => {
@@ -107,13 +153,20 @@ export default {
     </div>
     <div class="filters">
       <pv-select
+          v-if="suppliers.length"
           v-model="selectedSupplier"
           :options="suppliers"
           optionLabel="name"
+          optionValue="id"
           placeholder="Filter by Supplier"
           class="filter-select"
       />
-      <pv-input-text v-model="searchText" placeholder="Search by name or description..." class="filter-input"/>
+
+      <pv-input-text
+          v-model="searchText"
+          placeholder="Search by state or situation..."
+          class="filter-input"
+      />
     </div>
 
     <div v-if="filteredOrders.length">

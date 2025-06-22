@@ -49,9 +49,6 @@ export default {
   computed: {
     selectedBatches() {
       return this.filteredBatches.filter(b => this.selectedBatchIds.includes(b.batch.id));
-    },
-    allSelectedBatches() {
-      return this.fullOrder.filter(entry => this.selectedBatchIds.includes(entry.batch.id));
     }
   },
   mounted() {
@@ -96,15 +93,18 @@ export default {
         return;
       }
 
-      const { id: supplyId, userId } = this.selectedSupply;
+      const {id: supplyId, userId} = this.selectedSupply;
 
       this.filteredBatches = this.allBatches
           .filter(batch => batch.supply_id === supplyId)
           .map(batch => {
-            const supplier = this.supplierProfiles.find(p => p.id === (batch.supplier_id ?? userId)) || {
+            console.log('supplier id:', batch.supplierId)
+            const supplierId = batch?.supplier_id ?? userId;
+            const supplier = this.supplierProfiles.find(p => p.id === supplierId) || {
               name: 'Desconocido',
-              id: 0
+              id: supplierId ?? 0
             };
+
 
             const entry = {
               batch,
@@ -117,6 +117,7 @@ export default {
                 !this.selectedBatchIds.includes(batch.id)) {
               this.selectedBatchIds.push(batch.id);
             }
+            console.log('✔️ Confirmed supplier in batch:', entry.supplier);
 
             return entry;
           });
@@ -154,49 +155,43 @@ export default {
       this.$emit('update:modelValue', false);
       this.$emit('close');
     },
-    async handleFinalConfirmation({batches, quantities}) {
+    async handleFinalConfirmation({batches, quantities, supplierId}) {
+      console.log('🧪 supplierId recibido del modal:', supplierId);
       try {
         const orderService = new OrderToSupplierService();
         const batchService = new OrderToSupplierBatchService();
 
-        const grouped = batches.reduce((acc, entry) => {
-          const supplierId = entry.supplier.id;
-          if (!acc[supplierId]) acc[supplierId] = [];
-          acc[supplierId].push(entry);
-          return acc;
-        }, {});
+        const now = new Date();
+        const description = `Order for ${batches[0]?.supply?.name || 'supplies'}`;
+        const totalPrice = batches.reduce((sum, e) => (sum + (quantities[e.batch.id] || 0) * (e.supply.price || 0)), 0);
 
-        for (const [supplierId, entries] of Object.entries(grouped)) {
-          const now = new Date();
+        const orderPayload = {
+          date: now.toISOString(),
+          estimated_ship_date: null,
+          estimated_ship_time: null,
+          description,
+          admin_restaurant_id: 4,
+          supplier_id: supplierId, // ✅ corrected
+          order_to_supplier_state_id: 1,
+          order_to_supplier_situation_id: 1,
+          requested_products_count: batches.length,
+          total_price: totalPrice,
+          partially_accepted: false
+        };
 
-          const orderPayload = {
-            date: now.toISOString(),
-            estimated_ship_date: null,
-            estimated_ship_time: null,
-            description: `Order for ${entries[0]?.supply?.name || 'supplies'}`,
-            admin_restaurant_id: 4,
-            supplier_id: Number(supplierId),
-            order_to_supplier_state_id: 1,
-            order_to_supplier_situation_id: 1,
-            requested_products_count: entries.length,
-            total_price: entries.reduce((sum, e) => (sum + (quantities[e.batch.id] || 0) * (e.supply.price || 0)), 0),
-            partially_accepted: false
-          };
+        const orderRes = await orderService.create(orderPayload);
+        const orderId = orderRes?.id || orderRes?.data?.id;
 
-          const orderRes = await orderService.create(orderPayload);
-          const orderId = orderRes?.id || orderRes?.data?.id;
+        for (const entry of batches) {
+          const qty = quantities[entry.batch.id] || 0;
+          if (qty <= 0) continue;
 
-          for (const entry of entries) {
-            const qty = quantities[entry.batch.id] || 0;
-            if (qty <= 0) continue;
-
-            await batchService.create({
-              order_to_supplier_id: orderId,
-              batch_id: entry.batch.id,
-              quantity: qty,
-              accepted: false
-            });
-          }
+          await batchService.create({
+            order_to_supplier_id: orderId,
+            batch_id: entry.batch.id,
+            quantity: qty,
+            accepted: false
+          });
         }
 
         this.$toast?.add?.({
