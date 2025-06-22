@@ -1,11 +1,12 @@
-<script> import BaseModal from '../../../../shared/components/base-modal.component.vue';
+<script>
+import BaseModal from '../../../../shared/components/base-modal.component.vue';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import OrderDetailsModalComponent from './order-details-modal.component.vue';
+import PlaceOrderModalComponent from './place-order-modal.component.vue';
 import {SupplyService} from '../../inventory/services/supply.service';
 import {SupplyAssembler} from '../../inventory/services/supply.assembler';
 import {SupplyBatchService} from '../../inventory/services/supply-batch.service';
@@ -20,7 +21,7 @@ export default {
   name: 'OrderNowModal',
   components: {
     BaseModal,
-    OrderDetailsModalComponent,
+    OrderDetailsModalComponent: PlaceOrderModalComponent,
     'pv-button': Button,
     'pv-select': Select,
     'pv-input-text': InputText,
@@ -35,24 +36,22 @@ export default {
       step: 1,
       selectedSupply: null,
       allSupplies: [],
+      confirmedBatches: [],
       allBatches: [],
       supplierProfiles: [],
-      filteredBatches: [],
       selectedBatchIds: [],
-      currentSelection: [],
+      filteredBatches: [],
       fullOrder: [],
       showConfirmModal: false,
-      confirmedBatches: []
+      batchQuantities: {}
     };
   },
   computed: {
     selectedBatches() {
       return this.filteredBatches.filter(b => this.selectedBatchIds.includes(b.batch.id));
-    }
-  },
-  watch: {
-    modelValue(val) {
-      if (val) this.resetModal();
+    },
+    allSelectedBatches() {
+      return this.fullOrder.filter(entry => this.selectedBatchIds.includes(entry.batch.id));
     }
   },
   mounted() {
@@ -60,99 +59,137 @@ export default {
   },
   methods: {
     async loadInitialData() {
-      const [suppliesRes, batchesRes, usersRes, profilesRes] = await Promise.all([new SupplyService().getAll(), new SupplyBatchService().getAll(), new UserService().getAll(), new ProfileService().getAll()]);
+      const [suppliesRes, batchesRes, usersRes, profilesRes] = await Promise.all([
+        new SupplyService().getAll(),
+        new SupplyBatchService().getAll(),
+        new UserService().getAll(),
+        new ProfileService().getAll()
+      ]);
+
       this.allSupplies = SupplyAssembler.toEntitiesFromResponse(suppliesRes);
       this.allBatches = batchesRes.data;
+
       const users = UserAssembler.toEntitiesFromResponse(usersRes);
       const profiles = ProfileAssembler.toEntitiesFromResponse(profilesRes);
+
       this.supplierProfiles = users.map(user => {
         const profile = profiles.find(p => p.userId === user.id);
-        return {id: user.id, name: profile?.name || user.email, company: profile?.companyName || ''};
+        return {
+          id: user.id,
+          name: profile?.name || user.email,
+          company: profile?.companyName || ''
+        };
       });
-    }, resetModal() {
+    },
+    resetModal() {
       this.step = 1;
       this.selectedSupply = null;
       this.selectedBatchIds = [];
       this.filteredBatches = [];
-      this.currentSelection = [];
-    }, onSupplySelect() {
+      this.fullOrder = [];
+      this.showConfirmModal = false;
+      this.batchQuantities = {};
+    },
+    onSupplySelect() {
       if (!this.selectedSupply?.id) {
         this.filteredBatches = [];
         return;
       }
-      const {id: supplyId, userId} = this.selectedSupply;
-      this.filteredBatches = this.allBatches.filter(batch => batch.supply_id === supplyId).map(batch => {
-        const supplier = this.supplierProfiles.find(p => p.id === (batch.supplier_id ?? userId)) || {name: 'Desconocido'};
-        return {batch, supply: this.selectedSupply, supplier};
-      }).filter(entry => {
-        return !this.fullOrder.some(o => o.batch.id === entry.batch.id);
-      });
+
+      const { id: supplyId, userId } = this.selectedSupply;
+
+      this.filteredBatches = this.allBatches
+          .filter(batch => batch.supply_id === supplyId)
+          .map(batch => {
+            const supplier = this.supplierProfiles.find(p => p.id === (batch.supplier_id ?? userId)) || {
+              name: 'Desconocido',
+              id: 0
+            };
+
+            const entry = {
+              batch,
+              supply: this.selectedSupply,
+              supplier
+            };
+
+            // Si el batch está confirmado, asegúrate que siga seleccionado
+            if (this.confirmedBatches.some(cb => cb.batch.id === batch.id) &&
+                !this.selectedBatchIds.includes(batch.id)) {
+              this.selectedBatchIds.push(batch.id);
+            }
+
+            return entry;
+          });
+    },
+    toggleBatchSelection(batchId, entry) {
+      const index = this.selectedBatchIds.indexOf(batchId);
+      if (index > -1) {
+        this.selectedBatchIds.splice(index, 1);
+        this.fullOrder = this.fullOrder.filter(e => e.batch.id !== batchId);
+      } else {
+        this.selectedBatchIds.push(batchId);
+        this.fullOrder.push(entry);
+      }
     },
     nextStep() {
-      if (!this.selectedBatches.length) return;
+      if (!this.confirmedBatches) this.confirmedBatches = [];
 
-      // Agrega los seleccionados al acumulado, pero sin repetir
-      this.selectedBatches.forEach(entry => {
-        if (!this.confirmedBatches.some(e => e.batch.id === entry.batch.id)) {
+      this.selectedBatchIds.forEach(batchId => {
+        const entry = this.filteredBatches.find(b => b.batch.id === batchId);
+        if (entry && !this.confirmedBatches.some(cb => cb.batch.id === batchId)) {
           this.confirmedBatches.push(entry);
         }
       });
 
-      // Luego de agregar, espera al próximo tick para abrir modal
-      this.$nextTick(() => {
-        this.step = 2;
-        this.showConfirmModal = true;
-      });
+      console.log('🧪 [nextStep] confirmedBatches:', this.confirmedBatches);
+
+      this.step = 2;
+      this.showConfirmModal = true;
     },
     goBackFromDetails() {
       this.step = 1;
       this.showConfirmModal = false;
-    }, closeModal() {
+    },
+    closeModal() {
       this.$emit('update:modelValue', false);
       this.$emit('close');
     },
     async handleFinalConfirmation({batches, quantities}) {
-      batches.forEach(entry => {
-        if (!this.confirmedBatches.some(e => e.batch.id === entry.batch.id)) {
-          this.confirmedBatches.push(entry);
-        }
-      });
-
-      // Reset visual
-      this.selectedBatchIds = [];
-      this.selectedSupply = null;
-      this.filteredBatches = [];
-      this.showConfirmModal = false;
-      this.step = 1;
       try {
         const orderService = new OrderToSupplierService();
         const batchService = new OrderToSupplierBatchService();
-        const grouped = this.fullOrder.reduce((acc, entry) => {
+
+        const grouped = batches.reduce((acc, entry) => {
           const supplierId = entry.supplier.id;
           if (!acc[supplierId]) acc[supplierId] = [];
           acc[supplierId].push(entry);
           return acc;
         }, {});
+
         for (const [supplierId, entries] of Object.entries(grouped)) {
           const now = new Date();
+
           const orderPayload = {
             date: now.toISOString(),
-            estimated_ship_date: now.toISOString(),
-            estimated_ship_time: now.toISOString(),
-            description: 'Order',
+            estimated_ship_date: null,
+            estimated_ship_time: null,
+            description: `Order for ${entries[0]?.supply?.name || 'supplies'}`,
             admin_restaurant_id: 4,
             supplier_id: Number(supplierId),
             order_to_supplier_state_id: 1,
             order_to_supplier_situation_id: 1,
             requested_products_count: entries.length,
-            total_price: entries.reduce((sum, e) => sum + ((quantities[e.batch.id] || 0) * (e.supply.price || 0)), 0),
+            total_price: entries.reduce((sum, e) => (sum + (quantities[e.batch.id] || 0) * (e.supply.price || 0)), 0),
             partially_accepted: false
           };
+
           const orderRes = await orderService.create(orderPayload);
-          const orderId = orderRes.data.id;
+          const orderId = orderRes?.id || orderRes?.data?.id;
+
           for (const entry of entries) {
             const qty = quantities[entry.batch.id] || 0;
             if (qty <= 0) continue;
+
             await batchService.create({
               order_to_supplier_id: orderId,
               batch_id: entry.batch.id,
@@ -161,21 +198,44 @@ export default {
             });
           }
         }
-        this.fullOrder = [];
+
+        this.$toast?.add?.({
+          severity: 'success',
+          summary: 'Orden creada',
+          detail: 'La orden ha sido registrada correctamente.',
+          life: 3000
+        });
+
+        this.resetModal();
+        this.closeModal();
+        this.showConfirmModal = false;
       } catch (err) {
-        console.error('Error creando órdenes:', err);
-        console.log('🧪 Batches passed to detail modal:', this.fullOrder.concat(this.selectedBatches));
+        console.error('❌ Error al crear la orden:', err);
+        this.$toast?.add?.({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo crear la orden.',
+          life: 4000
+        });
       }
     }
   }
 };
 </script>
+
 <template>
   <base-modal :model-value="modelValue" title="Crear orden de compra" @close="closeModal">
     <template #default>
-      <div class="modal-step"><label>Selecciona un insumo:</label>
-        <pv-select v-model="selectedSupply" :options="allSupplies" optionLabel="name" placeholder="Selecciona un insumo"
-                   @change="onSupplySelect"/>
+      <div class="modal-step">
+        <label>Selecciona un insumo:</label>
+        <pv-select
+            v-model="selectedSupply"
+            :options="allSupplies"
+            optionLabel="name"
+            placeholder="Selecciona un insumo"
+            @change="onSupplySelect"
+        />
+
         <div v-if="filteredBatches.length">
           <h4>Batches disponibles para: {{ selectedSupply.name }}</h4>
           <pv-data-table :value="filteredBatches">
@@ -193,7 +253,12 @@ export default {
             </pv-column>
             <pv-column header="Seleccionar">
               <template #body="{ data }">
-                <pv-checkbox :value="data.batch.id" v-model="selectedBatchIds"/>
+                <pv-checkbox
+                    :value="data.batch.id"
+                    :binary="true"
+                    :model-value="selectedBatchIds.includes(data.batch.id)"
+                    @change="() => toggleBatchSelection(data.batch.id, data)"
+                />
               </template>
             </pv-column>
           </pv-data-table>
@@ -203,9 +268,15 @@ export default {
 
     <template #footer>
       <pv-button label="Cancelar" class="btn-cancel" @click="closeModal"/>
-      <pv-button label="Siguiente" class="btn-next" :disabled="!selectedBatchIds.length" @click="nextStep"/>
+      <pv-button
+          label="Siguiente"
+          class="btn-next"
+          :disabled="!selectedBatchIds.length"
+          @click="nextStep"
+      />
     </template>
   </base-modal>
+  <pv-toast position="top-right"/>
   <order-details-modal-component
       v-model="showConfirmModal"
       :selected-batches="confirmedBatches"
@@ -213,9 +284,11 @@ export default {
       @back="goBackFromDetails"
   />
 
+
 </template>
 
-<style scoped> .modal-step {
+<style scoped>
+.modal-step {
   display: flex;
   flex-direction: column;
   gap: 1rem;
