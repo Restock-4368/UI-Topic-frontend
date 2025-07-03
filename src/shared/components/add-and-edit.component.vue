@@ -18,10 +18,6 @@ export default {
   methods: {
     handleUpload(event, fieldName) {
       const file = event.files[0];
-      console.log('📁 Upload triggered:', event.files);
-      console.log('🧪 Sending to Cloudinary:');
-      console.log('Upload preset:', 'uitopic');
-      console.log('File:', file.name);
 
       const formData = new FormData();
       formData.append('file', file);
