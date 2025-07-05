@@ -13,6 +13,45 @@
   "language": {
     "switch": "Cambiar idioma"
   },
+  "signin": {
+    "title": "Iniciar sesión",
+    "userPlaceholder": "Usuario",
+    "passwordPlaceholder": "Contraseña",
+    "forgot": "¿Olvidaste tu contraseña?",
+    "button": "Iniciar sesión",
+    "or": "--- O inicia sesión con ---"
+  },
+  "signup": {
+    "title": "Registrarse",
+    "userPlaceholder": "Usuario",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "button": "Registrarse",
+    "or": "--- O regístrate con ---",
+    "select": "Selecciona tu rol",
+    "roles": {
+      "restaurant": "Administrador(a) de Restaurante",
+      "supplier": "Proveedor(a) de Restaurante"
+    }
+  },
+  "recover": {
+    "title": "¿Olvidaste tu contraseña?",
+    "description": "No te preocupes. Restablecer tu contraseña es fácil: solo dinos con qué correo te registraste en Restock.",
+    "emailPlaceholder": "Correo electrónico",
+    "button": "ENVIAR"
+  },
+  "panels": {
+    "left": {
+      "title": "¿Eres nuevo?",
+      "text": "¡Únete a nuestra comunidad y comienza a mejorar tu gestión hoy!",
+      "button": "REGISTRARSE"
+    },
+    "right": {
+      "title": "¿Ya tienes una cuenta?",
+      "text": "Inicia sesión para seguir gestionando tu inventario eficientemente.",
+      "button": "INICIAR SESIÓN"
+    }
+  },
   "footer": {
     "rights-reserved": "todos los derechos reservados.",
     "developed-by": "Desarrollado por"
