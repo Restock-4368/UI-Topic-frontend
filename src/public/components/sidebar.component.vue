@@ -37,9 +37,21 @@
       </li>
     </ul>
 
+    <div  class="menu list-none flex-auto p-0">
+      <pv-button
+          class="p-button-text p-button-danger"
+          @click="logout"
+      >
+        <i class="pi pi-sign-out"></i>
+        <span class="ml-2">Logout</span>
+      </pv-button>
+    </div>
+
     <div class="pt-5 flex justify-content-center mt-auto">
       <LanguageSwitcher />
     </div>
+
+
   </aside>
 </template>
 
@@ -118,6 +130,10 @@ export default {
     checkMobile() {
       this.isMobile = window.innerWidth < 1260
       this.sidebarVisible = !this.isMobile
+    },
+    logout() {
+      localStorage.removeItem("currentUser")
+      this.$router.push('/access')
     }
   }
 }
@@ -194,5 +210,10 @@ export default {
   font-size: 1.25rem;   /* ≈20 px */
 }
 
-
+.logout-container {
+  margin-top: auto;
+  padding: 1rem 0;
+  display: flex;
+  color: #e68900 !important;
+}
 </style>
