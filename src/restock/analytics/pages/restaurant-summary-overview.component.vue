@@ -2,11 +2,11 @@
 import {defineComponent} from 'vue'
 import RestaurantPendingOrdersWidget from "../components/restaurant-pending-orders-widget.component.vue";
 import RestaurantLastSuppliesWidget from "../components/restaurant-last-supplies-widget.component.vue";
-import RestaurantAlertsWidget from "../components/restaurant-alerts-widget.component.vue";
+import RestaurantNotificationsWidgetComponent from "../components/restaurant-notifications-widget.component.vue";
 
 export default defineComponent({
   name: "restaurant-summary-overview",
-  components: {RestaurantAlertsWidget, RestaurantLastSuppliesWidget, RestaurantPendingOrdersWidget}
+  components: {RestaurantAlertsWidget: RestaurantNotificationsWidgetComponent, RestaurantLastSuppliesWidget, RestaurantPendingOrdersWidget}
 })
 </script>
 
