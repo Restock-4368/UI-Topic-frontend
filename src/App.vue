@@ -23,21 +23,19 @@ export default {
 
 </script>
 
-<template>
-  <div class="layout-container">
-    <nav-bar></nav-bar>
 
-    <!-- Sidebar fija al lado izquierdo -->
-    <aside >
+<template>
+  <toast />
+  <div class="layout-container">
+    <nav-bar v-if="!$route.meta.hideLayout"></nav-bar>
+
+    <aside v-if="!$route.meta.hideLayout">
       <Sidebar/>
     </aside>
 
-    <!-- Contenido principal -->
-    <main class="main-content">
-      <!-- Imagen superior -->
-      <img src="../src/assets/images/imagen-principal.png" alt="Logo" class="principal-image" />
+    <main class="main-content" :class="{'full-width': $route.meta.hideLayout}">
+      <img v-if="!$route.meta.hideLayout" src="../src/assets/images/imagen-principal.png" alt="Logo" class="principal-image" />
 
-      <!-- Contenido dinámico de las rutas -->
       <div class="content-wrapper">
         <router-view />
       </div>

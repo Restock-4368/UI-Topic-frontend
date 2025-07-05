@@ -294,6 +294,9 @@ export default {
   border-bottom: 1px solid #ddd !important;
 }
 
+:global(.p-multiselect-list) {
+  background-color: #f0f0f0 !important;
+}
 
 .category-chip-list {
   display: flex !important;
