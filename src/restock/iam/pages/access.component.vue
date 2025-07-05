@@ -36,8 +36,9 @@ export default {
       this.mode = 'recover'
     },
     handleLoggedIn() {
-      // Redirigir, por ejemplo
-      this.$router.push('/')
+      setTimeout(() => {
+        this.$router.push('/dashboard/restaurant/summary'); //VALIDAR ROL
+      }, 1000);
     },
     goToLanding() {
       window.location.href = 'https://restock-4368.github.io/landing-page/';

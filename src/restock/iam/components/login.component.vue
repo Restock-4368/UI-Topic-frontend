@@ -17,7 +17,7 @@ export default {
         const userData = JSON.parse(storedUser);
         if (userData.password === this.password) {
           localStorage.setItem("currentUser", this.username);
-          this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Welcome ' + this.username, life: 3000 });
+          this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Welcome ' + this.username, life: 1000 });
 
           this.$emit('logged-in');
         } else {

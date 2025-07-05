@@ -18,6 +18,9 @@ const RestaurantRecipesOverview = () => import('../restock/planning/pages/restau
 const SuppliersOrdersOverview = () => import('../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue')
 const SalesComponent = () => import('../restock/monitoring/restaurant-sales/pages/sales.component.vue')
 const RestaurantOrdersToSuppliersOverview = () => import('../restock/resource/orders-to-suppliers/pages/restaurant-order-to-supplier-overview.component.vue')
+const AccessComponent = () => import('../restock/iam/pages/access.component.vue');
+
+
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
@@ -105,10 +108,14 @@ const routes = [
         component: SupplierAlertsOverviewComponent,
         meta: { title: 'sidebar.notifications' }
     },
+    // {
+    //     path: '/',
+    //     name: 'root-redirect',
+    //     component: RoleRedirect
+    // },
     {
         path: '/',
-        name: 'root-redirect',
-        component: RoleRedirect
+        redirect: '/access'
     },
 
     //For both roles
@@ -116,7 +123,14 @@ const routes = [
         path: '/dashboard/profile',
         name: 'profile',
         component: ProfileOverviewComponent,
+        meta: { title: 'sidebar.profile' }
     },
+    {
+        path: '/access',
+        name: 'access',
+        component: AccessComponent,
+        meta: { title: 'Access', hideLayout: true }
+    }
 ]
 
 const router = createRouter({
