@@ -34,7 +34,7 @@ onMounted(async () => {
         </pv-tab-list>
 
 
-        <pv-tab-panels class="scroll-wrapper" lazy="false">
+        <pv-tab-panels class="scroll-wrappern">
           <pv-tab-panel value="inventory">
             <pv-data-table :value="inventoryAlerts" responsiveLayout="scroll">
               <pv-column field="ingredient" header="Supplies">
@@ -133,10 +133,10 @@ onMounted(async () => {
   border-bottom: none;
 }
 
-.scroll-wrapper {
+.scroll-wrappern {
   flex: 1;
   overflow-y: auto;
-  max-height: 260px;
+  max-height: 230px;
   margin: 0;
 }
 
