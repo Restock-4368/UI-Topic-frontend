@@ -6,7 +6,7 @@ import RestaurantNotificationsWidgetComponent from "../components/restaurant-not
 
 export default defineComponent({
   name: "restaurant-summary-overview",
-  components: {RestaurantAlertsWidget: RestaurantNotificationsWidgetComponent, RestaurantLastSuppliesWidget, RestaurantPendingOrdersWidget}
+  components: {RestaurantNotificationsWidgetComponent, RestaurantLastSuppliesWidget, RestaurantPendingOrdersWidget}
 })
 </script>
 
@@ -14,7 +14,7 @@ export default defineComponent({
   <div class="restaurant-summary-overview">
     <div class="summary-row summary-row-1">
       <restaurant-pending-orders-widget class="widget widget-pending"/>
-      <restaurant-alerts-widget class="widget widget-alerts"/>
+      <restaurant-notifications-widget-component class="widget widget-alerts"/>
     </div>
     <div class="summary-row summary-row-2">
       <restaurant-last-supplies-widget class="widget widget-supplies"/>

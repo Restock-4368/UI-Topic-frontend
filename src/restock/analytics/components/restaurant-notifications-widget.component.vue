@@ -8,7 +8,8 @@ const inventoryAlerts = ref([])
 const orderAlerts = ref([])
 
 onMounted(async () => {
-  const {getInventoryAlerts, getOrderAlerts} = useRestaurantNotifications()
+  const { getInventoryAlerts, getOrderAlerts } = useRestaurantNotifications()
+
   inventoryAlerts.value = await getInventoryAlerts()
   orderAlerts.value = await getOrderAlerts()
 
@@ -20,20 +21,20 @@ onMounted(async () => {
   <div>
     <h3 class="widget-title">Last Notifications</h3>
     <div class="widget-container">
-      <pv-tabs v-model="selectedTab" class="custom-tabs">
-        <pv-tab-list class="custom-tablist">
+      <pv-tabs :value="selectedTab" @update:value="selectedTab = $event" class="custom-tabs">
+      <pv-tab-list class="custom-tablist">
           <pv-tab value="inventory">
             Inventory
-            <span v-if="inventoryAlerts.length" class="tab-badge">{{ inventoryAlerts.length }}</span>
+<!--            <span v-if="inventoryAlerts.length" class="tab-badge">{{ inventoryAlerts.length }}</span>-->
           </pv-tab>
           <pv-tab value="orders">
             Orders
-            <span v-if="orderAlerts.length" class="tab-badge">{{ orderAlerts.length }}</span>
+<!--            <span v-if="orderAlerts.length" class="tab-badge">{{ orderAlerts.length }}</span>-->
           </pv-tab>
         </pv-tab-list>
 
 
-        <pv-tab-panels class="scroll-wrapper">
+        <pv-tab-panels class="scroll-wrapper" lazy="false">
           <pv-tab-panel value="inventory">
             <pv-data-table :value="inventoryAlerts" responsiveLayout="scroll">
               <pv-column field="ingredient" header="Supplies">
@@ -136,6 +137,7 @@ onMounted(async () => {
   flex: 1;
   overflow-y: auto;
   max-height: 260px;
+  margin: 0;
 }
 
 .p-datatable thead th {
