@@ -1,24 +1,34 @@
 
 <script>
+import {SignUpRequest} from "../model/sign-up.request.js";
+import {useAuthenticationStore} from "../services/authentication.store.js";
+
 export default {
   name: "register",
   data() {
     return {
       username: "",
-      email: "",
       password: "",
-      role: ""
+      role: "",
+      roleId: 0
     }
   },
   methods: {
     register() {
-      if (localStorage.getItem(this.username)) {
-        this.$toast.add({ severity: 'warn', summary: 'Warning', detail: 'User already exists.', life: 3000 });
-      } else {
-        localStorage.setItem(this.username, JSON.stringify({ email: this.email, password: this.password }));
-        this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Registered successfully. Now sign in.', life: 3000 });
-        this.$emit('registered');
-      }
+      let authStore = useAuthenticationStore();
+
+      this.roleId === "Restaurant Administrator" ? 2 : 1;
+
+      let signUpRequest = new SignUpRequest(this.username, this.password, this.roleId);
+      authStore.signUp(signUpRequest, this.$router);
+
+      // if (localStorage.getItem(this.username)) {
+      //   this.$toast.add({ severity: 'warn', summary: 'Warning', detail: 'User already exists.', life: 3000 });
+      // } else {
+      //   localStorage.setItem(this.username, JSON.stringify({ email: this.email, password: this.password }));
+      //   this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Registered successfully. Now sign in.', life: 3000 });
+      //   this.$emit('registered');
+      // }
     }
   }
 }
@@ -28,10 +38,7 @@ export default {
   <form @submit.prevent="register" class="sign-up-form">
     <h2 class="title">Sign up</h2>
     <div class="input-field">
-      <input type="text" v-model="username" placeholder="User" required />
-    </div>
-    <div class="input-field">
-      <input type="email" v-model="email" placeholder="e-mail" required />
+      <input type="text" v-model="username" placeholder="Username" required />
     </div>
     <div class="input-field">
       <input type="password" v-model="password" placeholder="Password" required />

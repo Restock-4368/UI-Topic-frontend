@@ -1,45 +1,13 @@
 
 <script>
-import Login from '../components/login.component.vue'
-import Register from '../components/register.component.vue'
-import RecoverPassword from '../components/recover-password.component.vue'
-import LanguageSwitcher from "../../../public/components/language-switcher.component.vue";
+import Register from '../components/register.component.vue';
 
 export default {
-  name: "access",
+  name: 'register-overview',
   components: {
-    LanguageSwitcher,
-    Login,
-    Register,
-    RecoverPassword
-  },
-  data() {
-    return {
-      mode: 'signin'
-    }
-  },
-  computed: {
-    currentMode() {
-      if (this.mode === 'signup') return 'sign-up-mode'
-      if (this.mode === 'recover') return 'recover-password-mode'
-      return ''
-    }
+    Register
   },
   methods: {
-    switchToSignin() {
-      this.mode = 'signin'
-    },
-    switchToSignup() {
-      this.mode = 'signup'
-    },
-    switchToRecover() {
-      this.mode = 'recover'
-    },
-    handleLoggedIn() {
-      setTimeout(() => {
-        this.$router.push('/dashboard/restaurant/summary'); //VALIDAR ROL
-      }, 1000);
-    },
     goToLanding() {
       window.location.href = 'https://restock-4368.github.io/landing-page/';
     }
@@ -48,35 +16,26 @@ export default {
 </script>
 
 <template>
-
   <button class="back-button" @click="goToLanding">
     <i class="pi pi-arrow-left"></i>
   </button>
 
-<!--  <language-switcher></language-switcher>-->
-
-  <div class="container" :class="currentMode">
+  <div class="container sign-up-mode">
     <div class="forms-container">
       <div class="signin-signup-recover">
-        <login v-if="mode === 'signin'" @logged-in="handleLoggedIn" @recover="switchToRecover" />
-        <register v-if="mode === 'signup'" @registered="switchToSignin" />
-        <recover-password v-if="mode === 'recover'" @back="switchToSignin" />
+        <Register />
       </div>
     </div>
 
     <div class="panels-container">
-      <div class="panel left-panel">
-        <div class="content">
-          <h3>Are you new?</h3>
-          <p>Join our community and start improving your management today!</p>
-          <button class="btn switch" @click="switchToSignup">SIGN UP</button>
-        </div>
-      </div>
+      <div class="panel left-panel"></div>
       <div class="panel right-panel">
         <div class="content">
           <h3>Already have an account?</h3>
           <p>Sign in to continue managing your inventory efficiently.</p>
-          <button class="btn switch" @click="switchToSignin">SIGN IN</button>
+          <router-link to="/sign-in">
+            <button class="btn switch">SIGN IN</button>
+          </router-link>
         </div>
       </div>
     </div>
@@ -554,5 +513,4 @@ form.recover-password-form {
     bottom: 28%;
     left: 50%;
   }
-}
-</style>
+}</style>
