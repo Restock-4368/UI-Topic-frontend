@@ -15,24 +15,18 @@ export default {
   },
   methods: {
     onSignIn() {
+      const toast = this.$toast;
+
       let authStore = useAuthenticationStore();
       let signInRequest = new SignInRequest(this.username, this.password);
-      authStore.signIn(signInRequest, this.$router);
 
-      // const storedUser = localStorage.getItem(this.username);
-      // if (storedUser) {
-      //   const userData = JSON.parse(storedUser);
-      //   if (userData.password === this.password) {
-      //     localStorage.setItem("currentUser", this.username);
-      //     this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Welcome ' + this.username, life: 1000 });
-      //
-      //     this.$emit('logged-in');
-      //   } else {
-      //     this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Incorrect password.', life: 3000 });
-      //   }
-      // } else {
-      //   this.$toast.add({ severity: 'error', summary: 'Error', detail: 'User not found.', life: 3000 });
-      // }
+      authStore.signIn(signInRequest, this.$router)
+          .then(() => {
+            toast.add({ severity: 'success', summary: 'Success', detail: 'Welcome ' + this.username + '!', life: 3000 });
+          })
+          .catch(() => {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'User not found or incorrect password.', life: 3000 });
+          });
     },
     goToLanding() {
       window.location.href = 'https://restock-4368.github.io/landing-page/';
@@ -42,6 +36,7 @@ export default {
 </script>
 
 <template>
+  <pv-toast></pv-toast>
   <button class="back-button" @click="goToLanding">
     <i class="pi pi-arrow-left"></i>
   </button>

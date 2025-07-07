@@ -57,32 +57,31 @@ export const useAuthenticationStore = defineStore('authentication',{
          * @param router - Vue router instance
          */
         async signIn(signInRequest, router) {
-            authenticationService.signIn(signInRequest)
+            return authenticationService.signIn(signInRequest)
                 .then(response => {
-                    let signInResponse = new SignInResponse(response.data.id, response.data.username, response.data.role_id,response.data.token);
+                    let signInResponse = new SignInResponse(response.data.id, response.data.username, response.data.role_id, response.data.token);
                     this.signedIn = true;
                     this.userId = signInResponse.id;
                     this.username = signInResponse.username;
                     this.roleId = signInResponse.role_id;
 
-                    console.log(`Signed in as ${response.data.username} with token ${response.data.token} and role ${response.data.role_id}`);
-
                     localStorage.setItem('roleId', signInResponse.role_id.toString());
                     localStorage.setItem('token', signInResponse.token);
-                    console.log(signInResponse);
 
                     if (signInResponse.role_id === 1) {
                         router.push({ name: 'supplier-summary' });
                     } else if (signInResponse.role_id === 2) {
                         router.push({ name: 'restaurant-summary' });
                     } else {
-                        console.error("Unknown role:", signInResponse.role_id);
                         router.push({ name: 'sign-in' });
                     }
+
+                    return Promise.resolve();
                 })
                 .catch(error => {
                     console.log(error);
                     router.push({ name: 'sign-in' });
+                    return Promise.reject(error);
                 });
         },
         async signUp(signUpdRequest, router) {

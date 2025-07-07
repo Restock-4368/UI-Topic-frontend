@@ -2,9 +2,11 @@
 <script>
 import {useAuthenticationStore} from "../services/authentication.store.js";
 import {SignUpRequest} from "../model/sign-up.request.js";
+import {Toast as PvToast} from "primevue";
 
 export default {
   name: 'sign-up',
+  components: {PvToast},
   data() {
     return {
       authenticationStore: useAuthenticationStore(),
@@ -16,18 +18,20 @@ export default {
   },
   methods: {
     onSignUp() {
+      const toast = this.$toast;
+
+      if (!this.username.trim() || !this.password.trim() || !this.role) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'All fields must be filled correctly. Do not put spaces.', life: 3000 });
+        return;
+      }
+
       this.roleId = this.role === "Restaurant Administrator" ? 2 : 1;
 
-      let signUpRequest = new SignUpRequest(this.username, this.password, this.roleId);
-      this.authenticationStore.signUp(signUpRequest, this.$router);
-
-      // if (localStorage.getItem(this.username)) {
-      //   this.$toast.add({ severity: 'warn', summary: 'Warning', detail: 'User already exists.', life: 3000 });
-      // } else {
-      //   localStorage.setItem(this.username, JSON.stringify({ email: this.email, password: this.password }));
-      //   this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Registered successfully. Now sign in.', life: 3000 });
-      //   this.$emit('registered');
-      // }
+      let signUpRequest = new SignUpRequest(this.username.trim(), this.password.trim(), this.roleId);
+      this.authenticationStore.signUp(signUpRequest, this.$router)
+          .catch(() => {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Registration failed. Try again.', life: 3000 });
+          });
     },
     goToLanding() {
       window.location.href = 'https://restock-4368.github.io/landing-page/';
@@ -37,6 +41,7 @@ export default {
 </script>
 
 <template>
+  <pv-toast></pv-toast>
   <button class="back-button" @click="goToLanding">
     <i class="pi pi-arrow-left"></i>
   </button>
@@ -162,9 +167,6 @@ export default {
   display: none;
 }
 
-* {
-
-}
 .back-button {
   padding: 1rem;
   position: fixed;
