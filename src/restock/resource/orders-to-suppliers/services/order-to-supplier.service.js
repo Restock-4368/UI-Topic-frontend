@@ -21,7 +21,7 @@ export class OrderToSupplierService extends BaseService {
 
 export async function getOrdersToSupplierFromRestaurant() {
     const service = new OrderToSupplierService();
-    const restaurantId = 2;
+    const restaurantId = 4;
     const response = await service.getByRestaurantId(restaurantId);
     return OrderToSupplierAssembler.toEntitiesFromResponse(response);
 }
