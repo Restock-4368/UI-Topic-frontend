@@ -1,56 +1,64 @@
+
 <script>
-import {Toast as PvToast} from "primevue";
-import {SignInRequest} from "../model/sign-in.request.js";
-import {useAuthenticationStore} from "../services/authentication.store.js";
+import Login from '../components/login.component.vue';
 
 export default {
-  name: "login",
-  components: {PvToast},
-  data() {
-    return {
-      username: "",
-      password: ""
-    }
+  name: 'login-overview',
+  components: {
+    Login
   },
   methods: {
-    login() {
-      let authStore = useAuthenticationStore();
-      let signInRequest = new SignInRequest(this.username, this.password);
-      authStore.signIn(signInRequest, this.$router);
-      this.$emit('logged-in');
-      // const storedUser = localStorage.getItem(this.username);
-      // if (storedUser) {
-      //   const userData = JSON.parse(storedUser);
-      //   if (userData.password === this.password) {
-      //     localStorage.setItem("currentUser", this.username);
-      //     this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Welcome ' + this.username, life: 1000 });
-      //
-      //     this.$emit('logged-in');
-      //   } else {
-      //     this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Incorrect password.', life: 3000 });
-      //   }
-      // } else {
-      //   this.$toast.add({ severity: 'error', summary: 'Error', detail: 'User not found.', life: 3000 });
-      // }
+    goToLanding() {
+      window.location.href = 'https://restock-4368.github.io/landing-page/';
     }
   }
 }
 </script>
+
 <template>
-  <pv-toast />
-  <form @submit.prevent="login" class="sign-in-form">
-    <h2 class="title">Sign in</h2>
-    <div class="input-field">
-      <input type="text" v-model="username" placeholder="User" required />
+  <button class="back-button" @click="goToLanding">
+    <i class="pi pi-arrow-left"></i>
+  </button>
+
+  <div class="container">
+    <div class="forms-container">
+      <div class="signin-signup-recover">
+        <Login />
+      </div>
     </div>
-    <div class="input-field">
-      <input type="password" v-model="password" placeholder="Password" required />
+
+    <div class="panels-container">
+      <div class="panel left-panel">
+        <div class="content">
+          <h3>Are you new?</h3>
+          <p>Join our community and start improving your management today!</p>
+          <router-link to="/sign-up">
+            <button class="btn switch">SIGN UP</button>
+          </router-link>
+        </div>
+      </div>
     </div>
-    <button type="submit" class="btn solid">Sign in</button>
-  </form>
+  </div>
 </template>
 
 <style scoped>
+.back-button {
+  padding: 1rem;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: #4F8A5B;
+  border-radius: 80%;
+  font-size: 0.7rem;
+  cursor: pointer;
+  color: #ffffff;
+  z-index: 999;
+  transition: color 0.3s;
+}
+
+.back-button:hover {
+  color: #000000; /* color verde suave al pasar */
+}
 
 * {
   margin: 0;
@@ -382,7 +390,44 @@ form.recover-password-form {
 /* Responsive */
 
 @media (max-width: 870px) {
+  .container {
+    min-height: 800px;
+    height: 100vh;
+  }
 
+  .signin-signup-recover {
+    width: 100%;
+    top: 95%;
+    transform: translate(-50%, -100%);
+    transition: 1s 0.8s ease-in-out;
+  }
+
+  .signin-signup-recover,
+  .container.sign-up-mode .signin-signup-recover,
+  .container.recover-password-mode .signin-signup-recover {
+    left: 50%;
+  }
+
+  .panels-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 2fr 1fr;
+  }
+
+  .panel {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2.5rem 8%;
+    grid-column: 1 / 2;
+  }
+
+  .right-panel {
+    grid-row: 3 / 4;
+  }
+
+  .left-panel {
+    grid-row: 1 / 2;
+  }
 
   .panel .content {
     padding-right: 15%;
@@ -469,3 +514,4 @@ form.recover-password-form {
   }
 }
 </style>
+
