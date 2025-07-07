@@ -50,53 +50,41 @@ export function useRestaurantNotifications() {
         const states = Array.isArray(statesRes.data) ? statesRes.data : [];
         const situations = Array.isArray(situationsRes.data) ? situationsRes.data : [];
 
-        return orders
+        // Crear mapas para mejor performance
+        const stateMap = new Map(states.map(s => [s.id, s]));
+        const situationMap = new Map(situations.map(s => [s.id, s]));
+
+        // Filtrar y enriquecer órdenes
+        const alerts = orders
             .map(order => {
-                const state = states.find(s => s.id === order.order_to_supplier_state_id);
-                const situation = situations.find(s => s.id === order.order_to_supplier_situation_id);
+                const state = stateMap.get(order.order_to_supplier_state_id);
+                const situation = situationMap.get(order.order_to_supplier_situation_id);
 
-                const sitName = situation?.name?.toLowerCase();
-                const stateName = state?.name?.toLowerCase();
+                const stateName = state?.name?.toLowerCase() || '';
+                const situationName = situation?.name?.toLowerCase() || '';
 
-                if ((sitName && sitName !== "pending") || stateName === "delivered") {
-                    console.log("Order", order.id, "State:", stateName, "Situation:", sitName);
-                    return {
-                        ingredient: `Order #${order.id}`,
-                        status: stateName === "delivered"
-                            ? "Delivered"
-                            : `Updated to ${situation?.name}`
-                    };
-                }
-                console.log("Returning order alert for order", order.id);
-                return null;
+                const isRelevant =
+                    stateName === 'delivered' ||
+                    (situationName && situationName !== 'pending');
+
+                if (!isRelevant) return null;
+
+                const status =
+                    stateName === 'delivered'
+                        ? 'Delivered'
+                        : `Updated to ${situation?.name || 'Unknown'}`;
+
+                return {
+                    ingredient: `Order #${order.id}`,
+                    status,
+                    date: new Date(order.date || order.updated_at || null) // fallback
+                };
             })
+            .filter(Boolean)
+            .sort((a, b) => b.date - a.date); // más reciente primero
 
-            .filter(Boolean); // elimina nulls
-        const result = orders
-            .map(order => {
-                const state = states.find(s => s.id === order.order_to_supplier_state_id);
-                const situation = situations.find(s => s.id === order.order_to_supplier_situation_id);
-
-                const sitName = situation?.name?.toLowerCase();
-                const stateName = state?.name?.toLowerCase();
-
-                if ((sitName && sitName !== "pending") || stateName === "delivered") {
-                    console.log("✅ Order ALERT generated for:", order.id, "| Status:", stateName, "| Situation:", sitName);
-                    return {
-                        ingredient: `Order #${order.id}`,
-                        status: stateName === "delivered"
-                            ? "Delivered"
-                            : `Updated to ${situation?.name}`
-                    };
-                }
-
-                return null;
-            })
-            .filter(Boolean);
-
-        console.log("📦 Final orderAlerts:", result);
-        return result;
-
+        console.log('📦 Final orderAlerts:', alerts);
+        return alerts;
     }
 
     return {
