@@ -15,7 +15,7 @@ const authenticationService = new AuthenticationService();
 export const useAuthenticationStore = defineStore('authentication',{
     state: () => ({
         signedIn: !!localStorage.getItem('token'),
-        userId: 0,
+        userId: Number(localStorage.getItem('userId')) || 0 ,
         username: '',
         roleId: Number(localStorage.getItem('roleId')) || 0 }),
     getters: {
@@ -65,6 +65,7 @@ export const useAuthenticationStore = defineStore('authentication',{
                     this.username = signInResponse.username;
                     this.roleId = signInResponse.role_id;
 
+                    localStorage.setItem('userId', signInResponse.id.toString());
                     localStorage.setItem('roleId', signInResponse.role_id.toString());
                     localStorage.setItem('token', signInResponse.token);
 
@@ -121,6 +122,7 @@ export const useAuthenticationStore = defineStore('authentication',{
             this.roleId = 0;
             localStorage.removeItem('token');
             localStorage.removeItem('roleId');
+            localStorage.removeItem('userId');
             console.log('Signed out');
             router.push({ name: 'sign-in' });
         }

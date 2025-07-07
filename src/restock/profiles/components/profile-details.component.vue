@@ -5,7 +5,7 @@ export default {
     profile: {
       type: [Object, null],
       default: () => ({
-        name: '',
+        first_name: '',
         last_name: '',
         email: '',
         phone: '',
@@ -25,14 +25,11 @@ export default {
   },
   data() {
     return {
-      // Puedes agregar datos locales del componente aquí si los necesitas
     }
   },
   methods: {
-    // Puedes agregar métodos aquí si los necesitas
   },
   mounted() {
-    // Lógica de inicialización si la necesitas
   }
 }
 </script>
@@ -54,52 +51,52 @@ export default {
       <!-- Card Content -->
       <div class="card-content text">
         <div class="personal-details-form">
-          <h4 class="name">{{ profile?.name }} {{ profile?.last_name }}</h4>
+          <h4 class="name">{{ profile?.first_name || $t('profile.add-your-information') }} {{ profile?.last_name || '' }}</h4>
 
           <p class="info">
             <i class="pi pi-user icon"></i>
-            {{ profile?.email }}
+            {{ profile?.email || $t('profile.not-provided') }}
           </p>
 
           <!-- Phone -->
           <p class="info">
             <i class="pi pi-phone icon"></i>
-            {{ profile?.phone }}
+            {{ profile?.phone || $t('profile.not-provided') }}
           </p>
 
           <!-- Address -->
           <p class="info">
             <i class="pi pi-map-marker icon"></i>
-            {{ profile?.address }} - {{ profile?.country }}
+            {{ profile?.address || $t('profile.not-provided') }} - {{ profile?.country || $t('profile.not-provided') }}
           </p>
 
           <hr>
 
           <!-- Company Name -->
           <h5 class="subtitle">{{ $t('profile.business-name') }}:</h5>
-          <p>{{ profile?.business?.name }}</p>
+          <p>{{ profile?.business?.name || $t('profile.not-provided') }}</p>
 
           <!-- Company Address -->
           <h5 class="subtitle">{{ $t('profile.business-address') }}:</h5>
-          <p>{{ profile?.business?.address }}</p>
+          <p>{{ profile?.business?.address || $t('profile.not-provided') }}</p>
 
           <!-- Company Phone -->
           <h5 class="subtitle">{{ $t('profile.business-phone') }}:</h5>
-          <p>{{ profile?.business?.phone }}</p>
+          <p>{{ profile?.business?.phone || $t('profile.not-provided') }}</p>
 
           <!-- Company Email -->
           <h5 class="subtitle">{{ $t('profile.business-email') }}:</h5>
-          <p>{{ profile?.business?.email }}</p>
+          <p>{{ profile?.business?.email || $t('profile.not-provided') }}</p>
 
           <h5 class="subtitle">{{ $t('profile.categories') }}:</h5>
 
           <div class="category-chip-list">
             <span
-                v-for="category in categories"
+                v-for="category in categories? categories : []"
                 :key="category"
                 class="chip"
             >
-              {{ category }}
+              {{ category? category : $t('profile.not-provided') }}
             </span>
           </div>
         </div>
