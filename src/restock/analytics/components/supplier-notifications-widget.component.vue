@@ -155,6 +155,10 @@ function goToOrders() {
   border-radius: 30px;
 }
 
+.text-lg {
+  margin: 0.5rem 0;
+}
+
 .scroll-wrapper {
   max-height: 250px;
   overflow-y: auto;
