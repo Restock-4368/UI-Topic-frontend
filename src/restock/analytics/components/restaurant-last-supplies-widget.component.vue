@@ -1,108 +1,117 @@
-<script> export default {
-  name: 'RestaurantLastSuppliesWidget', data() {
+<script>
+import { SupplyBatchService} from "../../resource/inventory/services/supply-batch.service.js";
+import { SupplyService} from "../../resource/inventory/services/supply.service.js";
+import { SupplyCategoryService } from "../../resource/inventory/services/supply-category.service.js";
+
+export default {
+  name: 'RestaurantLastSuppliesWidget',
+  data() {
     return {
-      ingredients: [{
-        name: 'Pescado bonito',
-        category: 'Fish',
-        description: 'Se requiere producto fresco, refrigerado entre 0°C y 4°C'
-      }, {
-        name: 'Ají amarillo',
-        category: 'Vegetal',
-        description: 'Usado para base de salsas. Preferencia fresco'
-      }, {
-        name: 'Papa Huayro',
-        category: 'Vegetal',
-        description: 'Usada para platos criollos. Se requiere cocción rápida'
-      }, {
-        name: 'Cebolla roja',
-        category: 'Vegetal',
-        description: 'Requiere frescura y consistencia firme'
-      }, {
-        name: 'Leche evaporada',
-        category: 'Lácteo',
-        description: 'Marca específica solicitada, se almacena en ambiente seco'
-      }, {
-        name: 'Queso fresco',
-        category: 'Lácteo',
-        description: 'Debe venir sellado al vacío y refrigerado'
-      }, {name: 'Arroz', category: 'Grano', description: 'Variedad extra grano largo'}, {
-        name: 'Ajo molido',
-        category: 'Condimento',
-        description: 'Debe venir empacado en bolsas de 1kg'
-      }, {
-        name: 'Culantro fresco',
-        category: 'Hierba',
-        description: 'Entregar en bolsas húmedas, refrigerado'
-      }, {name: 'Pimiento rojo', category: 'Vegetal', description: 'Se requiere lavado y listo para picar'},]
-    };
-  }, methods: {
+      batches: [],
+    }
+  },
+  async mounted() {
+    const batchService = new SupplyBatchService()
+    const supplyService = new SupplyService()
+    const categoryService = new SupplyCategoryService()
+
+    const [batchRes, supplyRes, categoryRes] = await Promise.all([
+      batchService.getAll(),
+      supplyService.getAll(),
+      categoryService.getAll()
+    ])
+
+    const batches = batchRes.data || []
+    const supplies = supplyRes.data || []
+    const categories = categoryRes.data || []
+
+    // Creamos un mapa para acceso rápido por id
+    const categoryMap = Object.fromEntries(categories.map(c => [c.id, c]))
+
+    this.batches = batches
+        .map(b => {
+          const supply = supplies.find(s => s.id === b.supply_id)
+          if (!supply) return null
+          return {
+            ...b,
+            supply: {
+              ...supply,
+              category: categoryMap[supply.category_id] || null
+            }
+          }
+        })
+        .filter(b => b !== null)
+        .sort((a, b) => {
+          const aDate = a.created_at || a.id || 0
+          const bDate = b.created_at || b.id || 0
+          return bDate - aDate
+        })
+        .slice(0, 10)
+  },
+  methods: {
     getPairs() {
       const pairs = []
-      for (let i = 0; i < this.ingredients.length; i += 2) {
-        pairs.push(this.ingredients.slice(i, i + 2))
+      for (let i = 0; i < this.batches.length; i += 2) {
+        pairs.push(this.batches.slice(i, i + 2))
       }
       return pairs
-    }, scrollLeft() {
-      this.$refs.carousel.scrollBy({left: -220, behavior: 'smooth'})
-    }, scrollRight() {
-      this.$refs.carousel.scrollBy({left: 220, behavior: 'smooth'})
+    },
+    scrollLeft() {
+      this.$refs.carousel.scrollBy({ left: -220, behavior: 'smooth' })
+    },
+    scrollRight() {
+      this.$refs.carousel.scrollBy({ left: 220, behavior: 'smooth' })
     }
   }
 }
 </script>
-<template>
 
-  <div class="last-supplies-wrapper"><h3 class="widget-title">Last added supplies</h3>
-    <div class="last-supplies-widget">
-      <!-- Desktop Carousel -->
-      <div class="carousel-wrapper">
-        <button class="nav-button left" @click="scrollLeft"><i class="pi pi-chevron-left"/></button>
-        <div ref="carousel" class="carousel-container">
-          <div class="supply-card" v-for="(i, index) in ingredients" :key="index"><h4>{{ i.name }}</h4>
-            <p class="category">{{ i.category }}</p>
-            <p class="description">{{ i.description }}</p></div>
+<template>
+  <div class="last-supplies-wrapper">
+    <h3 class="widget-title">Last added supplies</h3>
+
+    <div class="carousel-wrapper">
+      <button class="nav-button left" @click="scrollLeft">
+        <i class="pi pi-chevron-left" />
+      </button>
+
+      <div ref="carousel" class="carousel-container">
+        <div class="supply-card" v-for="(b, i) in batches" :key="i">
+          <h4>{{ b.supply?.name }}</h4>
+          <p class="category">{{ b.supply?.category?.name || 'Uncategorized' }}</p>
+          <p class="description">{{ b.supply?.description || '-' }}</p>
         </div>
-        <button class="nav-button right" @click="scrollRight"><i class="pi pi-chevron-right"/></button>
       </div>
-      <!-- Mobile Scrollable Grid -->
-      <div class="supplies-grid">
-        <div class="ingredient-pair" v-for="(pair, i) in getPairs()" :key="i">
-          <div class="ingredient-card" v-for="(i, j) in pair" :key="j">
-            <h4>{{ i.name }}</h4>
-            <p class="category">{{ i.category }}</p>
-          </div>
+
+      <button class="nav-button right" @click="scrollRight">
+        <i class="pi pi-chevron-right" />
+      </button>
+    </div>
+
+    <div class="supplies-grid">
+      <div class="ingredient-pair" v-for="(pair, i) in getPairs()" :key="i">
+        <div class="ingredient-card" v-for="(b, j) in pair" :key="j">
+          <h4>{{ b.supply?.name }}</h4>
+          <p class="category">{{ b.supply?.category?.name || 'Uncategorized' }}</p>
         </div>
       </div>
     </div>
   </div>
 </template>
-<style>
-.last-supplies-wrapper {
-  display: flex;
-  flex-direction: column;
-}
 
+<style scoped>
 .widget-title {
   font-family: Poppins, sans-serif;
   font-weight: 500;
-  font-size: 23px;
-  color: #333;
+  font-size: 22px;
+  margin-bottom: 15px;
 }
 
-/* Box con shadow */
-.last-supplies-widget {
-  background: #fff;
-  padding: 20px 50px;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 30px;
-}
-
-/* Desktop carousel */
 .carousel-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
-  padding: 0 10px;
+  margin-bottom: 1.5rem;
 }
 
 .carousel-container {
@@ -110,6 +119,7 @@
   overflow-x: auto;
   scroll-behavior: smooth;
   gap: 1rem;
+  padding: 1rem 2.5rem;
   scrollbar-width: none;
 }
 
@@ -121,23 +131,29 @@
   background: #e8f5e9;
   border-radius: 12px;
   padding: 1rem;
-  max-width: 200px;
+  width: 220px;
+  height: 160px;
   flex-shrink: 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .supply-card h4 {
-  font-size: 16px;
   font-weight: 600;
+  font-size: 15px;
+  margin: 0;
 }
 
-.category {
+.supply-card .category {
   font-size: 14px;
   font-weight: 500;
-  color: #757575;
+  color: #666;
+  margin-bottom: 0.5rem;
 }
 
-.description {
+.supply-card .description {
   font-size: 13px;
   color: #444;
 }
@@ -147,36 +163,28 @@
   z-index: 2;
   top: 50%;
   transform: translateY(-50%);
-  background-color: #9E9E9E;
-  color: white;
+  background-color: white;
   border: none;
   cursor: pointer;
   border-radius: 50%;
-  width: 30px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
 .nav-button.left {
-  left: -3%;
+  left: 0;
 }
 
 .nav-button.right {
-  right: -3%;
+  right: 0;
 }
 
-/* Mobile Scroll Grid */
+/* Mobile view */
 .supplies-grid {
   display: none;
 }
 
 @media (max-width: 800px) {
-  .last-supplies-widget{
-    padding: 20px 20px 10px 20px ;
-  }
-
   .carousel-wrapper {
     display: none;
   }
@@ -186,8 +194,10 @@
     gap: 1rem;
     overflow-x: auto;
     background: #fff;
-    padding: 0;
-    padding-bottom: 10px;
+    padding: 20px 30px;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    height: 200px;
   }
 
   .ingredient-pair {
@@ -197,29 +207,27 @@
   }
 
   .ingredient-card {
-    background-color: #F4F4F4;
+    background-color: #f4f4f4;
     border-radius: 15px;
     width: 215px;
+    padding: 0 0 0 15px;
+    min-height: 60px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    align-content: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 0.5rem;
   }
 
   .ingredient-card h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin: 0;
+    font-weight: bold;
+    margin-bottom: 0;
   }
 
   .ingredient-card .category {
     font-size: 13px;
     color: #757575;
-    margin: 0;
+    margin-top: 2px;
   }
-
-  .widget-title {
-    font-size: 18px;
-  }
-} </style>
+}
+</style>
