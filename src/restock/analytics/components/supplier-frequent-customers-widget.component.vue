@@ -1,78 +1,100 @@
-<script> export default {
-  name: 'SupplierFrequentCustomersWidget', data() {
-    return {
-      customers: [{
-        name: 'Restaurante El Sabor Criollo',
-        category: 'Comida peruana tradicional',
-        description: 'Realiza compras semanales de ajíes, papas nativas y carnes al proveedor, priorizando insumos locales.'
-      }, {
-        name: 'La Mesa Verde',
-        category: 'Cocina saludable y orgánica',
-        description: 'Compra gran volumen de verduras orgánicas, quinua y legumbres cada 3 días para mantener su menú fresco.'
-      }, {
-        name: 'Don Carboncito',
-        category: 'Parrillas y carnes premium',
-        description: 'Adquiere cortes de carne de alta calidad y carbón vegetal cada semana, siendo uno de los mayores compradores en volumen.'
-      }, {
-        name: 'Mar y Tierra Bistro',
-        category: 'Fusión marina y gourmet',
-        description: 'Solicita mariscos frescos, especias importadas y vinos artesanales, con entregas programadas tres veces por semana.'
-      }], isMobile: false
-    };
-  }, mounted() {
-    this.checkViewport();
-    window.addEventListener('resize', this.checkViewport);
-  }, beforeUnmount() {
-    window.removeEventListener('resize', this.checkViewport);
-  }, methods: {
-    checkViewport() {
-      this.isMobile = window.innerWidth <= 800;
-    }, getPairs() {
-      const pairs = [];
-      for (let i = 0; i < this.customers.length; i += 2) {
-        pairs.push(this.customers.slice(i, i + 2));
-      }
-      return pairs;
-    }
+<script setup>
+import { ref, onMounted } from 'vue'
+import { OrderToSupplierService } from '../../resource/orders-to-suppliers/services/order-to-supplier.service.js'
+import { ProfileService} from "../../profiles/services/profile.service.js";
+import { UserService} from "../../iam/services/user.service.js";
+
+const customers = ref([])
+const isMobile = ref(false)
+const supplierId = 1 // Reemplazar cuando haya auth real
+
+function checkViewport() {
+  isMobile.value = window.innerWidth <= 800
+}
+
+function getPairs(list) {
+  const pairs = []
+  for (let i = 0; i < list.length; i += 2) {
+    pairs.push(list.slice(i, i + 2))
   }
-}; </script>
+  return pairs
+}
+
+onMounted(async () => {
+  checkViewport()
+  window.addEventListener('resize', checkViewport)
+
+  const orderService = new OrderToSupplierService()
+  const userService = new UserService()
+  const profileService = new ProfileService()
+
+  const allOrdersRes = await orderService.getAll()
+  const allOrders = allOrdersRes?.data || []
+
+  const filteredOrders = allOrders.filter(o => o.supplier_id === supplierId)
+
+  const frequencyMap = new Map()
+  for (const order of filteredOrders) {
+    const userId = order.admin_restaurant_id
+    frequencyMap.set(userId, (frequencyMap.get(userId) ?? 0) + 1)
+  }
+
+  const sortedEntries = Array.from(frequencyMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+
+  const usersRes = await userService.getByRoleId(2)
+  const users = usersRes.data || []
+
+  customers.value = await Promise.all(
+      sortedEntries.map(async ([userId, count]) => {
+        const user = users.find(u => u.id === userId)
+        const profileRes = await profileService.getByQuery('user_id', userId)
+        const profile = profileRes?.data?.[0]
+
+        return {
+          name: profile?.business?.name || user?.email || 'Unknown',
+          category: profile?.business?.categories || 'No category',
+          description: `Has placed ${count} order${count > 1 ? 's' : ''} in total.`,
+          count
+        }
+      })
+  )
+})
+</script>
+
 <template>
   <div>
     <div v-if="isMobile" class="mobile-header"><h3>Frequent Customers</h3></div>
     <div class="frequent-customers-container">
       <div v-if="!isMobile" class="header"><h3>Frequent Customers</h3></div>
+
+      <!-- Desktop -->
       <div class="cards-grid" v-if="!isMobile">
-        <div
-            class="customer-card"
-            v-for="(customer, index) in customers"
-            :key="index"
-        >
-          <h4>{{ customer.name }}</h4>
-          <p class="category">{{ customer.category }}</p>
+        <div class="customer-card" v-for="(customer, index) in customers" :key="index">
+          <div class="card-header">
+            <h4>{{ customer.name }}</h4>
+<!--            <span class="count-badge">{{ customer.count }}</span>-->
+          </div>
+          <p class="category"><i class="pi pi-tag mr-2" /> {{ customer.category }}</p>
           <p class="description">{{ customer.description }}</p>
         </div>
       </div>
 
+      <!-- Mobile -->
       <div class="frequent-grid" v-else>
-        <div
-            class="restaurant-pair"
-            v-for="(pair, index) in getPairs()"
-            :key="'pair-' + index"
-        >
-          <div
-              class="restaurant-card"
-              v-for="(c, i) in pair"
-              :key="'c-' + i"
-          >
-            <h4>{{ c.name }}</h4>
-            <p class="category">{{ c.category }}</p>
-          </div>
+        <div class="restaurant-card" v-for="(c, i) in customers" :key="i">
+          <h4>{{ c.name }}</h4>
+          <p class="category"><i class="pi pi-tag mr-1" /> {{ c.category }}</p>
+          <p class="description text-xs text-gray-600">{{ c.description }}</p>
         </div>
       </div>
     </div>
   </div>
 </template>
-<style scoped> .frequent-customers-container {
+
+<style scoped>
+.frequent-customers-container {
   background: #fff;
   padding: 10px 30px 30px 30px;
   box-shadow: 1px 0 8px rgba(0, 0, 0, 0.2);
@@ -87,10 +109,25 @@
 }
 
 .customer-card {
-  background-color: #CDE7D3;
+  background-color: #eaf8f2;
   padding: 1rem 1.5rem;
-  border-radius: 6px;
+  border-radius: 10px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.count-badge {
+  background: #007bff;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .customer-card h4 {
@@ -121,51 +158,37 @@
 }
 
 @media (max-width: 800px) {
-  .cards-grid {
-    display: none;
-  }
-
-  .frequent-customers-container .header {
-    display: none;
-  }
-
   .frequent-customers-container {
-    padding: 0;
+    padding: 1rem;
   }
-
   .frequent-grid {
     display: flex;
-    padding: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0;
     background: #fff;
     border-radius: 30px;
-    gap: 1rem;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .restaurant-pair {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-    justify-content: center;
   }
 
   .restaurant-card {
-    background-color: #F4F4F4;
+    background-color: #f0f4f7;
     border-radius: 15px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     padding: 1rem;
+    width: 160px;
+    flex: 0 0 auto;
   }
 
   .restaurant-card h4 {
     font-size: 14px;
-    margin: 0;
+    margin: 0 0 4px;
   }
 
   .restaurant-card p {
     font-size: 12px;
     color: #757575;
-    margin-bottom: 0;
+    margin-bottom: 0.25rem;
   }
-} </style>
+}
+</style>
