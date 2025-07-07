@@ -1,13 +1,34 @@
 
 <script>
-import Login from '../components/login.component.vue';
+import {useAuthenticationStore} from "../services/authentication.store.js";
+import {SignUpRequest} from "../model/sign-up.request.js";
 
 export default {
-  name: 'login-overview',
-  components: {
-    Login
+  name: 'sign-up',
+  data() {
+    return {
+      authenticationStore: useAuthenticationStore(),
+      username: "",
+      password: "",
+      role: "",
+      roleId: 0
+    }
   },
   methods: {
+    onSignUp() {
+      this.roleId = this.role === "Restaurant Administrator" ? 2 : 1;
+
+      let signUpRequest = new SignUpRequest(this.username, this.password, this.roleId);
+      this.authenticationStore.signUp(signUpRequest, this.$router);
+
+      // if (localStorage.getItem(this.username)) {
+      //   this.$toast.add({ severity: 'warn', summary: 'Warning', detail: 'User already exists.', life: 3000 });
+      // } else {
+      //   localStorage.setItem(this.username, JSON.stringify({ email: this.email, password: this.password }));
+      //   this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Registered successfully. Now sign in.', life: 3000 });
+      //   this.$emit('registered');
+      // }
+    },
     goToLanding() {
       window.location.href = 'https://restock-4368.github.io/landing-page/';
     }
@@ -20,20 +41,37 @@ export default {
     <i class="pi pi-arrow-left"></i>
   </button>
 
-  <div class="container">
+  <div class="container sign-up-mode">
     <div class="forms-container">
       <div class="signin-signup-recover">
-        <Login />
+        <form @submit.prevent="onSignUp" class="sign-up-form">
+          <h2 class="title">Sign up</h2>
+          <div class="input-field">
+            <input type="text" v-model="username" placeholder="Username" required />
+          </div>
+          <div class="input-field">
+            <input type="password" v-model="password" placeholder="Password" required />
+          </div>
+          <div class="input-field select-field">
+            <select v-model="role" required>
+              <option disabled value="">Select role</option>
+              <option>Restaurant Administrator</option>
+              <option>Restaurant Supplier</option>
+            </select>
+          </div>
+          <button type="submit" class="btn solid">Sign up</button>
+        </form>
       </div>
     </div>
 
     <div class="panels-container">
-      <div class="panel left-panel">
+      <div class="panel left-panel"></div>
+      <div class="panel right-panel">
         <div class="content">
-          <h3>Are you new?</h3>
-          <p>Join our community and start improving your management today!</p>
-          <router-link to="/sign-up">
-            <button class="btn switch">SIGN UP</button>
+          <h3>Already have an account?</h3>
+          <p>Sign in to continue managing your inventory efficiently.</p>
+          <router-link to="/sign-in">
+            <button class="btn switch">SIGN IN</button>
           </router-link>
         </div>
       </div>
@@ -42,6 +80,91 @@ export default {
 </template>
 
 <style scoped>
+
+.input-field.select-field {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+
+.input-field select {
+  background: white;
+  outline: none;
+  border: none;
+  line-height: 1;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #3C3C3C;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  /* Remueve el estilo predeterminado del navegador */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: none;
+}
+
+/* Estilo para las opciones del select */
+.input-field select option {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #3C3C3C;
+  background-color: white;
+  padding: 8px;
+}
+
+/* Estilo para la opción deshabilitada (placeholder) */
+.input-field select option:disabled {
+  color: #7D7D7D;
+  font-weight: 400;
+}
+
+/* Cuando el select tiene el valor por defecto, mostrar como placeholder */
+.input-field select:invalid {
+  color: #7D7D7D;
+  font-weight: 500;
+}
+
+/* Contenedor del select con flecha personalizada */
+.input-field.select-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Flecha personalizada */
+.input-field.select-field::after {
+  content: '▼';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #7D7D7D;
+  font-size: 0.8rem;
+}
+
+/* Estilo cuando el select está enfocado */
+.input-field select:focus {
+  color: #3C3C3C;
+}
+
+/* Para Firefox - remueve la flecha predeterminada */
+.input-field select::-moz-focus-inner {
+  border: 0;
+}
+
+/* Para IE - remueve la flecha predeterminada */
+.input-field select::-ms-expand {
+  display: none;
+}
+
+* {
+
+}
 .back-button {
   padding: 1rem;
   position: fixed;
@@ -512,6 +635,4 @@ form.recover-password-form {
     bottom: 28%;
     left: 50%;
   }
-}
-</style>
-
+}</style>

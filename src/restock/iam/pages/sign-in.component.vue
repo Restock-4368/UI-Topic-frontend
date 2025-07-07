@@ -1,13 +1,39 @@
 
 <script>
-import Register from '../components/register.component.vue';
+import {Toast as PvToast} from "primevue";
+import {useAuthenticationStore} from "../services/authentication.store.js";
+import {SignInRequest} from "../model/sign-in.request.js";
 
 export default {
-  name: 'register-overview',
-  components: {
-    Register
+  name: 'sign-in',
+  components: {PvToast},
+  data() {
+    return {
+      username: "",
+      password: ""
+    }
   },
   methods: {
+    onSignIn() {
+      let authStore = useAuthenticationStore();
+      let signInRequest = new SignInRequest(this.username, this.password);
+      authStore.signIn(signInRequest, this.$router);
+
+      // const storedUser = localStorage.getItem(this.username);
+      // if (storedUser) {
+      //   const userData = JSON.parse(storedUser);
+      //   if (userData.password === this.password) {
+      //     localStorage.setItem("currentUser", this.username);
+      //     this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Welcome ' + this.username, life: 1000 });
+      //
+      //     this.$emit('logged-in');
+      //   } else {
+      //     this.$toast.add({ severity: 'error', summary: 'Error', detail: 'Incorrect password.', life: 3000 });
+      //   }
+      // } else {
+      //   this.$toast.add({ severity: 'error', summary: 'Error', detail: 'User not found.', life: 3000 });
+      // }
+    },
     goToLanding() {
       window.location.href = 'https://restock-4368.github.io/landing-page/';
     }
@@ -20,21 +46,29 @@ export default {
     <i class="pi pi-arrow-left"></i>
   </button>
 
-  <div class="container sign-up-mode">
+  <div class="container">
     <div class="forms-container">
       <div class="signin-signup-recover">
-        <Register />
+        <form @submit.prevent="onSignIn" class="sign-in-form">
+          <h2 class="title">Sign in</h2>
+          <div class="input-field">
+            <input type="text" v-model="username" placeholder="User" required />
+          </div>
+          <div class="input-field">
+            <input type="password" v-model="password" placeholder="Password" required />
+          </div>
+          <button type="submit" class="btn solid">Sign in</button>
+        </form>
       </div>
     </div>
 
     <div class="panels-container">
-      <div class="panel left-panel"></div>
-      <div class="panel right-panel">
+      <div class="panel left-panel">
         <div class="content">
-          <h3>Already have an account?</h3>
-          <p>Sign in to continue managing your inventory efficiently.</p>
-          <router-link to="/sign-in">
-            <button class="btn switch">SIGN IN</button>
+          <h3>Are you new?</h3>
+          <p>Join our community and start improving your management today!</p>
+          <router-link to="/sign-up">
+            <button class="btn switch">SIGN UP</button>
           </router-link>
         </div>
       </div>
@@ -513,4 +547,6 @@ form.recover-password-form {
     bottom: 28%;
     left: 50%;
   }
-}</style>
+}
+</style>
+
