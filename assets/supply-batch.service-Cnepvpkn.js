@@ -1,0 +1,1 @@
+import{R as t,V as s}from"./index-InIZ-6yY.js";const r=void 0;class c extends t{constructor(){super(),this.resourceEndpoint=r}getBySupplyId(e){return s.get(`${this.resourceEndpoint}?supply_id=${e}`)}}export{c as S};

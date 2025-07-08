@@ -1,0 +1,1 @@
+class a{constructor({id:t=0,name:e=""}={}){this.id=t,this.name=e}}class s{static toEntityFromResource(t){return new a({...t})}static toEntitiesFromResponse(t){return t.data&&Array.isArray(t.data)?t.data.map(e=>this.toEntityFromResource(e)):(console.error("Respuesta inválida en UnitMeasurementAssembler:",t),[])}}export{s as U,a};
