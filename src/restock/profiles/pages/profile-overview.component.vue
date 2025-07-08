@@ -148,7 +148,6 @@ export default {
         console.log( "Business enviado" , payloadBusiness);
 
           try {
-          await this.profileService.update(this.profile.id, updatedProfile);
           await this.businessService.update(business.id, payloadBusiness);
           await this.loadProfile();
           await this.loadBusiness();
