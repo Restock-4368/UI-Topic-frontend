@@ -1,4 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+/* Para Toast de tipo warn */
+.p-toast .p-toast-message.p-toast-message-warn {
+  background: #bdaa1a !important; /* Fondo más claro (opcional) */
+}
+
+.p-toast .p-toast-message.p-toast-message-error {
+  background: #d33434 !important; /* Fondo más claro (opcional) */
+}
+
+/* Para Toast de tipo warn */
+.p-toast .p-toast-message.p-toast-message-success{
+  background: #4a8e43 !important; /* Fondo más claro (opcional) */
+}
 
 :root {
   font-family: 'Poppins', sans-serif;

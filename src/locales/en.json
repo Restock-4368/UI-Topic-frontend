@@ -71,6 +71,8 @@
     "business-email": "Business Email",
     "categories": "Categories",
     "business-categories": "Business Categories",
+    "not-provided": "Not provided",
+    "add-your-information": "Add your information",
     "settings": {
       "title": "Edit Your Information",
       "personal-info": "Personal Data",

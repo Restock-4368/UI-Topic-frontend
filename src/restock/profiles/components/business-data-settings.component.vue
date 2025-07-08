@@ -45,7 +45,8 @@ export default {
     },
     currentCategories: {
       handler(newCategories) {
-        this.selectedCategories = [...newCategories];
+        this.selectedCategories = newCategories
+            .filter(c => c && c.trim() !== "");
       },
       deep: true,
       immediate: true
@@ -56,7 +57,10 @@ export default {
       this.selectedCategories = this.selectedCategories.filter(c => c !== category);
     },
     onSaveChanges() {
-      this.localBusiness.categories = this.selectedCategories.join(', ');
+      this.localBusiness.categories = this.selectedCategories
+          .map(c => c.trim())
+          .filter(c => c !== "")
+          .join(", ");
 
       const updatedBusiness = {
         id: this.business.id,

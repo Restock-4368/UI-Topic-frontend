@@ -32,8 +32,13 @@ import {
     ConfirmDialog, useConfirm, ConfirmationService, Chip, DatePicker, Toast, ToastService, MultiSelect,
 } from "primevue";
 import router from "./router/index.js";
+import {createPinia} from "pinia";
 
 const app = createApp(App);
+
+
+// Pinia
+const pinia = createPinia();
 
 app
     .use(router)
@@ -71,5 +76,5 @@ app
     .component('pv-date-picker', DatePicker)
     .component('pv-toast', Toast)
     .component('pv-multiselect', MultiSelect)
-
+    .use(pinia)
 .mount('#app');

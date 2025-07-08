@@ -57,6 +57,8 @@
     "developed-by": "Desarrollado por"
   },
   "profile": {
+    "not-provided": "No proporcionado",
+    "add-your-information": "Agrega tu información",
     "title": "Detalles del Perfil",
     "alt-user-photo": "Foto del usuario",
     "name": "Nombre",
