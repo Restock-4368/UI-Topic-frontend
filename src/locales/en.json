@@ -13,6 +13,45 @@
   "language": {
     "switch": "Switch language"
   },
+  "signin": {
+    "title": "Sign in",
+    "userPlaceholder": "User",
+    "passwordPlaceholder": "Password",
+    "forgot": "Forgot your password?",
+    "button": "Sign in",
+    "or": "--- Or sign in with ---"
+  },
+  "signup": {
+    "title": "Sign up",
+    "userPlaceholder": "User",
+    "emailPlaceholder": "e-mail",
+    "passwordPlaceholder": "Password",
+    "button": "Sign up",
+    "or": "--- Or sign up with ---",
+    "select": "Select your role",
+    "roles": {
+      "restaurant": "Restaurant Administrator",
+      "supplier": "Restaurant Supplier"
+    }
+  },
+  "recover": {
+    "title": "Forgot your password?",
+    "description": "Don't worry. Resetting your password is easy: just tell us which e-mail address you registered with Restock.",
+    "emailPlaceholder": "e-mail",
+    "button": "SEND"
+  },
+  "panels": {
+    "left": {
+      "title": "Are you new?",
+      "text": "Join our community and start improving your management today!",
+      "button": "SIGN UP"
+    },
+    "right": {
+      "title": "Already have an account?",
+      "text": "Sign in to continue managing your inventory efficiently.",
+      "button": "SIGN IN"
+    }
+  },
   "footer": {
     "rights-reserved": "all rights reserved.",
     "developed-by": "Developed by"
@@ -32,6 +71,8 @@
     "business-email": "Business Email",
     "categories": "Categories",
     "business-categories": "Business Categories",
+    "not-provided": "Not provided",
+    "add-your-information": "Add your information",
     "settings": {
       "title": "Edit Your Information",
       "personal-info": "Personal Data",

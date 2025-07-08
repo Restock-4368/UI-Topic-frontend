@@ -37,9 +37,21 @@
       </li>
     </ul>
 
+    <div  class="menu list-none flex-auto p-0">
+      <pv-button
+          class="p-button-text p-button-danger"
+          @click="logout"
+      >
+        <i class="pi pi-sign-out"></i>
+        <span class="ml-2">Logout</span>
+      </pv-button>
+    </div>
+
     <div class="pt-5 flex justify-content-center mt-auto">
       <LanguageSwitcher />
     </div>
+
+
   </aside>
 </template>
 
@@ -50,10 +62,12 @@ import logo from '../../assets/images/logo-restock.png'
 import {ProfileService} from "../../restock/profiles/services/profile.service.js";
 import {ProfileAssembler} from "../../restock/profiles/services/profile.assembler.js";
 import {sessionService} from "../../shared/services/session.service.js";
+import AuthenticationSection from "../../restock/iam/components/authentication-section.component.vue";
+import {useAuthenticationStore} from "../../restock/iam/services/authentication.store.js";
 
 export default {
   name: 'Sidebar',
-  components: { RouterLink, LanguageSwitcher },
+  components: {AuthenticationSection, RouterLink, LanguageSwitcher },
   props: {
     user: {
       type: Object,
@@ -71,33 +85,11 @@ export default {
   },
   async created() {
 
-    const profileService = new ProfileService();
-    let resource =  await profileService.getById(sessionService.getProfileId());
-    const profile = ProfileAssembler.toEntityFromResource(resource.data);
+    const authStore = useAuthenticationStore();
+    this.loadMenu(authStore.roleId);
 
-      const role = profile.user.role_id;
-      console.log(role); // Verifica si el rol es correcto
+    console.log("Sidebar created with roleId:", authStore.roleId);
 
-      if (role === 1) { // Supplier
-        this.menuItems = [
-          { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/supplier/summary' },
-          { label: 'sidebar.subscription', icon: 'pi pi-credit-card', route: '/dashboard/supplier/subscription' },
-          { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/dashboard/supplier/inventory' },
-          { label: 'sidebar.notifications', icon: 'pi pi-bell', route: '/dashboard/supplier/notifications' },
-          { label: 'sidebar.orders', icon: 'pi pi-truck', route: '/dashboard/supplier/orders' },
-          { label: 'sidebar.ratings', icon: 'pi pi-star', route: '/dashboard/supplier/ratings' }
-        ];
-      } else if (role === 2) { // Restaurant
-        this.menuItems = [
-          { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/restaurant/summary' },
-          { label: 'sidebar.subscription', icon: 'pi pi-credit-card', route: '/dashboard/restaurant/subscription' },
-          { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/dashboard/restaurant/inventory' },
-          { label: 'sidebar.notifications', icon: 'pi pi-bell', route: '/dashboard/restaurant/notifications' },
-          { label: 'sidebar.orders', icon: 'pi pi-truck', route: '/dashboard/restaurant/orders' },
-          { label: 'sidebar.recipes', icon: 'pi pi-clipboard', route: '/dashboard/restaurant/recipes' },
-          { label: 'sidebar.sales', icon: 'pi pi-chart-line', route: '/dashboard/restaurant/sales' }
-        ];
-      }
   },
   mounted() {
     window.addEventListener('resize', this.checkMobile)
@@ -109,15 +101,53 @@ export default {
   watch: {
     isMobile(newValue) {
       this.sidebarVisible = !newValue
+    },
+    'authStore.roleId': function(newRoleId) {
+      console.log("RoleId changed in store:", newRoleId);
+      this.loadMenu(newRoleId);
+    }
+  },
+  computed: {
+    authStore() {
+      return useAuthenticationStore();
     }
   },
   methods: {
+    loadMenu(role) {
+      if (role === 1) {
+        this.menuItems = [
+          { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/supplier/summary' },
+          { label: 'sidebar.subscription', icon: 'pi pi-credit-card', route: '/dashboard/supplier/subscription' },
+          { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/dashboard/supplier/inventory' },
+          { label: 'sidebar.notifications', icon: 'pi pi-bell', route: '/dashboard/supplier/notifications' },
+          { label: 'sidebar.orders', icon: 'pi pi-truck', route: '/dashboard/supplier/orders' },
+          { label: 'sidebar.ratings', icon: 'pi pi-star', route: '/dashboard/supplier/ratings' }
+        ];
+      } else if (role === 2) {
+        this.menuItems = [
+          { label: 'sidebar.summary', icon: 'pi pi-chart-bar', route: '/dashboard/restaurant/summary' },
+          { label: 'sidebar.subscription', icon: 'pi pi-credit-card', route: '/dashboard/restaurant/subscription' },
+          { label: 'sidebar.inventory', icon: 'pi pi-box', route: '/dashboard/restaurant/inventory' },
+          { label: 'sidebar.notifications', icon: 'pi pi-bell', route: '/dashboard/restaurant/notifications' },
+          { label: 'sidebar.orders', icon: 'pi pi-truck', route: '/dashboard/restaurant/orders' },
+          { label: 'sidebar.recipes', icon: 'pi pi-clipboard', route: '/dashboard/restaurant/recipes' },
+          { label: 'sidebar.sales', icon: 'pi pi-chart-line', route: '/dashboard/restaurant/sales' }
+        ];
+      } else {
+        console.error("Unknown role for sidebar:", role);
+        this.menuItems = [];
+      }
+    },
     isActive(route) {
       return this.$route.path.startsWith(route)
     },
     checkMobile() {
       this.isMobile = window.innerWidth < 1260
       this.sidebarVisible = !this.isMobile
+    },
+    logout() {
+      let authStore = useAuthenticationStore();
+      authStore.signOut(this.$router);
     }
   }
 }
@@ -194,5 +224,10 @@ export default {
   font-size: 1.25rem;   /* ≈20 px */
 }
 
-
+.logout-container {
+  margin-top: auto;
+  padding: 1rem 0;
+  display: flex;
+  color: #e68900 !important;
+}
 </style>

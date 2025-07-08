@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SubscriptionOverviewComponent from '../restock/subscription/pages/subscription-overview.component.vue';
 import ProfileOverviewComponent from "../restock/profiles/pages/profile-overview.component.vue";
 import SupplierAlertsOverviewComponent from '../restock/monitoring/suppliers-orders/pages/supplier-alerts-overview.component.vue';
-
+import {authenticationGuard} from "../restock/iam/services/authentication.guard.js";
 
 /**
 * @description Lazy-loaded component imports for route configuration
@@ -18,6 +18,9 @@ const RestaurantRecipesOverview = () => import('../restock/planning/pages/restau
 const SuppliersOrdersOverview = () => import('../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue')
 const SalesComponent = () => import('../restock/monitoring/restaurant-sales/pages/sales.component.vue')
 const RestaurantOrdersToSuppliersOverview = () => import('../restock/resource/orders-to-suppliers/pages/restaurant-order-to-supplier-overview.component.vue')
+const SignInComponent = () => import('../restock/iam/pages/sign-in.component.vue')
+const SignUpComponent = () => import('../restock/iam/pages/sign-up.component.vue')
+
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
@@ -105,10 +108,14 @@ const routes = [
         component: SupplierAlertsOverviewComponent,
         meta: { title: 'sidebar.notifications' }
     },
+    // {
+    //     path: '/',
+    //     name: 'root-redirect',
+    //     component: RoleRedirect
+    // },
     {
         path: '/',
-        name: 'root-redirect',
-        component: RoleRedirect
+        redirect: '/sign-in'
     },
 
     //For both roles
@@ -116,7 +123,20 @@ const routes = [
         path: '/dashboard/profile',
         name: 'profile',
         component: ProfileOverviewComponent,
+        meta: { title: 'sidebar.profile' }
     },
+    {
+        path: '/sign-in',
+        name: 'sign-in',
+        component: SignInComponent,
+        meta: { title: 'Access', hideLayout: true }
+    },
+    {
+        path: '/sign-up',
+        name: 'sign-up',
+        component: SignUpComponent,
+        meta: { title: 'Access', hideLayout: true }
+    }
 ]
 
 const router = createRouter({
@@ -127,10 +147,16 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const baseTitle = 'Restock';
     document.title = `${baseTitle} - ${to.meta?.title || 'Page'}`;
-    next();
+
+    // Call the authentication guard
+    authenticationGuard(to, from, next);
+
+    //next();
 });
 
-
-
+/**
+ * @exports router
+ * @description Exports the configured Vue Router instance for use in the main application
+ */
 export default router
 
