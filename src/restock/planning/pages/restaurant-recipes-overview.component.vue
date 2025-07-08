@@ -121,7 +121,7 @@ export default {
       try {
         if (this.editMode === 'create') {
           const response = await this.recipeService.create(form);
-          const created = RecipeAssembler.toEntityFromResponse(response);
+          const created = RecipeAssembler.toEntityFromResource(response);
 
           const supplyPayload = form.supplies.map(rs => ({
             supply_id: rs.supply?.id || rs.supply_id,
