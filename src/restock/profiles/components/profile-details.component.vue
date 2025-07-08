@@ -196,7 +196,7 @@ export default {
       <!-- Card Content -->
       <div class="card-content text">
         <div class="personal-details-form">
-          <h4 class="name">{{ profile?.first_name  }} {{ profile?.last_name || '' }}</h4>
+          <h4 class="name">{{ profile?.name || $t('profile.add-your-information') }} {{ profile?.last_name || '' }}</h4>
 
           <p class="info">
             <i class="pi pi-user icon"></i>
