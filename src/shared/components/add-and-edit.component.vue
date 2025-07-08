@@ -23,6 +23,7 @@ export default {
       console.log('Upload preset:', 'uitopic');
       console.log('File:', file.name);
 
+
       const formData = new FormData();
       formData.append('file', file);
       formData.append('upload_preset', 'uitopic');

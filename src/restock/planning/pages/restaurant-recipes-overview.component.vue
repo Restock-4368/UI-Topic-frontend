@@ -8,6 +8,7 @@ import {RecipeService} from "../services/recipe.service.js";
 import {RecipeSupplyService} from "../services/recipe-supply.service.js";
 import {RecipeAssembler} from "../services/recipe.assembler.js";
 import {RecipeSupplyAssembler} from "../services/recipe-supply.assembler.js";
+import {SupplyService} from "../../resource/inventory/services/supply.service.js";
 
 export default {
   name: 'RestaurantRecipesOverview',
@@ -30,6 +31,9 @@ export default {
       recipeService: new RecipeService(),
       sortByPrice: false,
       recipeSupplyService: new RecipeSupplyService(),
+      detailsVisible: false,
+      supplyService: new SupplyService(),
+      allSupplies: []
     };
   },
   computed: {
@@ -74,10 +78,15 @@ export default {
       ];
     },
   },
-  created() {
-    this.loadRecipes();
+  async created() {
+    this.allSupplies = await this.loadAllSupplies();
+    await this.loadRecipes();
   },
   methods: {
+    async loadAllSupplies() {
+      const response = await this.supplyService.getAll();
+      return response.data;
+    },
     async loadRecipes() {
       const response = await this.recipeService.getAll();
       const recipes = RecipeAssembler.toEntitiesFromResponse(response);
@@ -85,7 +94,7 @@ export default {
           recipes.map(async r => {
             const respSupplies = await this.recipeSupplyService.getByRecipe(r.id)
             const supplies = RecipeSupplyAssembler.toEntitiesFromResponse(respSupplies);
-            return { ...r, supplies };
+            return {...r, supplies};
           })
       );
       this.recipes = enhanced;
@@ -101,7 +110,7 @@ export default {
     async openEditDialog(recipe) {
       const respSupplies = await this.recipeSupplyService.getByRecipe(recipe.id);
       const supplies = RecipeSupplyAssembler.toEntitiesFromResponse(respSupplies);
-      this.formModel = { ...recipe, supplies };
+      this.formModel = {...recipe, supplies};
       this.editMode = 'edit';
       this.formVisible = true;
     },
@@ -109,15 +118,12 @@ export default {
       this.formVisible = false;
     },
     async submitForm(form) {
-      console.log("FORM SUBMIT:", form);
-
       if (this.editMode === 'create') {
         const response = await this.recipeService.create(form);
         const created = RecipeAssembler.toEntityFromResponse(response);
 
         await this.recipeSupplyService.bulkCreate(created.id, form.supplies);
       } else {
-        console.log("EDIT MODE - ID:", form.id);
         await this.recipeSupplyService.deleteByRecipe(form.id);
         await this.recipeSupplyService.bulkCreate(form.id, form.supplies);
         await this.recipeService.update(form.id, form);
@@ -138,9 +144,27 @@ export default {
       this.selectedRecipe = null;
       await this.loadRecipes();
     },
-    getCurrentUserId() {
-      //TODO
+    async recipeDetails(recipe) {
+      const respSupplies = await this.recipeSupplyService.getByRecipe(recipe.id);
+      const rawSupplies = RecipeSupplyAssembler.toEntitiesFromResponse(respSupplies);
+
+      const enrichedSupplies = rawSupplies.map(rs => {
+        const supply = this.allSupplies.find(s => s.id === rs.supply_id);
+        return {
+          ...rs,
+          supply
+        };
+      });
+
+      this.selectedRecipe = {
+        ...recipe,
+        supplies: enrichedSupplies
+      };
+
+      this.detailsVisible = true;
     }
+
+
   },
 };
 </script>
@@ -148,7 +172,8 @@ export default {
 <template>
   <div class="recipes-view p-4">
     <!-- Header -->
-    <div class="recipes-header flex flex-column sm:flex-row justify-content-between sm:align-items-center flex-wrap gap-3 sm:gap-4 mb-4">
+    <div
+        class="recipes-header flex flex-column sm:flex-row justify-content-between sm:align-items-center flex-wrap gap-3 sm:gap-4 mb-4">
 
       <div class="recipes-header__top">
         <h2 class="text-2xl font-semibold mr-2">{{ $t('recipes.title') }}</h2>
@@ -181,24 +206,28 @@ export default {
     </div>
 
 
-
     <!-- Empty -->
     <empty-section v-if="filteredRecipes.length === 0">
       <template #icon>
         <i class="pi pi-clipboard" style="font-size: 3rem; color: #bcbcbc;"></i>
       </template>
-      You currently have no recipes registered. Create a new recipe to start organizing your preparations and better manage your ingredients from this section.
+      You currently have no recipes registered. Create a new recipe to start organizing your preparations and better
+      manage your ingredients from this section.
     </empty-section>
 
     <!-- Grid -->
     <div v-else class="recipes-grid">
-      <div v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-card">
-        <img :src="recipe.image_url" alt="Dish image" />
+      <div v-for="recipe in filteredRecipes"
+           :key="recipe.id"
+           class="recipe-card"
+           @click="recipeDetails(recipe)"
+      >
+        <img :src="recipe.image_url" alt="Dish image"/>
         <h3>{{ recipe.name }}</h3>
         <p>Total cost: S/.{{ recipe.total_price }}</p>
         <div class="recipe-card__actions">
-          <pv-button icon="pi pi-pencil" @click="openEditDialog(recipe)" outlined />
-          <pv-button icon="pi pi-trash" severity="danger" @click="openDeleteDialog(recipe)" outlined />
+          <pv-button icon="pi pi-pencil" @click="openEditDialog(recipe)" outlined/>
+          <pv-button icon="pi pi-trash" severity="danger" @click="openDeleteDialog(recipe)" outlined/>
         </div>
       </div>
     </div>
@@ -219,7 +248,7 @@ export default {
       >
         <template #extension="{ form }">
           <h4 class="mt-4 mb-2">Recipe Supplies</h4>
-          <SupplySelector v-model="form.supplies" />
+          <SupplySelector v-model="form.supplies"/>
         </template>
       </add-and-edit-form>
     </create-and-edit>
@@ -231,9 +260,35 @@ export default {
         @cancel="deleteVisible = false"
     />
 
+
+    <pv-dialog
+        v-model:visible="detailsVisible"
+        modal
+        :style="{
+          width: 'auto',
+          height: 'auto',
+        }"
+        :closable="true"
+    >
+
+      <div class="modal-content">
+        <h3>{{ selectedRecipe.name }}</h3>
+        <p>{{ selectedRecipe.description }}</p>
+        <img :src="selectedRecipe.image_url" alt="Recipe image" style="max-width: 100%;">
+        <p>Total Price: S/. {{ selectedRecipe.total_price }}</p>
+
+        <h4>Supplies:</h4>
+        <ul>
+          <li v-for="s in selectedRecipe.supplies" :key="s.supply.id">
+            {{ s.supply.name }} - {{ s.quantity }} unit(s)
+          </li>
+        </ul>
+
+      </div>
+    </pv-dialog>
+
   </div>
 </template>
-
 
 
 <style scoped>
@@ -267,5 +322,13 @@ export default {
   display: flex;
   gap: 0.5rem;
   margin-top: 0.5rem;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 30px;
+  max-width: 400px;
+  width: 100%;
 }
 </style>
