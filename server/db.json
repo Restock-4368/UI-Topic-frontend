@@ -1,12 +1,1367 @@
 {
-  "categories": [
+  "users": [
     {
       "id": 1,
-      "name": "Vue.js"
+      "email": "pepe@gmail.com",
+      "password": "password123",
+      "subscription_id": 1,
+      "start_date": "2023-01-01",
+      "subscription_payment_details_id": 1,
+      "role_id": 1
     },
     {
       "id": 2,
-      "name": "ASP.NET Core"
+      "email": "maria@example.com",
+      "password": "maria456",
+      "subscription_id": 2,
+      "start_date": "2023-02-01",
+      "subscription_payment_details_id": 2,
+      "role_id": 2
+    },
+    {
+      "id": 3,
+      "email": "juanito@gmail.com",
+      "password": "juan123",
+      "subscription_id": 1,
+      "start_date": "2023-03-01",
+      "subscription_payment_details_id": 1,
+      "role_id": 1
+    },
+    {
+      "id": 4,
+      "email": "elhuarique@gmail.com",
+      "password": "restaurante2024",
+      "subscription_id": 2,
+      "start_date": "2024-03-01",
+      "subscription_payment_details_id": 2,
+      "role_id": 2
+    }
+  ],
+  "roles": [
+    {
+      "id": 1,
+      "name": "supplier"
+    },
+    {
+      "id": 2,
+      "name": "restaurant"
+    }
+  ],
+  "businesses": [
+    {
+      "id": 1,
+      "name": "Frescos del Valle",
+      "address": "Calle del Mercado 456",
+      "categories": "Fast Food, Vegetables, Fruits, Dairy",
+      "phone": "987654321",
+      "email": "frescosdelvalle2@gmail.com"
+    },
+    {
+      "id": 2,
+      "name": "Sabores del Perú",
+      "address": "Calle de la Gastronomía 789",
+      "categories": "Fast Food, Vegetables, Fruits, Dairy",
+      "phone": "987654321",
+      "email": "saboresperu@gmail.com"
+    },
+    {
+      "id": 3,
+      "name": "Proveedor Triunfo S.A.C.",
+      "address": "Calle Proveedores 123",
+      "categories": "Vegetables, Fruits, Dairy",
+      "phone": "987654321",
+      "email": "proveedortriunfo@gmail.com"
+    },
+    {
+      "id": 4,
+      "name": "El Huarique del Sabor",
+      "address": "Calle Cevichería 123",
+      "categories": "Fast Food, Vegetables, Fruits, Dairy",
+      "phone": "987654321",
+      "email": "huariquesabor@gmail.com"
+    }
+  ],
+  "profiles": [
+    {
+      "id": 1,
+      "name": "Don Pepe",
+      "last_name": "Gonzales",
+      "email": "pepe@gmail.com",
+      "avatar": "https://i.pravatar.cc/150?img=1",
+      "phone": "987654321",
+      "address": "Av. Principal 123",
+      "country": "Perú",
+      "business_id": 1,
+      "user_id": 1,
+      "business": {
+        "id": 1,
+        "name": "Frescos del Valle",
+        "address": "Calle del Mercado 456",
+        "categories": "Fast Food, Vegetables, Fruits, Dairy",
+        "phone": "987654321",
+        "email": "frescosdelvalle2@gmail.com"
+      },
+      "user": {
+        "id": 1,
+        "email": "pepe@gmail.com",
+        "password": "password123",
+        "role_id": 1,
+        "subscription_id": 1,
+        "start_date": "2023-01-01",
+        "subscription_payment_details_id": 1
+      }
+    },
+    {
+      "id": 2,
+      "name": "Chef Maria",
+      "last_name": "Martinez",
+      "email": "maria@example.com",
+      "avatar": "https://i.pravatar.cc/150?img=2",
+      "phone": "987645321",
+      "address": "Av. Principal 133",
+      "country": "Perú",
+      "business_id": 2,
+      "user_id": 2,
+      "business": {
+        "id": 2,
+        "name": "Sabores del Perú",
+        "address": "Calle de la Gastronomía 789",
+        "categories": "Fast Food, Vegetables, Fruits, Dairy",
+        "phone": "987654321",
+        "email": "saboresperu@gmail.com"
+      },
+      "user": {
+        "id": 2,
+        "email": "maria@example.com",
+        "password": "maria456",
+        "role_id": 2,
+        "subscription_id": 2,
+        "start_date": "2023-02-15",
+        "subscription_payment_details_id": 2
+      }
+    },
+    {
+      "id": 3,
+      "name": "Juan",
+      "last_name": "Nito",
+      "email": "juanito@gmail.com",
+      "avatar": "https://i.pravatar.cc/150?img=3",
+      "phone": "999123456",
+      "address": "Calle Falsa 123",
+      "country": "Perú",
+      "business_id": 3,
+      "user_id": 3,
+      "business": {
+        "id": 3,
+        "name": "Proveedor Triunfo S.A.C.",
+        "address": "Calle Proveedores 123",
+        "categories": "Vegetables, Fruits, Dairy",
+        "phone": "987654321",
+        "email": "proveedortriunfo@gmail.com"
+      },
+      "user": {
+        "id": 3,
+        "email": "juanito@gmail.com",
+        "password": "juan123",
+        "role_id": 1,
+        "subscription_id": 1,
+        "start_date": "2023-03-10",
+        "subscription_payment_details_id": 3
+      }
+    },
+    {
+      "id": 4,
+      "name": "Chef Luis",
+      "last_name": "Salazar",
+      "email": "elhuarique@gmail.com",
+      "avatar": "https://i.pravatar.cc/150?img=4",
+      "phone": "987601234",
+      "address": "Calle Cevichería 123",
+      "country": "Perú",
+      "business_id": 4,
+      "user_id": 4,
+      "business": {
+        "id": 4,
+        "name": "El Huarique del Sabor",
+        "address": "Calle Cevichería 123",
+        "categories": "Fast Food, Vegetables, Fruits, Dairy",
+        "phone": "987654321",
+        "email": "huariquesabor@gmail.com"
+      },
+      "user": {
+        "id": 4,
+        "email": "elhuarique@gmail.com",
+        "password": "restaurante2024",
+        "subscription_id": 2,
+        "start_date": "2024-03-01",
+        "subscription_payment_details_id": 2,
+        "role_id": 2
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "name": "Lomo Saltado",
+      "total_price": 28.5,
+      "image_url": "https://jameaperu.com/assets/images/lomo-saltado-de-pollo_800x534.webp",
+      "user_id": 1
+    },
+    {
+      "id": 2,
+      "name": "Ají de Gallina",
+      "total_price": 24.9,
+      "image_url": "https://buenazo.cronosmedia.glr.pe/original/2023/06/26/6499bf204fb28f54f91a9289.png",
+      "user_id": 1
+    },
+    {
+      "id": 3,
+      "name": "Tallarines Verdes con Bistec",
+      "total_price": 25,
+      "image_url": "https://imgmedia.buenazo.pe/1200x660/buenazo/original/2023/06/19/6490842c015fab27f801c3f6.png",
+      "user_id": 1
+    },
+    {
+      "id": 4,
+      "name": "Seco de Res con Frijoles",
+      "total_price": 26,
+      "image_url": "https://imgmedia.buenazo.pe/1200x660/buenazo/original/2023/07/24/64bec4147521237a92206504.png",
+      "user_id": 1
+    },
+    {
+      "id": 5,
+      "name": "Ceviche de Pescado",
+      "total_price": 37,
+      "image_url": "https://treehouselodge.com/wp-content/uploads/2021/09/peruvian-ceviche.png",
+      "user_id": 1
+    }
+  ],
+  "recipes_supplies": [
+    {
+      "id": 1,
+      "recipe_id": 1,
+      "supply_id": 1,
+      "quantity": 2
+    },
+    {
+      "id": 2,
+      "recipe_id": 1,
+      "supply_id": 2,
+      "quantity": 1
+    },
+    {
+      "id": 3,
+      "recipe_id": 1,
+      "supply_id": 3,
+      "quantity": 1
+    },
+    {
+      "id": 7,
+      "recipe_id": 3,
+      "supply_id": 7,
+      "quantity": 1
+    },
+    {
+      "id": 8,
+      "recipe_id": 3,
+      "supply_id": 8,
+      "quantity": 1
+    },
+    {
+      "id": 9,
+      "recipe_id": 3,
+      "supply_id": 2,
+      "quantity": 1
+    },
+    {
+      "id": 10,
+      "recipe_id": 4,
+      "supply_id": 2,
+      "quantity": 1
+    },
+    {
+      "id": 11,
+      "recipe_id": 4,
+      "supply_id": 9,
+      "quantity": 1
+    },
+    {
+      "id": 12,
+      "recipe_id": 4,
+      "supply_id": 10,
+      "quantity": 1
+    },
+    {
+      "recipe_id": 5,
+      "supply_id": 11,
+      "quantity": 1,
+      "id": 19
+    },
+    {
+      "recipe_id": 5,
+      "supply_id": 12,
+      "quantity": 3,
+      "id": 20
+    },
+    {
+      "recipe_id": 5,
+      "supply_id": 3,
+      "quantity": 1,
+      "id": 21
+    },
+    {
+      "recipe_id": 2,
+      "supply_id": 4,
+      "quantity": 1,
+      "id": 27
+    },
+    {
+      "recipe_id": 2,
+      "supply_id": 6,
+      "quantity": 2,
+      "id": 28
+    },
+    {
+      "recipe_id": 2,
+      "supply_id": 5,
+      "quantity": 1,
+      "id": 29
+    }
+  ],
+  "supplies": [
+    {
+      "id": 1,
+      "name": "Potatoes",
+      "description": "Fresh organic potatoes used for various side dishes and stews.",
+      "perishable": true,
+      "min_stock": 5,
+      "max_stock": 50,
+      "category_id": 1,
+      "unit_measurement_id": 1,
+      "price": 2.5,
+      "user_id": 1
+    },
+    {
+      "id": 2,
+      "name": "Beef Tenderloine",
+      "description": "High-quality beef tenderloin, ideal for premium meat dishes.",
+      "perishable": true,
+      "min_stock": 2,
+      "max_stock": 20,
+      "category_id": 2,
+      "unit_measurement_id": 2,
+      "price": 12,
+      "user_id": 1
+    },
+    {
+      "id": 3,
+      "name": "Red Onione",
+      "description": "Crisp red onions used to add flavor and color to meals.",
+      "perishable": true,
+      "category_id": 1,
+      "unit_measurement_id": 1,
+      "min_stock": 3,
+      "max_stock": 30,
+      "price": 1,
+      "user_id": 1
+    },
+    {
+      "id": 4,
+      "name": "Chicken Breaste",
+      "description": "Boneless, skinless chicken breast, perfect for grilling and baking.",
+      "perishable": true,
+      "min_stock": 2,
+      "max_stock": 15,
+      "category_id": 2,
+      "unit_measurement_id": 2,
+      "price": 10,
+      "user_id": 1
+    },
+    {
+      "id": 5,
+      "name": "Yellow Chili Pepper",
+      "description": "Spicy yellow chili peppers used to enhance sauces and marinades.",
+      "perishable": true,
+      "min_stock": 1,
+      "max_stock": 10,
+      "category_id": 3,
+      "unit_measurement_id": 1,
+      "price": 1.5,
+      "user_id": 1
+    },
+    {
+      "id": 6,
+      "name": "Bread",
+      "description": "Freshly baked bread served with meals or used for sandwiches.",
+      "perishable": true,
+      "min_stock": 10,
+      "max_stock": 100,
+      "category_id": 4,
+      "unit_measurement_id": 1,
+      "price": 0.5,
+      "user_id": 1
+    },
+    {
+      "id": 7,
+      "name": "Spaghetti Pasta",
+      "description": "Durum wheat spaghetti used for pasta dishes and casseroles.",
+      "perishable": false,
+      "min_stock": 10,
+      "max_stock": 100,
+      "category_id": 1,
+      "unit_measurement_id": 1,
+      "price": 2,
+      "user_id": 1
+    },
+    {
+      "id": 8,
+      "name": "Basil",
+      "description": "Aromatic fresh basil leaves used in sauces and garnishing.",
+      "perishable": true,
+      "min_stock": 5,
+      "max_stock": 30,
+      "category_id": 1,
+      "unit_measurement_id": 1,
+      "price": 0.5,
+      "user_id": 1
+    },
+    {
+      "id": 9,
+      "name": "Beans",
+      "description": "Dried beans rich in protein, used in stews and soups.",
+      "perishable": false,
+      "min_stock": 5,
+      "max_stock": 50,
+      "category_id": 1,
+      "unit_measurement_id": 1,
+      "price": 3,
+      "user_id": 1
+    },
+    {
+      "id": 10,
+      "name": "Cilantro",
+      "description": "Fresh cilantro used to enhance flavor in a variety of dishes.",
+      "perishable": true,
+      "min_stock": 2,
+      "max_stock": 20,
+      "category_id": 1,
+      "unit_measurement_id": 1,
+      "price": 0.8,
+      "user_id": 1
+    },
+    {
+      "id": 11,
+      "name": "White Fish",
+      "description": "Lean white fish fillets ideal for grilling or baking.",
+      "perishable": true,
+      "min_stock": 3,
+      "max_stock": 30,
+      "category_id": 2,
+      "unit_measurement_id": 2,
+      "price": 8,
+      "user_id": 1
+    },
+    {
+      "id": 12,
+      "name": "Lime",
+      "description": "Juicy limes used for dressing, seasoning, and beverages.",
+      "perishable": true,
+      "min_stock": 10,
+      "max_stock": 50,
+      "category_id": 1,
+      "unit_measurement_id": 1,
+      "price": 0.4,
+      "user_id": 1
+    },
+    {
+      "id": 13,
+      "name": "Sillao",
+      "description": "Spicy yellow chili peppers used to enhance sauces and marinades.",
+      "perishable": true,
+      "category_id": 1,
+      "unit_measurement_id": 2,
+      "min_stock": 0,
+      "max_stock": 0,
+      "price": 12,
+      "user_id": 1
+    },
+    {
+      "id": 14,
+      "name": "Gaseosa",
+      "description": "Una gacela",
+      "perishable": true,
+      "category_id": 3,
+      "unit_measurement_id": 2,
+      "min_stock": null,
+      "max_stock": null,
+      "price": 5,
+      "user_id": 2
+    },
+    {
+      "id": 15,
+      "name": "Papitas",
+      "description": "Papitas q rico",
+      "perishable": false,
+      "category_id": 3,
+      "unit_measurement_id": 3,
+      "min_stock": 0,
+      "max_stock": 0,
+      "price": 20,
+      "user_id": 16
+    },
+    {
+      "id": 16,
+      "name": "Coquita",
+      "description": "current user",
+      "perishable": false,
+      "category_id": 3,
+      "unit_measurement_id": 3,
+      "min_stock": 10,
+      "max_stock": 101,
+      "price": null,
+      "user_id": 16
+    },
+    {
+      "name": "Viator",
+      "description": "Spicy yellow chili peppers used to enhance sauces and marinades.",
+      "perishable": true,
+      "category_id": 4,
+      "unit_measurement_id": 3,
+      "min_stock": 10,
+      "max_stock": 30,
+      "price": null,
+      "user_id": 2,
+      "id": 17
+    }
+  ],
+  "sales": [
+    {
+      "code": "PXBMGI",
+      "diner_name": "Luis",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 1
+    },
+    {
+      "code": "8UWI7E",
+      "diner_name": "Ana",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 2
+    },
+    {
+      "code": "JQC5ML",
+      "diner_name": "Ana",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 3
+    },
+    {
+      "code": "OBOO2M",
+      "diner_name": "Juan",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 4
+    },
+    {
+      "code": "URNS3N",
+      "diner_name": "Miguel",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 5
+    },
+    {
+      "code": "WV40NK",
+      "diner_name": "Ana",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 6
+    },
+    {
+      "code": "4Y37CH",
+      "diner_name": "Valeria",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 7
+    },
+    {
+      "code": "TB2E8S",
+      "diner_name": "Miguel",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 8
+    },
+    {
+      "code": "ECDNML",
+      "diner_name": "Sofía",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 9
+    },
+    {
+      "code": "G8URLL",
+      "diner_name": "Valeria",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 10
+    },
+    {
+      "code": "M3M4EB",
+      "diner_name": "Valeria",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": true,
+      "id": 11
+    },
+    {
+      "code": "YGEGA0",
+      "diner_name": "Carlos",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": false,
+      "id": 12
+    },
+    {
+      "code": "NP35AB",
+      "diner_name": "Sofía",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": false,
+      "id": 13
+    },
+    {
+      "code": "R4AEOF",
+      "diner_name": "Carlos",
+      "admin_restaurant_id": 1,
+      "date": "2025-06-20",
+      "added_inventory": false,
+      "id": 14
+    }
+  ],
+  "sales_recipes": [
+    {
+      "sale_id": 1,
+      "recipe_id": 3,
+      "quantity": 12,
+      "id": 1
+    },
+    {
+      "sale_id": 7,
+      "recipe_id": 4,
+      "quantity": 1,
+      "id": 2
+    },
+    {
+      "sale_id": 8,
+      "recipe_id": 4,
+      "quantity": 1,
+      "id": 3
+    },
+    {
+      "sale_id": 9,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 4
+    },
+    {
+      "sale_id": 10,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 5
+    },
+    {
+      "sale_id": 11,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 6
+    },
+    {
+      "sale_id": 12,
+      "recipe_id": 4,
+      "quantity": 4,
+      "id": 7
+    },
+    {
+      "sale_id": 13,
+      "recipe_id": 2,
+      "quantity": 1,
+      "id": 8
+    },
+    {
+      "sale_id": 14,
+      "recipe_id": 3,
+      "quantity": 1,
+      "id": 9
+    }
+  ],
+  "sales_additional_supplies": [
+    {
+      "sale_id": 1,
+      "supply_id": 12,
+      "quantity": 10,
+      "id": 1
+    },
+    {
+      "sale_id": 2,
+      "supply_id": 1,
+      "quantity": 15,
+      "id": 2
+    },
+    {
+      "sale_id": 3,
+      "supply_id": 1,
+      "quantity": 50,
+      "id": 3
+    },
+    {
+      "sale_id": 4,
+      "supply_id": 1,
+      "quantity": 17,
+      "id": 4
+    },
+    {
+      "sale_id": 5,
+      "supply_id": 1,
+      "quantity": 15,
+      "id": 5
+    },
+    {
+      "sale_id": 6,
+      "supply_id": 1,
+      "quantity": 20,
+      "id": 6
+    },
+    {
+      "sale_id": 12,
+      "supply_id": 15,
+      "quantity": 8,
+      "id": 7
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "order_to_supplier_id": 1,
+      "content": "Great service.",
+      "rating": 3.5,
+      "date": "2025-05-28"
+    }
+  ],
+  "orders_to_supplier": [
+    {
+      "id": 1,
+      "date": "2025-05-28T05:00:00.000Z",
+      "description": "Order for fresh supplies",
+      "estimated_ship_date": "2025-06-01T05:00:00.000Z",
+      "estimated_ship_time": "2025-06-01T05:11:40.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 3,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 1,
+      "requested_products_count": 2,
+      "total_price": 30.55,
+      "partially_accepted": false
+    },
+    {
+      "id": 2,
+      "date": "2025-01-01T05:00:00.000Z",
+      "estimated_ship_date": "2025-01-06T05:00:00.000Z",
+      "estimated_ship_time": "2025-01-06T07:50:00.000Z",
+      "description": "No description provided",
+      "admin_restaurant_id": 2,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 2,
+      "requested_products_count": 2,
+      "total_price": 5.5,
+      "partially_accepted": false
+    },
+    {
+      "id": 3,
+      "date": "2025-02-14T06:30:00.000Z",
+      "description": "Order for vegetables supplies",
+      "estimated_ship_date": "2025-03-01T07:40:00.000Z",
+      "estimated_ship_time": "2025-03-01T07:40:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 3,
+      "order_to_supplier_situation_id": 2,
+      "requested_products_count": 2,
+      "total_price": 75.55,
+      "partially_accepted": false
+    },
+    {
+      "id": 4,
+      "date": "2025-03-17T06:30:00.000Z",
+      "description": "Order for fruits supplies",
+      "estimated_ship_date": "2025-03-22T06:30:00.000Z",
+      "estimated_ship_time": "2025-03-22T06:30:00.000Z",
+      "admin_restaurant_id": 2,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 2,
+      "order_to_supplier_situation_id": 2,
+      "requested_products_count": 4,
+      "total_price": 23.55,
+      "partially_accepted": true
+    },
+    {
+      "id": 5,
+      "date": "2025-03-12T05:00:00.000Z",
+      "description": "Order for meals supplies",
+      "estimated_ship_date": "2025-03-20T05:00:00.000Z",
+      "estimated_ship_time": "2025-03-20T08:50:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 4,
+      "order_to_supplier_situation_id": 2,
+      "requested_products_count": 5,
+      "total_price": 34.55,
+      "partially_accepted": true
+    },
+    {
+      "id": 6,
+      "date": "2025-05-12T05:00:00.000Z",
+      "description": "Order for nutritive supplies",
+      "estimated_ship_date": "2025-05-20T05:00:00.000Z",
+      "estimated_ship_time": "2025-05-20T08:50:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 1,
+      "requested_products_count": 5,
+      "total_price": 65.55,
+      "partially_accepted": true
+    },
+    {
+      "id": 7,
+      "date": "2025-04-12T05:00:00.000Z",
+      "description": null,
+      "estimated_ship_date": "2025-04-20T05:00:00.000Z",
+      "estimated_ship_time": "2025-04-20T08:50:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 1,
+      "requested_products_count": 5,
+      "total_price": 70.55,
+      "partially_accepted": true
+    },
+    {
+      "id": 8,
+      "date": "2025-06-12T05:00:00.000Z",
+      "description": "Order for meals supplies",
+      "estimated_ship_date": "2025-06-20T05:00:00.000Z",
+      "estimated_ship_time": "2025-06-20T08:50:00.000Z",
+      "admin_restaurant_id": 4,
+      "supplier_id": 1,
+      "order_to_supplier_state_id": 1,
+      "order_to_supplier_situation_id": 1,
+      "requested_products_count": 5,
+      "total_price": 64.55,
+      "partially_accepted": true
+    }
+  ],
+  "orders_to_supplier_states": [
+    {
+      "id": 1,
+      "name": "On Hold"
+    },
+    {
+      "id": 2,
+      "name": "Preparing"
+    },
+    {
+      "id": 3,
+      "name": "On the way"
+    },
+    {
+      "id": 4,
+      "name": "Delivered"
+    }
+  ],
+  "orders_to_supplier_situations": [
+    {
+      "id": 1,
+      "name": "Pending"
+    },
+    {
+      "id": 2,
+      "name": "Approved"
+    },
+    {
+      "id": 3,
+      "name": "Declined"
+    }
+  ],
+  "orders_to_supplier_supplies": [
+    {
+      "id": 1,
+      "order_to_supplier_id": 1,
+      "batch_id": 1,
+      "quantity": 10,
+      "accepted": false
+    },
+    {
+      "id": 2,
+      "order_to_supplier_id": 1,
+      "batch_id": 2,
+      "quantity": 4,
+      "accepted": false
+    },
+    {
+      "id": 3,
+      "order_to_supplier_id": 2,
+      "batch_id": 3,
+      "quantity": 5,
+      "accepted": true
+    },
+    {
+      "id": 4,
+      "order_to_supplier_id": 3,
+      "batch_id": 5,
+      "quantity": 5,
+      "accepted": true
+    },
+    {
+      "id": 5,
+      "order_to_supplier_id": 3,
+      "batch_id": 4,
+      "quantity": 2,
+      "accepted": true
+    },
+    {
+      "id": 6,
+      "order_to_supplier_id": 4,
+      "batch_id": 6,
+      "quantity": 2,
+      "accepted": true
+    },
+    {
+      "id": 7,
+      "order_to_supplier_id": 4,
+      "batch_id": 7,
+      "quantity": 3,
+      "accepted": true
+    },
+    {
+      "id": 8,
+      "order_to_supplier_id": 4,
+      "batch_id": 8,
+      "quantity": 2,
+      "accepted": false
+    },
+    {
+      "id": 9,
+      "order_to_supplier_id": 5,
+      "batch_id": 6,
+      "quantity": 2,
+      "accepted": true
+    },
+    {
+      "id": 10,
+      "order_to_supplier_id": 5,
+      "batch_id": 5,
+      "quantity": 3,
+      "accepted": false
+    },
+    {
+      "id": 11,
+      "order_to_supplier_id": 2,
+      "batch_id": 4,
+      "quantity": 1,
+      "accepted": true
+    },
+    {
+      "id": 12,
+      "order_to_supplier_id": 6,
+      "batch_id": 8,
+      "quantity": 2,
+      "accepted": false
+    },
+    {
+      "id": 13,
+      "order_to_supplier_id": 6,
+      "batch_id": 2,
+      "quantity": 3,
+      "accepted": false
+    },
+    {
+      "id": 14,
+      "order_to_supplier_id": 6,
+      "batch_id": 3,
+      "quantity": 5,
+      "accepted": false
+    },
+    {
+      "id": 15,
+      "order_to_supplier_id": 7,
+      "batch_id": 4,
+      "quantity": 2,
+      "accepted": false
+    },
+    {
+      "id": 16,
+      "order_to_supplier_id": 7,
+      "batch_id": 5,
+      "quantity": 3,
+      "accepted": false
+    },
+    {
+      "id": 17,
+      "order_to_supplier_id": 7,
+      "batch_id": 1,
+      "quantity": 3,
+      "accepted": false
+    },
+    {
+      "id": 18,
+      "order_to_supplier_id": 8,
+      "batch_id": 1,
+      "quantity": 4,
+      "accepted": false
+    },
+    {
+      "id": 19,
+      "order_to_supplier_id": 8,
+      "batch_id": 2,
+      "quantity": 2,
+      "accepted": false
+    },
+    {
+      "id": 20,
+      "order_to_supplier_id": 8,
+      "batch_id": 3,
+      "quantity": 4,
+      "accepted": false
+    }
+  ],
+  "units_measurement": [
+    {
+      "id": 1,
+      "name": "kg"
+    },
+    {
+      "id": 2,
+      "name": "liter"
+    },
+    {
+      "id": 3,
+      "name": "unit"
+    }
+  ],
+  "supply_categories": [
+    {
+      "id": 1,
+      "name": "Vegetables"
+    },
+    {
+      "id": 2,
+      "name": "Meats"
+    },
+    {
+      "id": 3,
+      "name": "Dairy"
+    },
+    {
+      "id": 4,
+      "name": "Grains"
+    }
+  ],
+  "batches": [
+    {
+      "id": 1,
+      "supply_id": 1,
+      "stock": 50,
+      "expiration_date": "2025-06-01"
+    },
+    {
+      "id": 2,
+      "supply_id": 2,
+      "stock": 100,
+      "expiration_date": "2025-06-03"
+    },
+    {
+      "id": 3,
+      "supply_id": 3,
+      "stock": 195,
+      "expiration_date": "2025-06-03",
+      "user_id": null
+    },
+    {
+      "id": 4,
+      "supply_id": 6,
+      "stock": 9,
+      "expiration_date": "2025-06-27",
+      "user_id": null
+    },
+    {
+      "id": 5,
+      "supply_id": 4,
+      "stock": 10,
+      "expiration_date": "2025-06-27"
+    },
+    {
+      "id": 6,
+      "supply_id": 5,
+      "stock": 10,
+      "expiration_date": "2025-06-27"
+    },
+    {
+      "id": 7,
+      "supply_id": 8,
+      "stock": 10,
+      "expiration_date": "2025-06-27"
+    },
+    {
+      "id": 8,
+      "supply_id": 7,
+      "stock": 10,
+      "expiration_date": "2025-06-27"
+    },
+    {
+      "supply_id": 10,
+      "stock": 5,
+      "expiration_date": "2025-06-18",
+      "id": 9
+    },
+    {
+      "supply_id": 9,
+      "stock": 5,
+      "expiration_date": "2025-06-18",
+      "id": 10
+    },
+    {
+      "supply_id": 11,
+      "stock": 45,
+      "expiration_date": "2025-06-18",
+      "id": 11
+    },
+    {
+      "supply_id": 12,
+      "stock": 100,
+      "expiration_date": "2025-06-18",
+      "id": 12
+    }
+  ],
+  "batch_notifications_states": [
+    {
+      "id": 1,
+      "name": "Expiring Soon"
+    },
+    {
+      "id": 2,
+      "name": "Out of Stock"
+    },
+    {
+      "id": 3,
+      "name": "Overstock"
+    }
+  ],
+  "batch_notifications": [
+    {
+      "id": 1,
+      "inventory_supply_id": 1,
+      "batch_notification_state_id": 1,
+      "date": "2025-05-28"
+    },
+    {
+      "id": 2,
+      "inventory_supply_id": 2,
+      "batch_notification_state_id": 3,
+      "date": "2025-05-27"
+    },
+    {
+      "id": 3,
+      "inventory_supply_id": 3,
+      "batch_notification_state_id": 2,
+      "date": "2025-05-26"
+    }
+  ],
+  "restaurant_contacts": [],
+  "subscriptions": [
+    {
+      "id": "1",
+      "name": "Monthly plan",
+      "duration": 1,
+      "price": "59.99",
+      "status": true,
+      "popular": false,
+      "features": [
+        "Automated inventory management",
+        "Ordering and purchasing control",
+        "Reporting and analytics ",
+        "Critical stock notifications",
+        "Integration with suppliers"
+      ],
+      "rol_id": "1"
+    },
+    {
+      "id": "2",
+      "name": "Anual plan",
+      "duration": 12,
+      "price": "39.99",
+      "status": true,
+      "popular": true,
+      "features": [
+        "Gestión de inventario automatizado",
+        "Control de pedidos y compras",
+        "Reporte y analítica",
+        "Notificaciones de stock crítico",
+        "Integración con proveedores"
+      ],
+      "rol_id": "1"
+    },
+    {
+      "id": "3",
+      "name": "Semiannual Plan",
+      "duration": 6,
+      "price": "49.99",
+      "status": true,
+      "popular": false,
+      "features": [
+        "Automated inventory management",
+        "Ordering and purchasing control",
+        "Reporting and analytics",
+        "Critical stock notifications",
+        "Integration with suppliers"
+      ],
+      "rol_id": "1"
+    },
+    {
+      "id": "4",
+      "name": "Monthly plan",
+      "duration": 1,
+      "price": "59.99",
+      "status": true,
+      "popular": false,
+      "features": [
+        "Automated Inventory Management",
+        "Order Control",
+        "Reporting and Analytics",
+        "Order Notifications",
+        "Restaurant Rating Section"
+      ],
+      "rol_id": "2"
+    },
+    {
+      "id": "4",
+      "name": "Anual plan",
+      "duration": 1,
+      "price": "39.99",
+      "status": true,
+      "popular": true,
+      "features": [
+        "Automated Inventory Management",
+        "Order Control",
+        "Reporting and Analytics",
+        "Order Notifications",
+        "Restaurant Rating Section"
+      ],
+      "rol_id": "2"
+    },
+    {
+      "id": "4",
+      "name": "Semiannual plan",
+      "duration": 1,
+      "price": "49.99",
+      "status": true,
+      "popular": false,
+      "features": [
+        "Automated Inventory Management",
+        "Order Control",
+        "Reporting and Analytics",
+        "Order Notifications",
+        "Restaurant Rating Section"
+      ],
+      "rol_id": "2"
+    }
+  ],
+  "subscription_payment_details": [
+    {
+      "id": 1,
+      "card_type": "Visa",
+      "payment_method": "Credit Card",
+      "paid_at": "2023-01-01"
+    },
+    {
+      "id": 2,
+      "card_type": "Visa",
+      "payment_method": "Paypal",
+      "paid_at": "2023-01-01"
+    }
+  ],
+  "features": [
+    {
+      "id": 1,
+      "name": "Automated inventory management"
+    },
+    {
+      "id": 2,
+      "name": "Ordering and purchasing control"
+    },
+    {
+      "id": 3,
+      "name": "Reporting and analytics"
+    },
+    {
+      "id": 4,
+      "name": "Critical stock notifications"
+    },
+    {
+      "id": 5,
+      "name": "Integration with suppliers"
+    }
+  ],
+  "subscription_features": [
+    {
+      "subscription_id": 1,
+      "feature_id": 1
+    },
+    {
+      "subscription_id": 1,
+      "feature_id": 2
+    },
+    {
+      "subscription_id": 1,
+      "feature_id": 3
+    },
+    {
+      "subscription_id": 1,
+      "feature_id": 4
+    },
+    {
+      "subscription_id": 1,
+      "feature_id": 5
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 1
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 2
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 3
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 4
+    },
+    {
+      "subscription_id": 2,
+      "feature_id": 5
     }
   ]
 }

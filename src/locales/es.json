@@ -4,7 +4,7 @@
     "subscription": "Suscripción",
     "inventory": "Inventario",
     "suppliers": "Proveedores",
-    "alerts": "Alertas",
+    "notifications": "Notificaciones",
     "orders": "Pedidos",
     "recipes": "Recetas",
     "sales": "Ventas",
@@ -13,8 +13,358 @@
   "language": {
     "switch": "Cambiar idioma"
   },
+  "signin": {
+    "title": "Iniciar sesión",
+    "userPlaceholder": "Usuario",
+    "passwordPlaceholder": "Contraseña",
+    "forgot": "¿Olvidaste tu contraseña?",
+    "button": "Iniciar sesión",
+    "or": "--- O inicia sesión con ---"
+  },
+  "signup": {
+    "title": "Registrarse",
+    "userPlaceholder": "Usuario",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "button": "Registrarse",
+    "or": "--- O regístrate con ---",
+    "select": "Selecciona tu rol",
+    "roles": {
+      "restaurant": "Administrador(a) de Restaurante",
+      "supplier": "Proveedor(a) de Restaurante"
+    }
+  },
+  "recover": {
+    "title": "¿Olvidaste tu contraseña?",
+    "description": "No te preocupes. Restablecer tu contraseña es fácil: solo dinos con qué correo te registraste en Restock.",
+    "emailPlaceholder": "Correo electrónico",
+    "button": "ENVIAR"
+  },
+  "panels": {
+    "left": {
+      "title": "¿Eres nuevo?",
+      "text": "¡Únete a nuestra comunidad y comienza a mejorar tu gestión hoy!",
+      "button": "REGISTRARSE"
+    },
+    "right": {
+      "title": "¿Ya tienes una cuenta?",
+      "text": "Inicia sesión para seguir gestionando tu inventario eficientemente.",
+      "button": "INICIAR SESIÓN"
+    }
+  },
   "footer": {
     "rights-reserved": "todos los derechos reservados.",
     "developed-by": "Desarrollado por"
+  },
+  "profile": {
+    "not-provided": "No proporcionado",
+    "add-your-information": "Agrega tu información",
+    "title": "Detalles del Perfil",
+    "alt-user-photo": "Foto del usuario",
+    "name": "Nombre",
+    "last-name": "Apellido",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "country": "País",
+    "business-name": "Nombre del negocio",
+    "business-address": "Dirección del negocio",
+    "business-phone": "Teléfono del negocio",
+    "business-email": "Correo electrónico del negocio",
+    "categories": "Categorías",
+    "business-categories": "Categorías del negocio",
+    "settings": {
+      "title": "Edita tu información",
+      "personal-info": "Datos personales",
+      "business-info": "Datos del negocio",
+      "security-info": "Privacidad y seguridad",
+      "change-password": "Cambiar contraseña",
+      "current-password": "Contraseña actual",
+      "current-password-placeholder": "Ingresa la contraseña actual",
+      "new-password": "Nueva contraseña",
+      "new-password-placeholder": "Ingresa la nueva contraseña",
+      "confirm-password": "Confirmar nueva contraseña",
+      "confirm-password-placeholder": "Confirma la nueva contraseña",
+      "save-changes": "GUARDAR CAMBIOS",
+      "delete-account": "Eliminar cuenta",
+      "delete-account-warning": "Esta acción eliminará permanentemente tu cuenta. Todos tus datos personales, historial y configuraciones serán eliminados. No podrás recuperar tu cuenta tras la eliminación. Tu suscripción será cancelada.",
+      "confirm-delete": "CONFIRMAR ELIMINACIÓN"
+    }
+  },
+  "recipes": {
+    "title": "Recetas",
+    "add-recipe": "Agregar Receta",
+    "edit-recipe": "Editar Receta",
+    "delete-recipe": "Eliminar Receta",
+    "instructions": "Instrucciones",
+    "save-recipe": "Guardar Receta",
+    "cancel": "Cancelar"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "tabs": {
+      "all": "Todas",
+      "inventory": "Inventario",
+      "orders": "Pedidos"
+    },
+    "messages": {
+      "lowStock": "Lote de {supply} #{id} por debajo del stock mínimo ({stock}/{min})",
+      "maxStock": "Lote de {supply} #{id} alcanzó el stock máximo ({stock}/{max})",
+      "orderSituation": "Situación del pedido #{id} actualizada a {situation}",
+      "orderDelivered": "Pedido #{id} marcado como Entregado"
+    }
+  },
+  "inventory": {
+    "supplies-catalog-title": "Catálogo de Insumos",
+    "create-button": "CREAR",
+    "edit-button": "EDITAR",
+    "add-button": "AÑADIR",
+    "cancel-button": "CANCELAR",
+    "save-button": "GUARDAR",
+    "supplies-inventory-title": "Inventario de Insumos",
+    "supplies-inventory-placeholder": "Buscar insumos...",
+    "table": {
+      "supply": "Insumo",
+      "category": "Categoría",
+      "unit": "Unidad de Medida",
+      "expiration-date": "Fecha de Caducidad",
+      "stock": "Stock",
+      "minimum-stock": "Stock Mínimo",
+      "maximum-stock": "Stock Máximo",
+      "pereshible": "Perecible",
+      "price": "Precio",
+      "actions": "Acciones"
+    },
+    "supplies-catalog-create-and-edit-modal": {
+      "not-supplies": "No hay insumos disponibles, crea uno para continuar.",
+      "create-title": "Crear Insumo",
+      "create-subtitle": "Agrega un nuevo insumo al catálogo",
+      "edit-title": "Editar Insumo",
+      "edit-subtitle": "Edita los detalles del insumo en el catálogo",
+      "supply-name": "Nombre del Insumo",
+      "supply-name-placeholder": "Ingresa el nombre del insumo",
+      "supply-category": "Categoría del Insumo",
+      "supply-category-placeholder": "Selecciona la categoría del insumo",
+      "unit-of-measure": "Unidad de Medida",
+      "unit-of-measure-placeholder": "Selecciona la unidad de medida",
+      "description": "Descripción",
+      "description-placeholder": "Ingresa la descripción del insumo",
+      "pereshible": "Perecible",
+      "is-not-perishable": "No, no es perecible",
+      "is-perishable": "Sí, es perecible",
+      "minimum-stock": "Stock Mínimo",
+      "minimum-stock-placeholder": "Ingresa el stock mínimo",
+      "maximum-stock": "Stock Máximo",
+      "maximum-stock-placeholder": "Ingresa el stock máximo",
+      "price": "Precio",
+      "price-placeholder": "Ingresa el precio del insumo"
+    },
+    "supplies-inventory-add-and-edit-modal": {
+      "add-title": "Agregar Insumo al Inventario",
+      "add-subtitle": "Agrega un nuevo insumo al inventario",
+      "edit-title": "Editar Insumo en el Inventario",
+      "edit-subtitle": "Edita los detalles del insumo en el inventario",
+      "supply-name": "Nombre del Insumo",
+      "supply-name-placeholder": "Selecciona el nombre del insumo",
+      "supply-quantity": "Cantidad de Insumo",
+      "supply-quantity-placeholder": "Ingresa la cantidad del insumo",
+      "supply-expiration-date": "Fecha de Expiración del Insumo",
+      "supply-expiration-date-placeholder": "Selecciona la fecha de expiración"
+    },
+    "supplies-inventory-delete-modal": {
+      "title": "Eliminar Insumo del Inventario",
+      "delete-message": "Estás a punto de eliminar permanentemente el insumo “{name}” con {quantity} del inventario.\nEsta acción es irreversible y no se puede deshacer.",
+      "confirm-button": "CONFIRMAR",
+      "cancel-button": "CANCELAR"
+    }
+  },
+  "subscription": {
+    "title1": "PLANES FLEXIBLES PARA LLEVAR LA GESTIÓN DE TU RESTAURANTE",
+    "title2": "AL SIGUIENTE NIVEL"
+  },
+  "sales_restaurant": {
+    "register_sale": "Registra tus ventas",
+    "new_sale": "NUEVA VENTA",
+    "update_inventory": "Quieres actualizar tu inventario? Selecciona las ventas que quieres aqui:",
+    "registered_sales_not_discounted": "VENTAS REGISTRADAS QUE NO SE HAN DESCONTADO DEL INVENTARIO",
+    "history_sales": "Historial de ventas actualizadas en inventario",
+    "registered_sales": "Ventas registradas que ya descontaron insumos del inventario",
+    "search": "Buscar venta por código",
+    "code": "Codigo",
+    "quantity_dishes": "Cantidad de platos",
+    "quantity_additional_supplies": "Cantidad de insumos adicionales",
+    "actions": "Acciones",
+    "sale_details": {
+      "title": "DETALLES DE LA VENTA",
+      "name_customer": "Nombre del cliente",
+      "number_dishes": "Numero de platos",
+      "number_additional_supplies": "Numero de insumos adicionales",
+      "dishes": "Platos",
+      "additional_supplies": "Insumos adicionales",
+      "name": "Nombre",
+      "unit_price": "Precio por unidad",
+      "quantity": "Cantidad"
+    },
+    "sales_not_added_in_inventory": {
+      "title": "VENTAS REGISTRADAS QUE NO HAN DESCONTADO INSUMOS DEL INVENTARIO",
+      "subtitle": "Selecciona las ventas a las que deseas descontar los insumos utilizados del inventario",
+      "selectAll": "Seleccionar todo",
+      "code": "Código",
+      "quantityDishes": "Cantidad de platos",
+      "quantityAdditionalSupplies": "Cantidad de insumos adicionales",
+      "actions": "Acciones",
+      "cancel": "Cancelar",
+      "register": "Registrar"
+    },
+    "register_sale_modal": {
+      "title": "Registrar venta",
+      "sub-title": "Complete los detalles de una nueva venta para acceder a la opción de actualización de inventario.",
+      "dishes": "Platos",
+      "select_dish": "Selecciona un plato de tu lista de recetas",
+      "additionalSuppllies": "Insumos adicionales",
+      "select_additionalSupply": "Selecciona un insumo de tu inventario",
+      "selected_dishes": "Platos seleccionados",
+      "selected_additionalSupplies": "Insumos adicionales seleccionados",
+      "name": "Nombre",
+      "unit_price": "Precio unitario",
+      "quantity": "Cantidad",
+      "actions": "Acciones",
+      "cancel": "CANCELAR",
+      "register": "REGISTRAR",
+      "nothing-selected": "Seleccione los platos e ingredientes adicionales del pedido para ver la venta completa."
+    },
+    "sale_confirmation": {
+      "title": "Venta registrada correctamente"
+    }
+  },
+  "notifications_suppliers": {
+    "title": "Notificaciones de ordenes",
+    "restaurant": "Restaurante",
+    "evaluate": "Evaluar",
+    "situation": "Situacion",
+    "last-update": "Ultima actualización"
+  },
+  "supplier-orders": {
+    "tabs": {
+      "new-orders": "Pedidos Nuevos",
+      "history-orders": "Historial de Pedidos",
+      "accepted-orders": "Pedidos en Progreso"
+    },
+    "table": {
+      "date": "Fecha de Pedido",
+      "restaurant-name": "Nombre del Restaurante",
+      "requested-products": "N° de Productos Solicitados",
+      "final-price": "Precio Final",
+      "state": "Estado",
+      "ship-date": "Fecha de Envío",
+      "actions": "Acciones"
+    },
+    "description": "Descripción del Pedido",
+    "restaurant-name": "Nombre del Restaurante",
+    "estimated-ship-date": "Fecha de Envío Estimada",
+    "estimated-ship-time": "Hora de Envío Estimada",
+    "placeholder": {
+      "select-date": "Selecciona fecha",
+      "select-time": "Selecciona hora",
+      "description": "Descripción"
+    },
+    "details": {
+      "title": "Detalles del Pedido",
+      "description": "Ver los detalles de un pedido registrado.",
+      "estimated-date": "Fecha y Hora de Envío Estimada",
+      "buttons": {
+        "back": "Atrás",
+        "next": "Siguiente",
+        "close": "Cerrar"
+      }
+    },
+    "manage-new-orders": {
+      "title": "Gestión de Nuevo Pedido",
+      "description": "Completa los detalles del pedido para comenzar el seguimiento.",
+      "order-summary": "Resumen del Pedido",
+      "buttons": {
+        "submit-order": "Aceptar selección",
+        "close": "Cerrar",
+        "back": "Atrás",
+        "next": "Siguiente"
+      }
+    },
+    "update-order": {
+      "title": "Actualizar Pedido",
+      "description": "Actualiza los detalles de un pedido registrado.",
+      "order-summary": "Resumen del Pedido",
+      "buttons": {
+        "save": "Actualizar Pedido",
+        "close": "Cerrar"
+      }
+    },
+    "decline": {
+      "title": "Rechazar Pedido",
+      "message": "Esta acción es irreversible. ¿Estás seguro de que deseas rechazar todo el pedido seleccionado?",
+      "buttons": {
+        "confirm": "Sí, rechazar",
+        "cancel": "Cancelar"
+      }
+    },
+    "cancel": {
+      "title": "Cancelar Pedido",
+      "message": "¿Estás seguro de que deseas cancelar este pedido?",
+      "buttons": {
+        "confirm": "Sí, cancelar",
+        "cancel": "Cancelar"
+      }
+    },
+    "supplies": {
+      "title": "Insumos",
+      "description": "Ver los insumos disponibles para el pedido.",
+      "select-all": "Seleccionar todo",
+      "headers": {
+        "product-name": "Nombre del Producto",
+        "quantity": "Cantidad",
+        "unit-measure": "Unidad de Medida"
+      },
+      "total-price": "Precio Total"
+    },
+    "notifications": {
+      "summary-success": "Éxito",
+      "summary-error": "Error",
+      "order-updated": "Pedido actualizado con éxito",
+      "order-processed": "Pedido procesado con éxito",
+      "order-declined": "Pedido rechazado con éxito",
+      "order-cancelled": "Pedido cancelado con éxito",
+      "error-update": "Error al actualizar el pedido",
+      "error-process": "Error al procesar el pedido",
+      "error-decline": "Error al rechazar el pedido",
+      "error-cancel": "Error al cancelar el pedido"
+    },
+    "filters": {
+      "title": "Pedidos",
+      "search-placeholder": "Buscar pedidos por restaurante...",
+      "date-range-placeholder": "Rango de Fecha de Pedido",
+      "order-date-button": "Fecha de Pedido",
+      "status": "Estado",
+      "download": "Descargar Historial",
+      "last-7days": "Últimos 7 Días",
+      "last-30days": "Últimos 30 Días",
+      "last-3months": "Últimos 3 Meses",
+      "all-states": "Todos los Estados"
+    },
+    "state": {
+      "title": "Estado",
+      "preparing": "Preparando",
+      "delivered": "Entregado",
+      "on-hold": "En Espera",
+      "on-the-way": "En Camino"
+    },
+    "situation": {
+      "title": "Situación",
+      "pending": "Pendiente",
+      "approved": "Aprobado"
+    },
+    "empty": {
+      "new-orders": "Actualmente no tienes pedidos recibidos.",
+      "history-orders": "Actualmente no tienes pedidos entregados.",
+      "accepted-orders": "Actualmente no tienes pedidos aprobados."
+    }
   }
 }

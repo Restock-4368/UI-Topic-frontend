@@ -1,29 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import axios from "axios";
-import {UserService} from "../app/restock/iam/services/user.service.js";
+import SubscriptionOverviewComponent from '../restock/subscription/pages/subscription-overview.component.vue';
+import ProfileOverviewComponent from "../restock/profiles/pages/profile-overview.component.vue";
+import SupplierAlertsOverviewComponent from '../restock/monitoring/suppliers-orders/pages/supplier-alerts-overview.component.vue';
+import {authenticationGuard} from "../restock/iam/services/authentication.guard.js";
+
 /**
- * @description Lazy-loaded component imports for route configuration
- * Using dynamic imports to enable code splitting and improve performance
- */
-const Inventory = () => import('../restaurant-admin/components/inventory.component.vue')
-const RestaurantSummaryOverview = () => import('../app/restock/Analytics/pages/restaurant-summary-overview.component.vue')
-const SupplierReviewComponent = () => import('../app/restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
-const RoleRedirect = () => import('../app/public/pages/role-redirect.component.vue');
-const SupplierSummaryOverview = () => import('../app/restock/Analytics/pages/supplier-summary-overview.component.vue')
-const RestaurantSupplierOverview = () => import('../app/restock/resource/supplier-catalog/pages/restaurant-supplier-overview.component.vue')
-const RestaurantSupplierDetail = () => import('../app/restock/resource/supplier-catalog/pages/supplier-detail.component.vue')
+* @description Lazy-loaded component imports for route configuration
+* Using dynamic imports to enable code splitting and improve performance
+*/
+const Inventory = () => import('../restock/resource/inventory/pages/inventory.component.vue')
+const RestaurantSummaryOverview = () => import('../restock/Analytics/pages/restaurant-summary-overview.component.vue')
+const SupplierReviewComponent = () => import('../restock/resource/orders-to-suppliers/pages/supplier-review.component.vue')
+const RoleRedirect = () => import('../public/components/role-redirect.component.vue');
+const SupplierSummaryOverview = () => import('../restock/Analytics/pages/supplier-summary-overview.component.vue')
+const RestaurantNotificationsOverview = () => import('../restock/resource/inventory/pages/restaurant-notifications-overview.component.vue')
+const RestaurantRecipesOverview = () => import('../restock/planning/pages/restaurant-recipes-overview.component.vue')
+const SuppliersOrdersOverview = () => import('../restock/monitoring/suppliers-orders/pages/suppliers-orders-overview.component.vue')
+const SalesComponent = () => import('../restock/monitoring/restaurant-sales/pages/sales.component.vue')
+const RestaurantOrdersToSuppliersOverview = () => import('../restock/resource/orders-to-suppliers/pages/restaurant-order-to-supplier-overview.component.vue')
+const SignInComponent = () => import('../restock/iam/pages/sign-in.component.vue')
+const SignUpComponent = () => import('../restock/iam/pages/sign-up.component.vue')
 
 /**
  * @type {import('vue-router').RouteRecordRaw[]}
  * @description Application route definitions.
  */
 const routes = [
-    {
-        path: '/dashboard/supplier/inventory',
-        name: 'supplier-inventory',
-        component: Inventory,
-        meta: { title: 'sidebar.inventory' }
-    },
+
+    // Restaurants Routes
     {
         path: '/dashboard/restaurant/inventory',
         name: 'restaurant-inventory',
@@ -37,22 +41,54 @@ const routes = [
         meta: { title: 'sidebar.restaurant-summary-overview' }
     },
     {
+        path: '/dashboard/restaurant/subscription',
+        name: 'restaurant-subscription',
+        component: SubscriptionOverviewComponent,
+        meta: { title: 'sidebar.supplier-summary-overview' }
+    },
+    {
+        path: '/dashboard/restaurant/notifications',
+        name: 'restaurant-notifications',
+        component: RestaurantNotificationsOverview,
+        meta: { title: 'sidebar.restaurant-notifications-overview' }
+    },
+    {
+        path: '/dashboard/restaurant/recipes',
+        name: 'restaurant-recipes',
+        component: RestaurantRecipesOverview,
+        meta: { title: 'sidebar.restaurant-recipes-overview' }
+    },
+    {
+        path: '/dashboard/restaurant/orders',
+        name: 'restaurant-orders-to-suppliers',
+        component: RestaurantOrdersToSuppliersOverview,
+        meta: { title: 'sidebar.orders' }
+    },
+    {
+        path: '/dashboard/restaurant/sales',
+        name: 'restaurant-sales',
+        component: SalesComponent,
+        meta: { title: 'sidebar.sales' }
+    },
+
+    // Suppliers Routes
+    {
         path: '/dashboard/supplier/summary',
         name: 'supplier-summary',
         component: SupplierSummaryOverview,
         meta: { title: 'sidebar.supplier-summary-overview' }
     },
     {
-        path: '/dashboard/restaurant/suppliers',
-        name: 'supplier-catalog',
-        component: RestaurantSupplierOverview,
-        meta: { title: 'sidebar.supplier-catalog-overview' }
+        path: '/dashboard/supplier/subscription',
+        name: 'supplier-subscription',
+        component: SubscriptionOverviewComponent,
+        meta: { title: 'sidebar.subscription' }
     },
     {
-        path: '/dashboard/restaurant/suppliers/:id',
-        name: 'supplier-detail',
-        component: RestaurantSupplierDetail,
-        meta: { title: 'sidebar.supplier-detail' }
+        path: '/dashboard/supplier/inventory',
+        name: 'supplier-inventory',
+        component: Inventory,
+        meta: { title: 'sidebar.inventory' }
     },
     {
         path: '/dashboard/supplier/ratings',
@@ -61,9 +97,45 @@ const routes = [
         meta: { title: 'sidebar.ratings' }
     },
     {
+        path: '/dashboard/supplier/orders',
+        name: 'supplier-orders',
+        component: SuppliersOrdersOverview,
+        meta: { title: 'sidebar.orders' }
+    },
+    {
+        path: '/dashboard/supplier/notifications',
+        name: 'notificaction-suppliers',
+        component: SupplierAlertsOverviewComponent,
+        meta: { title: 'sidebar.notifications' }
+    },
+    // {
+    //     path: '/',
+    //     name: 'root-redirect',
+    //     component: RoleRedirect
+    // },
+    {
         path: '/',
-        name: 'root-redirect',
-        component: RoleRedirect
+        redirect: '/sign-in'
+    },
+
+    //For both roles
+    {
+        path: '/dashboard/profile',
+        name: 'profile',
+        component: ProfileOverviewComponent,
+        meta: { title: 'sidebar.profile' }
+    },
+    {
+        path: '/sign-in',
+        name: 'sign-in',
+        component: SignInComponent,
+        meta: { title: 'Access', hideLayout: true }
+    },
+    {
+        path: '/sign-up',
+        name: 'sign-up',
+        component: SignUpComponent,
+        meta: { title: 'Access', hideLayout: true }
     }
 ]
 
@@ -75,10 +147,16 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const baseTitle = 'Restock';
     document.title = `${baseTitle} - ${to.meta?.title || 'Page'}`;
-    next();
+
+    // Call the authentication guard
+    authenticationGuard(to, from, next);
+
+    //next();
 });
 
-
-
+/**
+ * @exports router
+ * @description Exports the configured Vue Router instance for use in the main application
+ */
 export default router
 
