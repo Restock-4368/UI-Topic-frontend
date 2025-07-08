@@ -11,14 +11,7 @@ export default {
   name: 'App',
   components: {NavBar, Sidebar },
    async created () {
-
- // DEFINIR AQUI EL ID DEL PERFIL ACTUAL
-    // 1 -> Supplier pepe
-    // 2 -> Restaurant maria
-    // 3 -> Supplier Juan
-    // 4 -> Restaurant Luis
-     sessionService.setProfileId(2); // Simula la asignación del ID del perfil
-  },
+ },
 }
 
 </script>

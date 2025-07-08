@@ -1,22 +1,11 @@
 import { ref, readonly } from "vue";
 
-class SessionService {
-    constructor() {
-        this._profileId = ref(null);
-        this.profileId = readonly(this._profileId);
-    }
+export const sessionService = {
 
-    setProfileId(id) {
-        this._profileId.value = id;
+    getUserId() {
+        return Number(localStorage.getItem('userId'));
+    },
+    clearUserId() {
+        localStorage.removeItem('userId');
     }
-
-    getProfileId() {
-        return this._profileId.value;
-    }
-
-    getProfileIdRef() {
-        return this.profileId;
-    }
-}
-
-export const sessionService = new SessionService(); // 👈 Instancia única exportada
+};

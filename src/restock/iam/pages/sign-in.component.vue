@@ -1,137 +1,93 @@
 
 <script>
+import {Toast as PvToast} from "primevue";
+import {useAuthenticationStore} from "../services/authentication.store.js";
+import {SignInRequest} from "../model/sign-in.request.js";
+
 export default {
-  name: "register",
+  name: 'sign-in',
+  components: {PvToast},
   data() {
     return {
       username: "",
-      email: "",
-      password: "",
-      role: ""
+      password: ""
     }
   },
   methods: {
-    register() {
-      if (localStorage.getItem(this.username)) {
-        this.$toast.add({ severity: 'warn', summary: 'Warning', detail: 'User already exists.', life: 3000 });
-      } else {
-        localStorage.setItem(this.username, JSON.stringify({ email: this.email, password: this.password }));
-        this.$toast.add({ severity: 'success', summary: 'Success', detail: 'Registered successfully. Now sign in.', life: 3000 });
-        this.$emit('registered');
-      }
+    onSignIn() {
+      const toast = this.$toast;
+
+      let authStore = useAuthenticationStore();
+      let signInRequest = new SignInRequest(this.username, this.password);
+
+      authStore.signIn(signInRequest, this.$router)
+          .then(() => {
+            toast.add({ severity: 'success', summary: 'Success', detail: 'Welcome ' + this.username + '!', life: 3000 });
+          })
+          .catch(() => {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'User not found or incorrect password.', life: 3000 });
+          });
+    },
+    goToLanding() {
+      window.location.href = 'https://restock-4368.github.io/landing-page/';
     }
   }
 }
 </script>
 
 <template>
-  <form @submit.prevent="register" class="sign-up-form">
-    <h2 class="title">Sign up</h2>
-    <div class="input-field">
-      <input type="text" v-model="username" placeholder="User" required />
+  <pv-toast></pv-toast>
+  <button class="back-button" @click="goToLanding">
+    <i class="pi pi-arrow-left"></i>
+  </button>
+
+  <div class="container">
+    <div class="forms-container">
+      <div class="signin-signup-recover">
+        <form @submit.prevent="onSignIn" class="sign-in-form">
+          <h2 class="title">Sign in</h2>
+          <div class="input-field">
+            <input type="text" v-model="username" placeholder="User" required />
+          </div>
+          <div class="input-field">
+            <input type="password" v-model="password" placeholder="Password" required />
+          </div>
+          <button type="submit" class="btn solid">Sign in</button>
+        </form>
+      </div>
     </div>
-    <div class="input-field">
-      <input type="email" v-model="email" placeholder="e-mail" required />
+
+    <div class="panels-container">
+      <div class="panel left-panel">
+        <div class="content">
+          <h3>Are you new?</h3>
+          <p>Join our community and start improving your management today!</p>
+          <router-link to="/sign-up">
+            <button class="btn switch">SIGN UP</button>
+          </router-link>
+        </div>
+      </div>
     </div>
-    <div class="input-field">
-      <input type="password" v-model="password" placeholder="Password" required />
-    </div>
-    <div class="input-field select-field">
-      <select v-model="role" required>
-        <option disabled value="">Select role</option>
-        <option>Restaurant Administrator</option>
-        <option>Restaurant Supplier</option>
-      </select>
-    </div>
-    <button type="submit" class="btn solid">Sign up</button>
-  </form>
+  </div>
 </template>
 
-
 <style scoped>
-
-/* Añade estos estilos a tu CSS existente */
-
-/* Modificar el grid para el select */
-.input-field.select-field {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-}
-
-.input-field select {
-  background: white;
-  outline: none;
-  border: none;
-  line-height: 1;
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #3C3C3C;
-  width: 100%;
-  height: 100%;
+.back-button {
+  padding: 1rem;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background-color: #4F8A5B;
+  border-radius: 80%;
+  font-size: 0.7rem;
   cursor: pointer;
-  padding: 0;
-  margin: 0;
-  /* Remueve el estilo predeterminado del navegador */
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: none;
+  color: #ffffff;
+  z-index: 999;
+  transition: color 0.3s;
 }
 
-/* Estilo para las opciones del select */
-.input-field select option {
-  font-weight: 500;
-  font-size: 1rem;
-  color: #3C3C3C;
-  background-color: white;
-  padding: 8px;
-}
-
-/* Estilo para la opción deshabilitada (placeholder) */
-.input-field select option:disabled {
-  color: #7D7D7D;
-  font-weight: 400;
-}
-
-/* Cuando el select tiene el valor por defecto, mostrar como placeholder */
-.input-field select:invalid {
-  color: #7D7D7D;
-  font-weight: 500;
-}
-
-/* Contenedor del select con flecha personalizada */
-.input-field.select-field {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-/* Flecha personalizada */
-.input-field.select-field::after {
-  content: '▼';
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: #7D7D7D;
-  font-size: 0.8rem;
-}
-
-/* Estilo cuando el select está enfocado */
-.input-field select:focus {
-  color: #3C3C3C;
-}
-
-/* Para Firefox - remueve la flecha predeterminada */
-.input-field select::-moz-focus-inner {
-  border: 0;
-}
-
-/* Para IE - remueve la flecha predeterminada */
-.input-field select::-ms-expand {
-  display: none;
+.back-button:hover {
+  color: #000000; /* color verde suave al pasar */
 }
 
 * {
@@ -464,7 +420,44 @@ form.recover-password-form {
 /* Responsive */
 
 @media (max-width: 870px) {
+  .container {
+    min-height: 800px;
+    height: 100vh;
+  }
 
+  .signin-signup-recover {
+    width: 100%;
+    top: 95%;
+    transform: translate(-50%, -100%);
+    transition: 1s 0.8s ease-in-out;
+  }
+
+  .signin-signup-recover,
+  .container.sign-up-mode .signin-signup-recover,
+  .container.recover-password-mode .signin-signup-recover {
+    left: 50%;
+  }
+
+  .panels-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 2fr 1fr;
+  }
+
+  .panel {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 2.5rem 8%;
+    grid-column: 1 / 2;
+  }
+
+  .right-panel {
+    grid-row: 3 / 4;
+  }
+
+  .left-panel {
+    grid-row: 1 / 2;
+  }
 
   .panel .content {
     padding-right: 15%;
@@ -551,3 +544,4 @@ form.recover-password-form {
   }
 }
 </style>
+

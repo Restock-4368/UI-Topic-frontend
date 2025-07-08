@@ -2,7 +2,7 @@
 export class Profile {
     constructor({
                     id = 0,
-                    name = '',
+                    first_name = '',
                     email = '',
                     last_name = '',
                     avatar = '',
@@ -15,7 +15,7 @@ export class Profile {
                     user = null,
                 } = {}) {
         this.id = id;
-        this.name = name;
+        this.name = first_name;
         this.email = email;
         this.last_name = last_name;
         this.avatar = avatar;

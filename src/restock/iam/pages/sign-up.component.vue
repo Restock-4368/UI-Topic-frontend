@@ -1,44 +1,37 @@
 
 <script>
-import Login from '../components/login.component.vue'
-import Register from '../components/register.component.vue'
-import RecoverPassword from '../components/recover-password.component.vue'
-import LanguageSwitcher from "../../../public/components/language-switcher.component.vue";
+import {useAuthenticationStore} from "../services/authentication.store.js";
+import {SignUpRequest} from "../model/sign-up.request.js";
+import {Toast as PvToast} from "primevue";
 
 export default {
-  name: "access",
-  components: {
-    LanguageSwitcher,
-    Login,
-    Register,
-    RecoverPassword
-  },
+  name: 'sign-up',
+  components: {PvToast},
   data() {
     return {
-      mode: 'signin'
-    }
-  },
-  computed: {
-    currentMode() {
-      if (this.mode === 'signup') return 'sign-up-mode'
-      if (this.mode === 'recover') return 'recover-password-mode'
-      return ''
+      authenticationStore: useAuthenticationStore(),
+      username: "",
+      password: "",
+      role: "",
+      roleId: 0
     }
   },
   methods: {
-    switchToSignin() {
-      this.mode = 'signin'
-    },
-    switchToSignup() {
-      this.mode = 'signup'
-    },
-    switchToRecover() {
-      this.mode = 'recover'
-    },
-    handleLoggedIn() {
-      setTimeout(() => {
-        this.$router.push('/dashboard/restaurant/summary'); //VALIDAR ROL
-      }, 1000);
+    onSignUp() {
+      const toast = this.$toast;
+
+      if (!this.username.trim() || !this.password.trim() || !this.role) {
+        toast.add({ severity: 'warn', summary: 'Validation', detail: 'All fields must be filled correctly. Do not put spaces.', life: 3000 });
+        return;
+      }
+
+      this.roleId = this.role === "Restaurant Administrator" ? 2 : 1;
+
+      let signUpRequest = new SignUpRequest(this.username.trim(), this.password.trim(), this.roleId);
+      this.authenticationStore.signUp(signUpRequest, this.$router)
+          .catch(() => {
+            toast.add({ severity: 'error', summary: 'Error', detail: 'Registration failed. Try again.', life: 3000 });
+          });
     },
     goToLanding() {
       window.location.href = 'https://restock-4368.github.io/landing-page/';
@@ -48,35 +41,43 @@ export default {
 </script>
 
 <template>
-
+  <pv-toast></pv-toast>
   <button class="back-button" @click="goToLanding">
     <i class="pi pi-arrow-left"></i>
   </button>
 
-<!--  <language-switcher></language-switcher>-->
-
-  <div class="container" :class="currentMode">
+  <div class="container sign-up-mode">
     <div class="forms-container">
       <div class="signin-signup-recover">
-        <login v-if="mode === 'signin'" @logged-in="handleLoggedIn" @recover="switchToRecover" />
-        <register v-if="mode === 'signup'" @registered="switchToSignin" />
-        <recover-password v-if="mode === 'recover'" @back="switchToSignin" />
+        <form @submit.prevent="onSignUp" class="sign-up-form">
+          <h2 class="title">Sign up</h2>
+          <div class="input-field">
+            <input type="text" v-model="username" placeholder="Username" required />
+          </div>
+          <div class="input-field">
+            <input type="password" v-model="password" placeholder="Password" required />
+          </div>
+          <div class="input-field select-field">
+            <select v-model="role" required>
+              <option disabled value="">Select role</option>
+              <option>Restaurant Administrator</option>
+              <option>Restaurant Supplier</option>
+            </select>
+          </div>
+          <button type="submit" class="btn solid">Sign up</button>
+        </form>
       </div>
     </div>
 
     <div class="panels-container">
-      <div class="panel left-panel">
-        <div class="content">
-          <h3>Are you new?</h3>
-          <p>Join our community and start improving your management today!</p>
-          <button class="btn switch" @click="switchToSignup">SIGN UP</button>
-        </div>
-      </div>
+      <div class="panel left-panel"></div>
       <div class="panel right-panel">
         <div class="content">
           <h3>Already have an account?</h3>
           <p>Sign in to continue managing your inventory efficiently.</p>
-          <button class="btn switch" @click="switchToSignin">SIGN IN</button>
+          <router-link to="/sign-in">
+            <button class="btn switch">SIGN IN</button>
+          </router-link>
         </div>
       </div>
     </div>
@@ -84,6 +85,88 @@ export default {
 </template>
 
 <style scoped>
+
+.input-field.select-field {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+
+.input-field select {
+  background: white;
+  outline: none;
+  border: none;
+  line-height: 1;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #3C3C3C;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  /* Remueve el estilo predeterminado del navegador */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: none;
+}
+
+/* Estilo para las opciones del select */
+.input-field select option {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #3C3C3C;
+  background-color: white;
+  padding: 8px;
+}
+
+/* Estilo para la opción deshabilitada (placeholder) */
+.input-field select option:disabled {
+  color: #7D7D7D;
+  font-weight: 400;
+}
+
+/* Cuando el select tiene el valor por defecto, mostrar como placeholder */
+.input-field select:invalid {
+  color: #7D7D7D;
+  font-weight: 500;
+}
+
+/* Contenedor del select con flecha personalizada */
+.input-field.select-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Flecha personalizada */
+.input-field.select-field::after {
+  content: '▼';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #7D7D7D;
+  font-size: 0.8rem;
+}
+
+/* Estilo cuando el select está enfocado */
+.input-field select:focus {
+  color: #3C3C3C;
+}
+
+/* Para Firefox - remueve la flecha predeterminada */
+.input-field select::-moz-focus-inner {
+  border: 0;
+}
+
+/* Para IE - remueve la flecha predeterminada */
+.input-field select::-ms-expand {
+  display: none;
+}
+
 .back-button {
   padding: 1rem;
   position: fixed;
@@ -554,5 +637,4 @@ form.recover-password-form {
     bottom: 28%;
     left: 50%;
   }
-}
-</style>
+}</style>
