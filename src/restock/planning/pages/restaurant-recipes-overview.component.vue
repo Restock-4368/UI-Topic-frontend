@@ -118,19 +118,53 @@ export default {
       this.formVisible = false;
     },
     async submitForm(form) {
-      if (this.editMode === 'create') {
-        const response = await this.recipeService.create(form);
-        const created = RecipeAssembler.toEntityFromResponse(response);
+      try {
+        if (this.editMode === 'create') {
+          const response = await this.recipeService.create(form);
+          const created = RecipeAssembler.toEntityFromResponse(response);
 
-        await this.recipeSupplyService.bulkCreate(created.id, form.supplies);
-      } else {
-        await this.recipeSupplyService.deleteByRecipe(form.id);
-        await this.recipeSupplyService.bulkCreate(form.id, form.supplies);
-        await this.recipeService.update(form.id, form);
+          const supplyPayload = form.supplies.map(rs => ({
+            supply_id: rs.supply?.id || rs.supply_id,
+            quantity: rs.quantity
+          }));
+
+          await this.recipeSupplyService.bulkCreate(created.id, supplyPayload);
+
+          const enrichedSupplies = supplyPayload.map(rs => {
+            const supply = this.allSupplies.find(s => s.id === rs.supply_id);
+            return {
+              ...rs,
+              supply
+            };
+          });
+
+          this.recipes.push({
+            ...created,
+            supplies: enrichedSupplies
+          });
+
+          await this.loadRecipes();
+        } else {
+          await this.recipeSupplyService.deleteByRecipe(form.id);
+
+          const supplyPayload = form.supplies
+              .filter(rs => rs.supply && rs.supply.id)
+              .map(rs => ({
+                supply_id: rs.supply.id,
+                quantity: rs.quantity
+              }));
+
+          await this.recipeSupplyService.bulkCreate(form.id, supplyPayload);
+          await this.recipeService.update(form.id, form);
+
+          await this.loadRecipes();
+        }
+
+        this.closeForm();
+      } catch (error) {
+        console.error("Error al guardar la receta:", error);
+        this.$toast.add({ severity: 'error', summary: 'Error', detail: 'No se pudo guardar la receta', life: 3000 });
       }
-
-      await this.loadRecipes();
-      this.closeForm();
     },
 
     openDeleteDialog(recipe) {
@@ -145,6 +179,8 @@ export default {
       await this.loadRecipes();
     },
     async recipeDetails(recipe) {
+      const respRecipe = await this.recipeService.getById(recipe.id);
+      const detailed = RecipeAssembler.toEntityFromResponse(respRecipe);
       const respSupplies = await this.recipeSupplyService.getByRecipe(recipe.id);
       const rawSupplies = RecipeSupplyAssembler.toEntitiesFromResponse(respSupplies);
 
@@ -157,7 +193,7 @@ export default {
       });
 
       this.selectedRecipe = {
-        ...recipe,
+        ...detailed,
         supplies: enrichedSupplies
       };
 
@@ -226,8 +262,8 @@ export default {
         <h3>{{ recipe.name }}</h3>
         <p>Total cost: S/.{{ recipe.total_price }}</p>
         <div class="recipe-card__actions">
-          <pv-button icon="pi pi-pencil" @click="openEditDialog(recipe)" outlined/>
-          <pv-button icon="pi pi-trash" severity="danger" @click="openDeleteDialog(recipe)" outlined/>
+          <pv-button icon="pi pi-pencil" @click.stop="openEditDialog(recipe)" outlined/>
+          <pv-button icon="pi pi-trash" severity="danger" @click.stop="openDeleteDialog(recipe)" outlined/>
         </div>
       </div>
     </div>
@@ -264,29 +300,47 @@ export default {
     <pv-dialog
         v-model:visible="detailsVisible"
         modal
-        :style="{
-          width: 'auto',
-          height: 'auto',
-        }"
+        :style="{ width: '600px', maxHeight: '90vh' }"
         :closable="true"
     >
+      <div class="flex flex-column gap-4 overflow-y-auto" style="max-height: 75vh; padding: 1rem;">
+        <!-- Título y precio -->
+        <div class="flex justify-content-between align-items-center border-bottom-1 surface-border pb-2">
+          <h3 class="m-0 text-xl font-bold">{{ selectedRecipe.name }}</h3>
+          <span class="text-xl text-color-secondary">S/. {{ selectedRecipe.total_price }}</span>
+        </div>
 
-      <div class="modal-content">
-        <h3>{{ selectedRecipe.name }}</h3>
-        <p>{{ selectedRecipe.description }}</p>
-        <img :src="selectedRecipe.image_url" alt="Recipe image" style="max-width: 100%;">
-        <p>Total Price: S/. {{ selectedRecipe.total_price }}</p>
+        <!-- Imagen -->
+        <div class="w-full border-round overflow-hidden shadow-1">
+          <img
+              :src="selectedRecipe.image_url"
+              alt="Recipe image"
+              class="w-full"
+              style="max-height: 250px; object-fit: cover;"
+          />
+        </div>
 
-        <h4>Supplies:</h4>
-        <ul>
-          <li v-for="s in selectedRecipe.supplies" :key="s.supply.id">
-            {{ s.supply.name }} - {{ s.quantity }} unit(s)
-          </li>
-        </ul>
+        <!-- Descripción -->
+        <p class="text-sl line-height-3 text-color-primary m-0">
+          {{ selectedRecipe.description }}
+        </p>
 
+        <!-- Lista de insumos -->
+        <div>
+          <h4 class="text-md font-medium mb-2">Supplies</h4>
+          <ul class="pl-3 m-0">
+            <li
+                v-for="s in selectedRecipe.supplies"
+                :key="s.supply.id"
+                class="mb-1 text-sm"
+            >
+              <i class="pi pi-food mr-2 text-primary"></i>
+              {{ s.supply.name }} – {{ s.quantity }} unit(s)
+            </li>
+          </ul>
+        </div>
       </div>
     </pv-dialog>
-
   </div>
 </template>
 
@@ -309,6 +363,7 @@ export default {
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
 }
 
 .recipe-card img {

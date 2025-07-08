@@ -43,7 +43,7 @@ export default {
   methods: {
     addSupply() {
       const exists = this.internalValue.some(s => s.supply_id === this.selectedSupply?.id);
-      if (!exists) {
+      if (!exists && this.selectedQuantity > 0) {
         this.internalValue.push({
           supply_id: this.selectedSupply.id,
           quantity: this.selectedQuantity
@@ -89,7 +89,7 @@ export default {
           inputClass="w-full"
       />
 
-      <pv-button icon="pi pi-plus-circle" @click="addSupply"  class="green-button" :disabled="!selectedSupply || !selectedQuantity"/>
+      <pv-button icon="pi pi-plus-circle" @click="addSupply"  class="green-button" :disabled="!selectedSupply || !selectedQuantity || selectedQuantity <= 0"/>
     </div>
 
     <pv-data-table :value="internalValue" class="w-full">
