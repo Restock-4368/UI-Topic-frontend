@@ -13,9 +13,40 @@ export default {
   data() {
     return {
       form: { ...this.initialData },
+      errors: {}
     };
   },
+
+  watch: {
+    initialData: {
+      handler(val) {
+        this.form = { ...val };
+        this.errors = {};
+      },
+      deep: true
+    }
+  },
   methods: {
+    validate() {
+      const errs = {};
+      this.schema.forEach(f => {
+        const value = this.form[f.name];
+        if (f.type === 'number') {
+          if (value === null || value === undefined || value === '' || Number(value) <= 0) {
+            errs[f.name] = 'Required';
+          }
+        } else if (f.type !== 'boolean' && (!value || value.toString().trim() === '')) {
+          errs[f.name] = 'Required';
+        }
+      });
+      this.errors = errs;
+      return Object.keys(errs).length === 0;
+    },
+    handleSubmit() {
+      if (this.validate()) {
+        this.$emit('submit', this.form);
+      }
+    },
     handleUpload(event, fieldName) {
       const file = event.files[0];
       console.log('Upload triggered:', event.files);
@@ -47,7 +78,7 @@ export default {
 
 
 <template>
-  <form @submit.prevent="$emit('submit', form)">
+  <form @submit.prevent="handleSubmit">
     <div v-for="field in schema" :key="field.name" class="p-field mb-3">
       <label :for="field.name" class="block mb-1">{{ field.label }}</label>
 
@@ -57,6 +88,7 @@ export default {
           :id="field.name"
           :placeholder="field.placeholder"
           class="w-full"
+          :class="{ 'p-invalid': errors[field.name] }"
       />
 
       <pv-input-number
@@ -71,6 +103,7 @@ export default {
           :minFractionDigits="field.format === 'currency' ? 2 : 0"
           :maxFractionDigits="field.format === 'currency' ? 2 : 0"
           class="w-full"
+          :class="{ 'p-invalid': errors[field.name] }"
       />
       <pv-input-switch
           v-else-if="field.type === 'boolean'"
@@ -97,6 +130,9 @@ export default {
             style="max-width: 100%; border-radius: 10px;"
         />
       </div>
+
+
+      <small v-if="errors[field.name]" class="p-error">{{ errors[field.name] }}</small>
     </div>
 
     <slot name="extension" :form="form" />
